@@ -5,7 +5,7 @@ const SignUp = () => {
   return (
     <div className="flex items-center justify-center min-h-screen reltive">
       <img
-        src="/Frame 1261153634.jpg"
+        src="/Frame 1261153634 (1).jpg"
         alt="side_img"
         className="absolute left-0 hidden md:block w-[35%]"
       />
@@ -20,13 +20,13 @@ const SignUp = () => {
 
         <form className="mt-8 space-y-6">
           <div className="flex space-x-2">
-            <div className="relative">
+            <div className="relative w-[48%]">
               <label htmlFor="first_name" className="sr-only">
                 First Name
               </label>
               <div className="flex items-center border rounded-full  p-2 shadow-md">
                 <span className=" pl-3 pr-2">
-                  <img src="/fluent_person-32-light.svg" alt="person" />
+                  <img src="/fluent_person-32-light.svg" alt="person"  className="w-6 h-6"/>
                 </span>
                 <span>
                   <img src="/Line 1.svg" alt="line" />
@@ -36,18 +36,18 @@ const SignUp = () => {
                   name="first_name"
                   type="first_name"
                   required
-                  className="flex-1 px-2 py-2 rounded-full bg-transparent outline-none text-gray-700 "
+                  className="flex-1 px-2 py-2 rounded-full bg-transparent outline-none text-gray-700 w-[48%]"
                   placeholder=" First Name"
                 />
               </div>
             </div>
-            <div className="relative">
+            <div className="relative w-[48%]">
               <label htmlFor="last_name" className="sr-only">
                 Last Name
               </label>
               <div className="flex items-center border rounded-full  p-2 shadow-md">
                 <span className=" pl-3 pr-2">
-                  <img src="/fluent_person-32-light.svg" alt="person" />
+                  <img src="/fluent_person-32-light.svg" alt="person"  className="w-6 h-6" />
                 </span>
                 <span>
                   <img src="/Line 1.svg" alt="line" />
@@ -57,7 +57,7 @@ const SignUp = () => {
                   name="last_name"
                   type="last_name"
                   required
-                  className="flex-1 px-2 py-2 rounded-full bg-transparent outline-none text-gray-700 "
+                  className="flex-1 px-2 py-2 rounded-full bg-transparent outline-none text-gray-700 w-[48%]"
                   placeholder="Last Name"
                 />
               </div>
@@ -70,7 +70,7 @@ const SignUp = () => {
             </label>
             <div className="flex items-center border rounded-full  p-2 shadow-md">
               <span className=" pl-3 pr-2">
-                <img src="/fluent_person-32-light.svg" alt="person" />
+                <img src="/fluent_person-32-light.svg" alt="person" className="w-8 h-8" />
               </span>
               <span>
                 <img src="/Line 1.svg" alt="line" />
@@ -92,7 +92,7 @@ const SignUp = () => {
             </label>
             <div className="flex items-center border rounded-full  p-2 shadow-md">
               <span className=" pl-3 pr-2">
-                <img src="/Frame 33.svg" alt="email" />
+                <img src="/Frame 33.svg" alt="email"  className="w-8 h-8" />
               </span>
               <span>
                 <img src="/Line 1.svg" alt="line" />
@@ -114,7 +114,7 @@ const SignUp = () => {
             </label>
             <div className="flex items-center border rounded-full  p-2 shadow-md">
               <span className=" pl-3 pr-2">
-                <img src="/ph_phone-thin.svg" alt="phone" />
+                <img src="/ph_phone-thin.svg" alt="phone"  className="w-8 h-8" />
               </span>
               <span>
                 <img src="/Line 1.svg" alt="line" />
@@ -136,7 +136,7 @@ const SignUp = () => {
             </label>
             <div className="flex items-center border rounded-full  p-2 shadow-md">
               <span className=" pl-3 pr-2">
-                <img src="/Frame 34.svg" alt="email" />
+                <img src="/Frame 34.svg" alt="email"  className="w-8 h-8" />
               </span>
               <span>
                 <img src="/Line 1.svg" alt="line" />
@@ -160,7 +160,7 @@ const SignUp = () => {
             </label>
             <div className="flex items-center border rounded-full  p-2 shadow-md">
               <span className=" pl-3 pr-2">
-                <img src="/Frame 34.svg" alt="email" />
+                <img src="/Frame 34.svg" alt="password"  className="w-8 h-8"/>
               </span>
               <span>
                 <img src="/Line 1.svg" alt="line" />
@@ -179,16 +179,10 @@ const SignUp = () => {
             </div>
           </div>
 
-          <div className="text-right">
-            <a href="#" className="text-sm text-primary hover:underline">
-              Forgot password?
-            </a>
-          </div>
-
           <div>
             <button
               type="submit"
-              className="w-full py-3 px-4 bg-gradient-to-r from-[#62DEFF] to-[#02A9D6] text-white rounded-full hover:from-sky-300 hover:to-sky-400 transition duration-300 shadow-lg"
+              className="w-full py-3 px-4 bg-custom-gradient text-white rounded-full shadow-lg"
             >
               Sign In
             </button>
@@ -199,7 +193,7 @@ const SignUp = () => {
             <Link
               to="/"
               href="#"
-              className="font-medium text-blue-400 hover:underline"
+              className="font-medium text-primary hover:underline"
             >
               Sign in
             </Link>
