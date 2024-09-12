@@ -9,24 +9,30 @@ const menuItems = [
     activeLogo: "/solar_home-2-broken.svg",
     inactiveLogo: "/solar_home-2-broken (1).svg",
   },
-  // {
-  //   name: "Users",
-  //   route: "/users",
-  //   activeLogo: "/solar_user-linear (1).svg",
-  //   inactiveLogo: "/solar_user-linear.svg",
-  // },
-  // {
-  //   name: "Program",
-  //   route: "/Program",
-  //   activeLogo: "/_30-Report (1).svg",
-  //   inactiveLogo: " /_30-Report.svg",
-  // },
-  // {
-  //   name: "Tab",
-  //   route: "/tab",
-  //   activeLogo: "/Frame_active(1).svg",
-  //   inactiveLogo: "/Frame_active.svg",
-  // },
+  {
+    name: "History",
+    route: "/history",
+    activeLogo: "/solar_history-broken (2).svg",
+    inactiveLogo: "/solar_history-broken (1).svg",
+  },
+  {
+    name: "Profile",
+    route: "/profile",
+    activeLogo: "/solar_user-linear (2).svg",
+    inactiveLogo: " /solar_user-linear (1).svg",
+  },
+  {
+    name: "Assessments",
+    route: "/assessments",
+    activeLogo: "/Layer_1 (2).svg",
+    inactiveLogo: "/Layer_1 (1).svg",
+  },
+  {
+    name: "Settings",
+    route: "/settings",
+    activeLogo: "/lets-icons_setting-alt-line (2).svg",
+    inactiveLogo: "/lets-icons_setting-alt-line (1).svg",
+  },
   {
     name: "Logout",
     route: "/",
@@ -94,19 +100,16 @@ const SideBar = () => {
         } lg:translate-x-0`}
         aria-label="Sidebar"
       >
-        <div
-          className="h-full px-3 py-4 overflow-y-auto bg-transparent "
-          style={{ borderRadius: "0px 40px 0px 0px" }}
-        >
+        <div className="pl-4  py-4 overflow-y-auto bg-transparent h-screen">
           <ul className="space-y-2 font-medium mt-16">
             {menuItems.map((item) => (
-              <li key={item.route} style={{ padding: "0px 16px 0px 16px" }}>
+              <li key={item.route}>
                 <NavLink
                   to={item.route}
                   className={({ isActive }) =>
                     isActive
-                      ? "flex items-center my-4 p-2 rounded-lg text-primary bg-white "
-                      : "flex items-center my-4 p-2 rounded-lg text-white"
+                      ? "flex items-center my-4 p-2  text-primary bg-white "
+                      : "flex items-center my-4 p-2  text-white"
                   }
                 >
                   {({ isActive }) => (
