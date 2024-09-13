@@ -5,10 +5,11 @@ import SignIn from "./pages/SignIn/SignIn";
 import SignUp from "./pages/SignUp/SignUp";
 import Home from "./pages/Home/Home";
 import Pyramid from "./pages/Home/Pyramid";
-import History from "./pages/History/History"
-import Profile from "./pages/Profile/Profile"
+import History from "./pages/History/History";
+import Profile from "./pages/Profile/Profile";
 import Assessments from "./pages/Assessments/Assessments";
-import Settings from "./pages/Settings/Settings"
+import Settings from "./pages/Settings/Settings";
+import StepperForm from "./pages/Home/StepperForm";
 
 function App() {
   const router = createBrowserRouter([
@@ -29,20 +30,24 @@ function App() {
       element: <Pyramid />,
     },
     {
+      path: "/home/stepper",
+      element: <StepperForm />,
+    },
+    {
       path: "/history",
-      element: <History/>,
+      element: <History />,
     },
     {
       path: "/Profile",
-      element: <Profile/>,
+      element: <Profile />,
     },
     {
       path: "/assessments",
-      element: <Assessments/>,
+      element: <Assessments />,
     },
     {
       path: "/settings",
-      element: <Settings/>,
+      element: <Settings />,
     },
   ]);
 
