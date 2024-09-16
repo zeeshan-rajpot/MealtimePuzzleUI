@@ -10,6 +10,7 @@ import Profile from "./pages/Profile/Profile";
 import Assessments from "./pages/Assessments/Assessments";
 import Settings from "./pages/Settings/Settings";
 import StepperForm from "./pages/Home/StepperForm";
+import ChildInformationPage from "./pages/Home/ChildInformationPage";
 
 function App() {
   const router = createBrowserRouter([
@@ -28,6 +29,10 @@ function App() {
     {
       path: "/home/options",
       element: <Pyramid />,
+    },
+    {
+      path: "/home/childinfo",
+      element: <ChildInformationPage />,
     },
     {
       path: "/home/stepper",

@@ -108,7 +108,7 @@ const SideBar = () => {
                   to={item.route}
                   className={({ isActive }) =>
                     isActive
-                      ? "flex items-center my-4 p-2  text-primary bg-white "
+                      ? "flex items-center my-4 p-2  text-primary bg-white rounded-l-full"
                       : "flex items-center my-4 p-2  text-white"
                   }
                 >
