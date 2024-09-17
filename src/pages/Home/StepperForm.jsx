@@ -20,14 +20,36 @@ const StepperForm = () => {
     recommendation: "",
   });
 
+  // Use effect to load saved data for the current step (only when currentStep changes)
+  useEffect(() => {
+    const savedData = JSON.parse(
+      localStorage.getItem(savedCategories[currentStep])
+    );
+    if (savedData) {
+      setFormData(savedData);
+    } else {
+      setFormData({
+        role: "",
+        clinicalPrompt: "",
+        impression: "",
+        recommendation: "",
+      });
+    }
+    // Only run this effect when currentStep changes
+  }, [currentStep]);
+
   // Handle input changes
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setFormData({ ...formData, [name]: value });
   };
 
-  // Move to the next step
+  // Move to the next step and save current step data in localStorage
   const handleNext = () => {
+    localStorage.setItem(
+      savedCategories[currentStep],
+      JSON.stringify(formData)
+    );
     if (currentStep < savedCategories.length - 1) {
       setCurrentStep(currentStep + 1);
     }
@@ -40,9 +62,14 @@ const StepperForm = () => {
     }
   };
 
-  // Handle form submission (for now, log the data to the console)
+  // Handle form submission (log data and navigate)
   const handleSubmit = () => {
-    navigate("/home/childinfo");
+    localStorage.setItem(
+      savedCategories[currentStep],
+      JSON.stringify(formData)
+    );
+    // Navigate to detail page or next step
+    navigate("/home/detailpage");
   };
 
   return (

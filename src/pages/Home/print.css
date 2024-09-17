@@ -1,0 +1,32 @@
+@media print {
+  /* Hide elements not needed in the print version */
+  header,
+  aside,
+  button {
+    display: none;
+  }
+
+  /* Make the content fit on one page */
+  #printableContent {
+    page-break-inside: avoid;
+    width: 100%;
+    margin: 0;
+    padding: 0;
+  }
+
+  /* Adjust font sizes and spacing for print */
+  h2,
+  h3 {
+    font-size: 18px;
+    margin: 10px 0;
+  }
+
+  p {
+    font-size: 14px;
+  }
+
+  /* Hide borders on input fields or placeholders */
+  .border-b-2 {
+    border: none;
+  }
+}

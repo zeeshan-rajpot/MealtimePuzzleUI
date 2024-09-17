@@ -11,6 +11,7 @@ import Assessments from "./pages/Assessments/Assessments";
 import Settings from "./pages/Settings/Settings";
 import StepperForm from "./pages/Home/StepperForm";
 import ChildInformationPage from "./pages/Home/ChildInformationPage";
+import DetailPage from "./pages/Home/DetailPage";
 
 function App() {
   const router = createBrowserRouter([
@@ -37,6 +38,10 @@ function App() {
     {
       path: "/home/stepper",
       element: <StepperForm />,
+    },
+    {
+      path: "/home/detailpage",
+      element: <DetailPage />,
     },
     {
       path: "/history",

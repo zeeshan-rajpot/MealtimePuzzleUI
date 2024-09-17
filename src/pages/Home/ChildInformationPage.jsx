@@ -1,8 +1,32 @@
-import React from "react";
+import React, { useState } from "react";
 import Header from "../../components/Header";
 import SideBar from "../../components/SideBar";
+import { Link } from "react-router-dom";
 
 const ChildInformationPage = () => {
+  const [formData, setFormData] = useState({
+    urn: "",
+    firstName: "",
+    lastName: "",
+    parentName: "",
+    dob: "",
+    email: "",
+    contact: ""
+  });
+
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setFormData({
+      ...formData,
+      [name]: value
+    });
+  };
+
+  const handleNext = () => {
+    // Save the entire formData object in localStorage as 'childInformation'
+    localStorage.setItem("childInformation", JSON.stringify(formData));
+  };
+
   return (
     <>
       <Header />
@@ -19,59 +43,78 @@ const ChildInformationPage = () => {
             <div className="w-full mt-4 ">
               <input
                 type="text"
-                name="clinicalPrompt"
-                placeholder="child's URN(Unit Record Number)?"
+                name="urn"
+                placeholder="child's URN (Unit Record Number)?"
                 className="w-full p-3 border rounded mb-4"
+                value={formData.urn}
+                onChange={handleInputChange}
               />
 
               <div className="flex space-x-3">
                 <input
                   type="text"
-                  name="clinicalPrompt"
+                  name="firstName"
                   placeholder="Child First Name"
                   className="w-full p-3 border rounded mb-4"
+                  value={formData.firstName}
+                  onChange={handleInputChange}
                 />
                 <input
                   type="text"
-                  name="clinicalPrompt"
+                  name="lastName"
                   placeholder="Child Last Name"
                   className="w-full p-3 border rounded mb-4"
+                  value={formData.lastName}
+                  onChange={handleInputChange}
                 />
               </div>
 
               <div className="flex space-x-3">
                 <input
                   type="text"
-                  name="clinicalPrompt"
+                  name="parentName"
                   placeholder="Parent/Caretaker Name"
                   className="w-full p-3 border rounded mb-4"
+                  value={formData.parentName}
+                  onChange={handleInputChange}
                 />
                 <input
                   type="date"
-                  name="clinicalPrompt"
+                  name="dob"
                   placeholder="DD/MM/YYYY"
                   className="w-full p-3 border rounded mb-4"
+                  value={formData.dob}
+                  onChange={handleInputChange}
                 />
               </div>
 
               <input
                 type="text"
-                name="clinicalPrompt"
+                name="email"
                 placeholder="Parent/Caretaker Email Address"
                 className="w-full p-3 border rounded mb-4"
+                value={formData.email}
+                onChange={handleInputChange}
               />
 
               <input
                 type="text"
-                name="clinicalPrompt"
+                name="contact"
                 placeholder="Parent/Caretaker Contact Number"
                 className="w-full p-3 border rounded mb-4"
+                value={formData.contact}
+                onChange={handleInputChange}
               />
 
               <div className="flex justify-center mt-4">
-                <button className="bg-primary text-white rounded-full py-3 px-32">
-                  Next
-                </button>
+                <Link to="/home/options">
+                  <button
+                    className="bg-primary text-white rounded-full py-3 px-32"
+                    onClick={handleNext}
+                  >
+                    Next
+                  </button>
+                </Link>
               </div>
             </div>
           </div>
