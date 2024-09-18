@@ -53,7 +53,10 @@ const DetailPage = () => {
           </div>
 
           <div id="printableContent" className="w-full max-w-3xl mx-auto pb-12">
-            <h2 className="text-2xl font-semibold ">Child Information</h2>
+            <div className="flex justify-between mb-6">
+              <h2 className="text-2xl font-semibold ">Child Information</h2>
+              <h2 className="text-2xl font-semibold ">2nd Session</h2>
+            </div>
 
             <div className="mt-4 space-y-6">
               <p className="text-sm font-medium">
@@ -81,6 +84,7 @@ const DetailPage = () => {
 
             <div className="mt-10">
               <h2 className="text-2xl font-semibold ">Mealtime</h2>
+              
               {stepData.map((step, index) => (
                 <div key={index} className="space-y-6">
                   <h3 className="mt-8 text-lg font-semibold">

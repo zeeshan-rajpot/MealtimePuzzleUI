@@ -12,6 +12,8 @@ import Settings from "./pages/Settings/Settings";
 import StepperForm from "./pages/Home/StepperForm";
 import ChildInformationPage from "./pages/Home/ChildInformationPage";
 import DetailPage from "./pages/Home/DetailPage";
+import Formulation from "./pages/Formulation/Formulation";
+import FormulationPyrmaid from "./pages/Home/FormulationPyrmaid";
 
 function App() {
   const router = createBrowserRouter([
@@ -26,6 +28,10 @@ function App() {
     {
       path: "/home",
       element: <Home />,
+    },
+    {
+      path: "/home/formulationOptions",
+      element: <FormulationPyrmaid />,
     },
     {
       path: "/home/options",
@@ -52,8 +58,12 @@ function App() {
       element: <Profile />,
     },
     {
-      path: "/assessments",
+      path: "/intervention",
       element: <Assessments />,
+    },
+    {
+      path: "/formulation",
+      element: <Formulation />,
     },
     {
       path: "/settings",

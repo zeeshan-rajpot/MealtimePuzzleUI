@@ -22,10 +22,16 @@ const menuItems = [
     inactiveLogo: " /solar_user-linear (1).svg",
   },
   {
-    name: "Assessments",
-    route: "/assessments",
+    name: "Intervention",
+    route: "/intervention",
     activeLogo: "/Layer_1 (2).svg",
     inactiveLogo: "/Layer_1 (1).svg",
+  },
+  {
+    name: "Formulation",
+    route: "/Formulation",
+    activeLogo: "/fluent_clipboard-math-formula-20-regular.svg",
+    inactiveLogo: "/fluent_clipboard-math-formula-20-regular.svg",
   },
   {
     name: "Settings",

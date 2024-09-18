@@ -2,7 +2,7 @@ import React from "react";
 import SideBar from "../../components/SideBar";
 import Header from "../../components/Header";
 
-const Assessments = () => {
+const Formulation = () => {
   const Data = [
     { name: "Mohsin Ali Raza", id: "090078601" },
     { name: "Mohsin Ali Raza", id: "090078601" },
@@ -18,9 +18,7 @@ const Assessments = () => {
         <div className="pt-10 w-full lg:w-[75%] xl:w-[80%] 2xl:w-[85%] h-auto">
           <div className="flex flex-col justify-center items-center">
             <div className="flex justify-between mb-6 w-full px-[7rem] relative">
-              <h1 className="text-2xl font-bold text-center ">
-                Intervention{" "}
-              </h1>
+              <h1 className="text-2xl font-bold text-center ">Formualtion </h1>
               <input
                 type="text"
                 placeholder="Search..."
@@ -53,4 +51,4 @@ const Assessments = () => {
   );
 };
 
-export default Assessments;
+export default Formulation;
