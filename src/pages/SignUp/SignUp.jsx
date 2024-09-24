@@ -2,11 +2,15 @@ import React from "react";
 import { Link } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import { useSignupUserMutation } from "../../features/auth/authApi";
+import toast from "react-hot-toast";
+import { useNavigate } from "react-router-dom";
 
 const SignUp = () => {
+  const navigate = useNavigate();
   const {
     register,
     handleSubmit,
+    reset,
     formState: { errors },
   } = useForm();
 
@@ -15,9 +19,10 @@ const SignUp = () => {
   const onSubmit = async (userData) => {
     try {
       const response = await signupUser(userData).unwrap();
-      console.log("Signup body", response);
+      // console.log("Signup body", response);
+      toast.success("New User Created")
       navigate("/");
-      console.log("Data ", userData);
+      // console.log("Data ", userData);
       
     } catch (err) {
       console.error("Failed to login:", err);

@@ -1,6 +1,7 @@
 import React from "react";
 import SideBar from "../../components/SideBar";
 import Header from "../../components/Header";
+import { Link } from "react-router-dom";
 
 const Formulation = () => {
   const Data = [
@@ -33,15 +34,14 @@ const Formulation = () => {
 
             <div className="space-y-4 w-full max-w-4xl">
               {Data.map((item, index) => (
-                <div
-                  key={index}
-                  className="border-2 border-gray-100 p-4 flex justify-between rounded-lg shadow-sm hover:border-primary"
-                >
-                  <div>
-                    <p className="font-semibold">{item.name}</p>
-                    <p>{item.id}</p>
+                <Link to="/formulation/detailpage" className="cursor-pointer border-2 border-gray-100 p-4 flex justify-between rounded-lg shadow-sm hover:border-primary">
+                  <div key={index}>
+                    <div>
+                      <p className="font-semibold">{item.name}</p>
+                      <p>{item.id}</p>
+                    </div>
                   </div>
-                </div>
+                </Link>
               ))}
             </div>
           </div>

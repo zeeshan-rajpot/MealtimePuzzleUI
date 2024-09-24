@@ -1,30 +1,38 @@
-import React, { useState } from "react";
+import React from "react";
+import { useForm } from "react-hook-form";
 import Header from "../../components/Header";
 import SideBar from "../../components/SideBar";
-import { Link } from "react-router-dom";
+import { useChildUserMutation } from "../../features/Forms/ChildInfo";
+import toast from "react-hot-toast";
+import { useNavigate } from "react-router-dom";
 
 const ChildInformationPage = () => {
-  const [formData, setFormData] = useState({
-    urn: "",
-    firstName: "",
-    lastName: "",
-    parentName: "",
-    dob: "",
-    email: "",
-    contact: ""
-  });
+  const navigate = useNavigate();
+  const {
+    register, // used to register form inputs
+    handleSubmit, // used to handle form submission
+    reset,
+    formState: { errors }, // used to handle validation errors
+  } = useForm();
 
-  const handleInputChange = (e) => {
-    const { name, value } = e.target;
-    setFormData({
-      ...formData,
-      [name]: value
-    });
-  };
+  const [childUser, { isLoading, isError, isSuccess }] = useChildUserMutation();
 
-  const handleNext = () => {
-    // Save the entire formData object in localStorage as 'childInformation'
-    localStorage.setItem("childInformation", JSON.stringify(formData));
+  const onSubmit = async (formData) => {
+    try {
+      // Save form data to localStorage
+      localStorage.setItem("childInformation", JSON.stringify(formData));
+
+      // Make API call
+      await childUser(formData).unwrap();
+      // Handle success logic here (e.g., navigate to next page or show success message)
+      toast.success("Child Added Successfully");
+      reset();
+      navigate("/home/formulationOptions");
+    } catch (error) {
+      // Handle error logic here (e.g., display error message)
+      console.error("Error submitting form:", error);
+      toast.error("An Error Occured");
+    }
   };
 
   return (
@@ -40,83 +48,101 @@ const ChildInformationPage = () => {
           <div className="w-full max-w-3xl mx-auto flex justify-center items-center flex-col">
             <h2 className="text-2xl font-semibold">Child Information</h2>
 
-            <div className="w-full mt-4 ">
+            <form onSubmit={handleSubmit(onSubmit)} className="w-full mt-4">
               <input
                 type="text"
-                name="urn"
+                {...register("urn", { required: "URN is required" })}
                 placeholder="child's URN (Unit Record Number)?"
                 className="w-full p-3 border rounded mb-4"
-                value={formData.urn}
-                onChange={handleInputChange}
               />
+              {errors.urn && (
+                <p className="text-red-500">{errors.urn.message}</p>
+              )}
 
               <div className="flex space-x-3">
                 <input
                   type="text"
-                  name="firstName"
+                  {...register("firstName", {
+                    required: "First Name is required",
+                  })}
                   placeholder="Child First Name"
                   className="w-full p-3 border rounded mb-4"
-                  value={formData.firstName}
-                  onChange={handleInputChange}
                 />
+                <div>
+                  
+                </div>
+               
+
                 <input
                   type="text"
-                  name="lastName"
+                  {...register("lastName", {
+                    required: "Last Name is required",
+                  })}
                   placeholder="Child Last Name"
                   className="w-full p-3 border rounded mb-4"
-                  value={formData.lastName}
-                  onChange={handleInputChange}
                 />
+              
               </div>
 
               <div className="flex space-x-3">
                 <input
                   type="text"
-                  name="parentName"
+                  {...register("parentName", {
+                    required: "Parent/Caretaker Name is required",
+                  })}
                   placeholder="Parent/Caretaker Name"
                   className="w-full p-3 border rounded mb-4"
-                  value={formData.parentName}
-                  onChange={handleInputChange}
                 />
+              
+
                 <input
                   type="date"
-                  name="dob"
-                  placeholder="DD/MM/YYYY"
+                  {...register("dob", {
+                    required: "Date of Birth is required",
+                  })}
                   className="w-full p-3 border rounded mb-4"
-                  value={formData.dob}
-                  onChange={handleInputChange}
                 />
+               
               </div>
 
               <input
-                type="text"
-                name="email"
+                type="email"
+                {...register("email", {
+                  required: "Email is required",
+                  pattern: {
+                    value: /^\S+@\S+$/,
+                    message: "Invalid email address",
+                  },
+                })}
                 placeholder="Parent/Caretaker Email Address"
                 className="w-full p-3 border rounded mb-4"
-                value={formData.email}
-                onChange={handleInputChange}
               />
+              {errors.email && (
+                <p className="text-red-500">{errors.email.message}</p>
+              )}
 
               <input
                 type="text"
-                name="contact"
+                {...register("contact", {
+                  required: "Contact Number is required",
+                })}
                 placeholder="Parent/Caretaker Contact Number"
                 className="w-full p-3 border rounded mb-4"
-                value={formData.contact}
-                onChange={handleInputChange}
               />
+              {errors.contact && (
+                <p className="text-red-500">{errors.contact.message}</p>
+              )}
 
               <div className="flex justify-center mt-4">
-                <Link to="/home/options">
-                  <button
-                    className="bg-primary text-white rounded-full py-3 px-32"
-                    onClick={handleNext}
-                  >
-                    Next
-                  </button>
-                </Link>
+                <button
+                  type="submit"
+                  className="bg-primary text-white rounded-full py-3 px-32"
+                  disabled={isLoading}
+                >
+                  {isLoading ? "Submitting..." : "Next"}
+                </button>
               </div>
-            </div>
+            </form>
           </div>
         </div>
       </section>

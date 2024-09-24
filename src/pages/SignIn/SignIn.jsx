@@ -2,11 +2,13 @@ import {React, useState} from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import { useLoginUserMutation } from "../../features/auth/authApi";
+import toast from "react-hot-toast";
 const SignIn = () => {
   const navigate = useNavigate();
   const {
     register,
     handleSubmit,
+    reset,
     formState: { errors },
   } = useForm();
 
@@ -23,7 +25,10 @@ const SignIn = () => {
     try {
      const response =  await loginUser(data).unwrap();
       localStorage.setItem('token', response.token);
+
       navigate("/home");
+      reset();
+      toast.success("Login Successful")
     } catch (err) {
       console.error("Failed to login:", err);
     }

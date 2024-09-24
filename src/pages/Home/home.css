@@ -1,12 +1,5 @@
 .selected-section {
-  position: absolute;
-  right: -10px;
-  top: 50%;
-  transform: translateY(-50%);
-  height: 12px; /* 3 in Tailwind is 12px */
-  width: 12px;
-  border-radius: 50%;
-  background-color: #22c55e; /* This is Tailwind's bg-green-500 */
+  
 }
 
 .modal-overlay {
@@ -39,12 +32,4 @@
   cursor: pointer;
 }
 
-.btn-add {
-  margin-top: 10px;
-  padding: 10px 20px;
-  background-color: blue;
-  color: white;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-}
+
