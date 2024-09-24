@@ -202,7 +202,7 @@ const SignUp = () => {
                 <option value="">Select a role</option>
                 <option value="Psychologist">Psychologist</option>
                 <option value="Speech Pathologist">Speech Pathologist</option>
-                <option value="Occupational therapist">Occupational therapist</option>
+                <option value="Occupational Therapist">Occupational therapist</option>
                 <option value="Paediatric Dietitian">Paediatric Dietitian</option>
                 <option value="Paediatrician">Paediatrician</option>
               </select>

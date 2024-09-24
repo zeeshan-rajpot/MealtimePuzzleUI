@@ -86,6 +86,14 @@ const ChildInformationPage = () => {
 
               <div className="flex space-x-3">
                 <input
+                  type="date"
+                  name="dateOfBirth" // Match the JSON field name
+                  placeholder="Date of Birth"
+                  className="w-full p-3 border rounded mb-4"
+                  value={formData.dateOfBirth}
+                  onChange={handleInputChange}
+                />
+                <input
                   type="text"
                   {...register("parentName", {
                     required: "Parent/Caretaker Name is required",
