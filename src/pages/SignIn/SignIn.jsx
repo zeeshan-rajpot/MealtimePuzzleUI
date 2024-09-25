@@ -103,11 +103,11 @@ const SignIn = () => {
             )}
           </div>
 
-          <div className="text-right">
+          {/* <div className="text-right">
             <a href="#" className="text-sm text-primary hover:underline">
               Forgot password?
             </a>
-          </div>
+          </div> */}
 
           <div>
             <button

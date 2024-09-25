@@ -25,6 +25,7 @@ const SignUp = () => {
       // console.log("Data ", userData);
       
     } catch (err) {
+      toast.error(err.data.error)
       console.error("Failed to login:", err);
       console.log("Data ", userData);
 
@@ -218,7 +219,7 @@ const SignUp = () => {
 
           {isError && (
             <p className="text-red-500">
-              {error?.data?.message || "Error during login"}
+              {error?.data?.error || "Error during login"}
             </p>
           )}
 

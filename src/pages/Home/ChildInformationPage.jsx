@@ -1,37 +1,44 @@
-import React from "react";
-import { useForm } from "react-hook-form";
+import React, { useState } from "react";
 import Header from "../../components/Header";
 import SideBar from "../../components/SideBar";
-import { useChildUserMutation } from "../../features/Forms/ChildInfo";
-import toast from "react-hot-toast";
-import { useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
+import axios from "axios"; // Add axios for API requests
 
 const ChildInformationPage = () => {
-  const navigate = useNavigate();
-  const {
-    register, // used to register form inputs
-    handleSubmit, // used to handle form submission
-    reset,
-    formState: { errors }, // used to handle validation errors
-  } = useForm();
+  const [formData, setFormData] = useState({
+    urn: "",
+    firstName: "",
+    lastName: "",
+    dateOfBirth: "", // Use this field name to match the JSON from Postman
+    parentName: "",
+    contactEmail: "", // Use this field name to match the JSON from Postman
+    contactPhone: "", // Use this field name to match the JSON from Postman
+    finnumber: "",
+    gender: ""
+  });
 
-  const [childUser, { isLoading, isError, isSuccess }] = useChildUserMutation();
+  const [error, setError] = useState(null);
 
-  const onSubmit = async (formData) => {
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setFormData({
+      ...formData,
+      [name]: value
+    });
+  };
+
+  const handleNext = async () => {
+    const token = localStorage.getItem("token"); // Retrieve the token
     try {
-      // Save form data to localStorage
-      localStorage.setItem("childInformation", JSON.stringify(formData));
-
-      // Make API call
-      await childUser(formData).unwrap();
-      // Handle success logic here (e.g., navigate to next page or show success message)
-      toast.success("Child Added Successfully");
-      reset();
-      navigate("/home/formulationOptions");
+      const response = await axios.post("http://localhost:5001/api/child", formData, {
+        headers: {
+          Authorization: `Bearer ${token}` // Add the token in the Authorization header
+        }
+      });
+      alert("Child information submitted successfully!");
     } catch (error) {
-      // Handle error logic here (e.g., display error message)
-      console.error("Error submitting form:", error);
-      toast.error("An Error Occured");
+      console.log(error)
+      setError("Failed to submit child information.");
     }
   };
 
@@ -48,40 +55,35 @@ const ChildInformationPage = () => {
           <div className="w-full max-w-3xl mx-auto flex justify-center items-center flex-col">
             <h2 className="text-2xl font-semibold">Child Information</h2>
 
-            <form onSubmit={handleSubmit(onSubmit)} className="w-full mt-4">
+            {error && <div className="text-red-500 mb-4">{error}</div>}
+
+            <div className="w-full mt-4 ">
               <input
                 type="text"
-                {...register("urn", { required: "URN is required" })}
-                placeholder="child's URN (Unit Record Number)?"
+                name="urn"
+                placeholder="Child's URN (Unit Record Number)"
                 className="w-full p-3 border rounded mb-4"
+                value={formData.urn}
+                onChange={handleInputChange}
               />
-              {errors.urn && (
-                <p className="text-red-500">{errors.urn.message}</p>
-              )}
 
               <div className="flex space-x-3">
                 <input
                   type="text"
-                  {...register("firstName", {
-                    required: "First Name is required",
-                  })}
+                  name="firstName"
                   placeholder="Child First Name"
                   className="w-full p-3 border rounded mb-4"
+                  value={formData.firstName}
+                  onChange={handleInputChange}
                 />
-                <div>
-                  
-                </div>
-               
-
                 <input
                   type="text"
-                  {...register("lastName", {
-                    required: "Last Name is required",
-                  })}
+                  name="lastName"
                   placeholder="Child Last Name"
                   className="w-full p-3 border rounded mb-4"
+                  value={formData.lastName}
+                  onChange={handleInputChange}
                 />
-              
               </div>
 
               <div className="flex space-x-3">
@@ -95,62 +97,63 @@ const ChildInformationPage = () => {
                 />
                 <input
                   type="text"
-                  {...register("parentName", {
-                    required: "Parent/Caretaker Name is required",
-                  })}
+                  name="parentName"
                   placeholder="Parent/Caretaker Name"
                   className="w-full p-3 border rounded mb-4"
+                  value={formData.parentName}
+                  onChange={handleInputChange}
                 />
-              
-
-                <input
-                  type="date"
-                  {...register("dob", {
-                    required: "Date of Birth is required",
-                  })}
-                  className="w-full p-3 border rounded mb-4"
-                />
-               
               </div>
 
-              <input
-                type="email"
-                {...register("email", {
-                  required: "Email is required",
-                  pattern: {
-                    value: /^\S+@\S+$/,
-                    message: "Invalid email address",
-                  },
-                })}
-                placeholder="Parent/Caretaker Email Address"
-                className="w-full p-3 border rounded mb-4"
-              />
-              {errors.email && (
-                <p className="text-red-500">{errors.email.message}</p>
-              )}
+              <div className="flex space-x-3">
+                <input
+                  type="text"
+                  name="contactEmail" // Match the JSON field name
+                  placeholder="Parent/Caretaker Email Address"
+                  className="w-full p-3 border rounded mb-4"
+                  value={formData.contactEmail}
+                  onChange={handleInputChange}
+                />
+                <input
+                  type="number"
+                  name="contactPhone" // Match the JSON field name
+                  placeholder="Parent/Caretaker Contact Number"
+                  className="w-full p-3 border rounded mb-4"
+                  value={formData.contactPhone}
+                  onChange={handleInputChange}
+                />
+              </div>
 
-              <input
-                type="text"
-                {...register("contact", {
-                  required: "Contact Number is required",
-                })}
-                placeholder="Parent/Caretaker Contact Number"
-                className="w-full p-3 border rounded mb-4"
-              />
-              {errors.contact && (
-                <p className="text-red-500">{errors.contact.message}</p>
-              )}
+              <div className="flex space-x-3">
+                <input
+                  type="text"
+                  name="gender"
+                  placeholder="Child Gender"
+                  className="w-full p-3 border rounded mb-4"
+                  value={formData.gender}
+                  onChange={handleInputChange}
+                />
+                <input
+                  type="text"
+                  name="finnumber"
+                  placeholder="Child FIN Number"
+                  className="w-full p-3 border rounded mb-4"
+                  value={formData.finnumber}
+                  onChange={handleInputChange}
+                />
+              </div>
 
               <div className="flex justify-center mt-4">
-                <button
-                  type="submit"
-                  className="bg-primary text-white rounded-full py-3 px-32"
-                  disabled={isLoading}
-                >
-                  {isLoading ? "Submitting..." : "Next"}
-                </button>
+                {/* <Link to="/home/options"> */}
+                  <button
+                    className="bg-primary text-white rounded-full py-3 px-32"
+                    onClick={handleNext}
+                  >
+                    Next
+                  </button>
+                {/* </Link> */}
               </div>
-            </form>
+            </div>
           </div>
         </div>
       </section>
