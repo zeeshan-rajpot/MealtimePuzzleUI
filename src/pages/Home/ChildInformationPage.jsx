@@ -1,10 +1,14 @@
 import React, { useState } from "react";
 import Header from "../../components/Header";
 import SideBar from "../../components/SideBar";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+
 import axios from "axios"; // Add axios for API requests
+import toast from "react-hot-toast";
 
 const ChildInformationPage = () => {
+  const navigate = useNavigate();
+
   const [formData, setFormData] = useState({
     urn: "",
     firstName: "",
@@ -28,6 +32,7 @@ const ChildInformationPage = () => {
   };
 
   const handleNext = async () => {
+    console.log(formData)
     const token = localStorage.getItem("token"); // Retrieve the token
     try {
       const response = await axios.post("http://localhost:5001/api/child", formData, {
@@ -35,9 +40,12 @@ const ChildInformationPage = () => {
           Authorization: `Bearer ${token}` // Add the token in the Authorization header
         }
       });
-      alert("Child information submitted successfully!");
+      navigate(`/home/formulationOptions/${formData.urn}`); 
+
     } catch (error) {
       console.log(error)
+      toast.error(error.response.data.error)
+
       setError("Failed to submit child information.");
     }
   };
@@ -107,7 +115,7 @@ const ChildInformationPage = () => {
 
               <div className="flex space-x-3">
                 <input
-                  type="text"
+                  type="email"
                   name="contactEmail" // Match the JSON field name
                   placeholder="Parent/Caretaker Email Address"
                   className="w-full p-3 border rounded mb-4"
