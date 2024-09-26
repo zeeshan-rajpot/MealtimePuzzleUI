@@ -2,10 +2,13 @@ import React, { useState } from "react";
 import Header from "../../components/Header";
 import SideBar from "../../components/SideBar";
 import { useNavigate } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import "./home.css";
 
 const FormulationPyramid = () => {
   const navigate = useNavigate();
+  const { urn } = useParams();
+  console.log(urn)
   const [selectedImages, setSelectedImages] = useState([]);
   const [modalOpen, setModalOpen] = useState(false); // Modal state
   const [selectedSection, setSelectedSection] = useState(null); // Selected section info
@@ -43,14 +46,49 @@ const FormulationPyramid = () => {
 
 const descriptionsCount = Object.keys(descriptions).length;
 
-  const handleNextClick = () => {
-    if (selectedImages.length === 0) {
-      alert("Add atleast one description");
-    } else {
-      navigate("/home/options");
-    }
-  };
+  // const handleNextClick = () => {
+  //   if (selectedImages.length === 0) {
+  //     alert("Add atleast one description");
+  //   } else {
+  //     navigate("/home/options");
+  //   }
+  // };
 
+  const domains = Object.keys(descriptions).map(label => ({
+    domainName: label,
+    description: descriptions[label],
+}));
+  const handleNextClick = async () => {
+    console.log(domains)
+    if (selectedImages.length === 0) {
+        alert("Add at least one description");
+        return;
+    }
+    const token = localStorage.getItem("token"); // Retrieve the token
+
+    // Prepare data to send to the API
+   
+
+    try {
+        const response = await fetch(`http://localhost:5001/api/child/formulation`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                Authorization: `Bearer ${token}`, // Include token if authentication is required
+            },
+            body: JSON.stringify({urn, domains }),
+        });
+
+      
+
+        const data = await response.json();
+        alert('Formulations added successfully!');
+        navigate("/home/options");
+    } catch (error) {
+        console.error( error);
+        alert('Failed to add formulations. Please try again later.');
+    }
+};
   return (
     <>
       <Header />

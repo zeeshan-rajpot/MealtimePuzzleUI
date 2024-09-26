@@ -31,7 +31,7 @@ function App() {
       element: <Home />,
     },
     {
-      path: "/home/formulationOptions",
+      path: "/home/formulationOptions/:urn",
       element: <FormulationPyrmaid />,
     },
     {
