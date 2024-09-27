@@ -4,16 +4,24 @@ import SideBar from "../../components/SideBar";
 import { useNavigate } from "react-router-dom";
 import { useParams } from "react-router-dom";
 import "./home.css";
+import toast from "react-hot-toast";
+import { useAddFormulationMutation } from "../../features/Forms/Pyramids";
 
 const FormulationPyramid = () => {
   const navigate = useNavigate();
+  const handleBack = () => {
+    navigate(-1);
+  };
   const { urn } = useParams();
-  console.log(urn)
+
+  const [addFormulation,{ isLoading, isError, error }] = useAddFormulationMutation();
+
+
   const [selectedImages, setSelectedImages] = useState([]);
-  const [modalOpen, setModalOpen] = useState(false); // Modal state
-  const [selectedSection, setSelectedSection] = useState(null); // Selected section info
-  const [descriptions, setDescriptions] = useState({}); // Descriptions for sections
-  const [descriptionInput, setDescriptionInput] = useState(""); // Current input for description
+  const [modalOpen, setModalOpen] = useState(false); 
+  const [selectedSection, setSelectedSection] = useState(null); 
+  const [descriptions, setDescriptions] = useState({}); 
+  const [descriptionInput, setDescriptionInput] = useState(""); 
 
   const handleImageClick = (imageId, label) => {
     setSelectedSection({ id: imageId, label });
@@ -46,47 +54,49 @@ const FormulationPyramid = () => {
 
 const descriptionsCount = Object.keys(descriptions).length;
 
-  // const handleNextClick = () => {
-  //   if (selectedImages.length === 0) {
-  //     alert("Add atleast one description");
-  //   } else {
-  //     navigate("/home/options");
-  //   }
-  // };
 
   const domains = Object.keys(descriptions).map(label => ({
     domainName: label,
     description: descriptions[label],
 }));
+
+
   const handleNextClick = async () => {
+
     console.log(domains)
     if (selectedImages.length === 0) {
         alert("Add at least one description");
         return;
     }
-    const token = localStorage.getItem("token"); // Retrieve the token
-
+    
     // Prepare data to send to the API
-   
-
-    try {
-        const response = await fetch(`http://localhost:5001/api/child/formulation`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                Authorization: `Bearer ${token}`, // Include token if authentication is required
-            },
-            body: JSON.stringify({urn, domains }),
-        });
+    // try {
+    //     const response = await fetch(`http://localhost:5001/api/child/formulation`, {
+    //         method: 'POST',
+    //         headers: {
+    //             'Content-Type': 'application/json',
+    //             Authorization: `Bearer ${token}`, // Include token if authentication is required
+    //         },
+    //         body: JSON.stringify({urn, domains }),
+    //     });
 
       
 
-        const data = await response.json();
-        alert('Formulations added successfully!');
-        navigate("/home/options");
-    } catch (error) {
-        console.error( error);
-        alert('Failed to add formulations. Please try again later.');
+    //     const data = await response.json();
+    //     alert('Formulations added successfully!');
+    // } catch (error) {
+    //     console.error( error);
+    //     alert('Failed to add formulations. Please try again later.');
+    // }
+
+    try {
+      await addFormulation({ urn, domains }).unwrap();
+      console.log("Formulation added successfully!");
+      navigate("/home/options");
+      toast.success("Formulation added successfully!");
+    } catch (err) {
+      console.error("Failed to add formulation:", err);
+      toast.error("Failed to add formulation");
     }
 };
   return (
@@ -96,7 +106,7 @@ const descriptionsCount = Object.keys(descriptions).length;
         <SideBar />
         <div className="w-full">
           <div className="flex mt-4 justify-between items-center">
-            <div className="flex">
+            <div className="flex" onClick={handleBack}>
             <img src="/ion_chevron-back.svg" alt="back_arrow" />
             <button className="text-base">Back</button>
             </div>
@@ -327,7 +337,7 @@ const descriptionsCount = Object.keys(descriptions).length;
               className="mt-8 w-[30%] rounded-full px-4 py-2 bg-custom-gradient text-white"
               onClick={handleNextClick}
             >
-              Next
+             {isLoading? isLoading: "Next" } 
             </button>
           </div>
         </div>

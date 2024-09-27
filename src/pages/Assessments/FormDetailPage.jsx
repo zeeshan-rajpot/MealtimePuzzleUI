@@ -1,7 +1,12 @@
+import { useNavigate } from "react-router-dom";
 import Header from "../../components/Header";
 import SideBar from "../../components/SideBar";
 
 const FormDetailPage = () => {
+  const navigate = useNavigate();
+  const handleBack = () => {
+    navigate(-1);
+  };
   const stepData = [
     {
       category: "Self Feeding",
@@ -29,7 +34,7 @@ const FormDetailPage = () => {
       <section className="flex flex-col lg:flex-row justify-between gap-4 h-auto w-full">
         <SideBar />
         <div className="pt-10 w-full lg:w-[75%] xl:w-[80%] 2xl:w-[85%] h-auto">
-          <div className="flex mt-4">
+          <div className="flex mt-4" onClick={handleBack}>
             <img src="/ion_chevron-back.svg" alt="back_arrow" />
             <button className="text-base">Back</button>
           </div>

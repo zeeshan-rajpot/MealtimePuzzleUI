@@ -1,72 +1,36 @@
-import React, { useState, useEffect } from "react";
+import React, { useEffect } from "react";
+import { useForm } from "react-hook-form";
+import {
+  useGetUserProfileQuery,
+  useUpdateUserProfileMutation,
+} from "../../features/Profile/profileApi";
 import SideBar from "../../components/SideBar";
 import Header from "../../components/Header";
-import axios from "axios";
+import toast from "react-hot-toast";
 
 const Profile = () => {
-  const [profileData, setProfileData] = useState({
-    firstName: "",
-    lastName: "",
-    email: "",
-    phone: ""
-  });
+  const { register, handleSubmit, reset } = useForm();
+  const { data: profileData, isLoading, error } = useGetUserProfileQuery();
+  const [updateUserProfile] = useUpdateUserProfileMutation();
 
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
-
-  // Fetch user data on component mount
   useEffect(() => {
-    const fetchUserData = async () => {
-      const token = localStorage.getItem("token"); // Retrieve the token from localStorage (or wherever it is stored)
-  
-      try {
-        const response = await axios.get("http://localhost:5001/api/user-details", {
-          headers: {
-            Authorization: `Bearer ${token}` // Add the token in the Authorization header
-          }
-        });
-        setProfileData(response.data);
-        setLoading(false);
-      } catch (err) {
-        setError("Failed to fetch user details");
-        setLoading(false);
-      }
-    };
-    fetchUserData();
-  }, []);
+    if (profileData) {
+      reset(profileData);
+    }
+  }, [profileData, reset]);
 
-  // Handle form input changes
-  const handleInputChange = (e) => {
-    const { name, value } = e.target;
-    setProfileData({
-      ...profileData,
-      [name]: value
-    });
-  };
-
-  // Handle form submit for profile update
-  const handleFormSubmit = async (e) => {
-    e.preventDefault();
-    const token = localStorage.getItem("token"); // Retrieve the token
-  
+  const onSubmit = async (profileData) => {
     try {
-      const response = await axios.post(
-        "http://localhost:5001/api/update-profile",
-        profileData,
-        {
-          headers: {
-            Authorization: `Bearer ${token}` // Add the token in the Authorization header
-          }
-        }
-      );
-      alert("Profile updated successfully!");
+      await updateUserProfile(profileData).unwrap();
+      toast.success("Profile updated successfully!");
     } catch (err) {
-      setError("Failed to update profile");
+      console.error("Failed to update profile", err);
+      toast.error("Failed to update profile");
     }
   };
 
-  if (loading) return <div>Loading...</div>;
-  if (error) return <div>{error}</div>;
+  if (isLoading) return <div>Loading...</div>;
+  if (error) return <div>Error fetching profile data</div>;
 
   return (
     <>
@@ -79,39 +43,31 @@ const Profile = () => {
               <h2 className="text-2xl font-semibold">Profile</h2>
 
               <div className="w-full mt-4 ">
-                <form onSubmit={handleFormSubmit}>
+                <form onSubmit={handleSubmit(onSubmit)}>
                   <div className="flex space-x-4">
                     <input
                       type="text"
-                      name="firstName"
-                      value={profileData.firstName}
-                      onChange={handleInputChange}
+                      {...register("firstName")}
                       placeholder="First Name"
                       className="w-full p-3 border rounded mb-4"
                     />
                     <input
                       type="text"
-                      name="lastName"
-                      value={profileData.lastName}
-                      onChange={handleInputChange}
+                      {...register("lastName")}
                       placeholder="Last Name"
                       className="w-full p-3 border rounded mb-4"
                     />
                   </div>
 
                   <input
-                    type="text"
-                    name="email"
-                    value={profileData.email}
-                    onChange={handleInputChange}
+                    type="email"
+                    {...register("email")}
                     placeholder="Email Address"
                     className="w-full p-3 border rounded mb-4"
                   />
                   <input
                     type="text"
-                    name="phone"
-                    value={profileData.phone}
-                    onChange={handleInputChange}
+                    {...register("phone")}
                     placeholder="Phone Number"
                     className="w-full p-3 border rounded mb-4"
                   />
@@ -121,7 +77,7 @@ const Profile = () => {
                       type="submit"
                       className="bg-primary text-white rounded-full py-3 px-32"
                     >
-                      Edit
+                      {isLoading ? isLoading : "Update"}
                     </button>
                   </div>
                 </form>

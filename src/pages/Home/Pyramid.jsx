@@ -5,6 +5,9 @@ import { useNavigate } from "react-router-dom";
 
 const Pyramid = () => {
   const navigate = useNavigate();
+  const handleBack = () => {
+    navigate(-1);
+  };
   const [selectedImages, setSelectedImages] = useState([]);
 
   const handleImageClick = (imageId, label) => {

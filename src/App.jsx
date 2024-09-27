@@ -12,10 +12,10 @@ import Settings from "./pages/Settings/Settings";
 import StepperForm from "./pages/Home/StepperForm";
 import ChildInformationPage from "./pages/Home/ChildInformationPage";
 import DetailPage from "./pages/Home/DetailPage";
+import ChildData from "./pages/Formulation/ChildData";
 import Formulation from "./pages/Formulation/Formulation";
-import FormDetailPage from "./pages/Formulation/FormDetailPage";
+import FormDetailPage from "./pages/Assessments/FormDetailPage";
 import FormulationPyrmaid from "./pages/Home/FormulationPyrmaid";
-
 
 function App() {
   const router = createBrowserRouter([
@@ -64,13 +64,18 @@ function App() {
       element: <Assessments />,
     },
     {
-      path: "/formulation",
-      element: <Formulation />,
-    },
-    {
-      path: "/formulation/detailpage",
+      path: "/intervention/detailpage",
       element: <FormDetailPage />,
     },
+    {
+      path: "/childData",
+      element: <ChildData />,
+    },
+    {
+      path: "/childData/formulation",
+      element: <Formulation />,
+    },
+
     {
       path: "/settings",
       element: <Settings />,
