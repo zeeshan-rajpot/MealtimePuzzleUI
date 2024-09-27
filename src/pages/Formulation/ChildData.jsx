@@ -4,13 +4,13 @@ import Header from "../../components/Header";
 import { Link } from "react-router-dom";
 import { useFetchChildrenQuery } from "../../features/Forms/ChildInfo";
 
-const Assessments = () => {
+const ChildData = () => {
   const { data: childrenData, error, isLoading } = useFetchChildrenQuery();
 
   if (isLoading) return <p>Loading...</p>;
   if (error) return <p>Error loading children data.</p>;
 
- 
+
   return (
     <>
       <Header />
@@ -35,7 +35,7 @@ const Assessments = () => {
             <div className="space-y-4 w-full max-w-4xl">
               {childrenData?.map((child) => (
                 <Link
-                  to={`/intervention/detailpage`}
+                  to={`/childData/formulation`}
                   className="border-2 border-gray-100 p-4 flex justify-between rounded-lg shadow-sm hover:border-primary"
                 >
                   <div>
@@ -56,4 +56,4 @@ const Assessments = () => {
   );
 };
 
-export default Assessments;
+export default ChildData;

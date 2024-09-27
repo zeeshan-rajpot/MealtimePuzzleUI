@@ -29,7 +29,7 @@ const menuItems = [
   },
   {
     name: "Formulation",
-    route: "/Formulation",
+    route: "/childData",
     activeLogo: "/fluent_clipboard-math-formula-20-regular.svg",
     inactiveLogo: "/fluent_clipboard-math-formula-20-regular.svg",
   },

@@ -2,9 +2,13 @@ import React, { useState, useEffect } from "react";
 import Header from "../../components/Header";
 import SideBar from "../../components/SideBar";
 import { useNavigate } from "react-router-dom";
+import { useAddStepperMutation } from "../../features/Forms/stepper";
+import toast from "react-hot-toast";
 
 const StepperForm = () => {
   const navigate = useNavigate();
+
+  const [addStepper, { isLoading, isError, error }] = useAddStepperMutation();
   // Retrieve categories from local storage
   const savedCategories =
     JSON.parse(localStorage.getItem("selectedImageLabels")) || [];
@@ -14,7 +18,7 @@ const StepperForm = () => {
 
   // Track form input values for each step
   const [formData, setFormData] = useState({
-    role: "",
+    // role: "",
     clinicalPrompt: "",
     impression: "",
     recommendation: "",
@@ -29,7 +33,7 @@ const StepperForm = () => {
       setFormData(savedData);
     } else {
       setFormData({
-        role: "",
+        // role: "",
         clinicalPrompt: "",
         impression: "",
         recommendation: "",
@@ -63,13 +67,22 @@ const StepperForm = () => {
   };
 
   // Handle form submission (log data and navigate)
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     localStorage.setItem(
       savedCategories[currentStep],
       JSON.stringify(formData)
     );
-    // Navigate to detail page or next step
-    navigate("/home/detailpage");
+
+    try {
+      const response = await addStepper({ urn, domainId, formData });
+      console.log("Formulation added successfully:", response);
+      // Navigate to detail page or next step
+      navigate("/home/detailpage");
+      toast.success("All information added successfully!");
+    } catch (error) {
+      console.error("Failed to add formulation:", error);
+      toast.error("Failed to add formulation. Please try again.");
+    }
   };
 
   return (
@@ -92,7 +105,7 @@ const StepperForm = () => {
             </h2>
 
             <div className="w-full mt-4 ">
-              <select
+              {/* <select
                 className="w-full p-3 border rounded mb-4"
                 name="role"
                 value={formData.role}
@@ -102,7 +115,7 @@ const StepperForm = () => {
                 <option value="Doctor">Doctor</option>
                 <option value="Nutritionist">Nutritionist</option>
                 <option value="Caregiver">Caregiver</option>
-              </select>
+              </select> */}
 
               <input
                 type="text"
@@ -144,7 +157,7 @@ const StepperForm = () => {
                     className="bg-primary text-white rounded-full py-3 px-32"
                     onClick={handleNext}
                   >
-                    Next
+                    {isLoading ? isLoading : "Next "}
                   </button>
                 )}
               </div>
