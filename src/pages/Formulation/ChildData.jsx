@@ -1,15 +1,31 @@
-import React, { Children } from "react";
+import React, { useState, useEffect } from "react";
 import SideBar from "../../components/SideBar";
 import Header from "../../components/Header";
 import { Link } from "react-router-dom";
 import { useFetchChildrenQuery } from "../../features/Forms/ChildInfo";
 
 const ChildData = () => {
-  const { data: childrenData, error, isLoading } = useFetchChildrenQuery();
+  const {
+    data: childrenData,
+    error,
+    isLoading,
+    refetch,
+  } = useFetchChildrenQuery();
+
+  useEffect(() => {
+    refetch();
+  }, [refetch]);
 
   if (isLoading) return <p>Loading...</p>;
   if (error) return <p>Error loading children data.</p>;
 
+  const [searchQuery, setSearchQuery] = useState("");
+  const filteredChildren = childrenData?.filter((child) => {
+    const fullName = `${child.firstName} ${child.lastName}`.toLowerCase();
+    const urn = child.urn.toLowerCase();
+    const query = searchQuery.toLowerCase();
+    return fullName.includes(query) || urn.includes(query);
+  });
 
   return (
     <>
@@ -24,6 +40,8 @@ const ChildData = () => {
                 type="text"
                 placeholder="Search..."
                 className=" border border-gray-300 rounded-lg px-2 py-2 w-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
               />
               <img
                 src="/flowbite_search-outline.svg"
@@ -33,21 +51,25 @@ const ChildData = () => {
             </div>
 
             <div className="space-y-4 w-full max-w-4xl">
-              {childrenData?.map((child) => (
-                <Link
-                  to={`/childData/formulation`}
-                  className="border-2 border-gray-100 p-4 flex justify-between rounded-lg shadow-sm hover:border-primary"
-                >
-                  <div>
-                    <div key={child.finnumber}>
-                      <p className="font-semibold">
-                        {child.firstName} {child.lastName}
-                      </p>
-                      <p>{child.urn}</p>
+              {filteredChildren?.length > 0 ? (
+                filteredChildren.map((child) => (
+                  <Link
+                    to={`/childData/formulation/${child.urn}`}
+                    className="border-2 border-gray-100 p-4 flex justify-between rounded-lg shadow-sm hover:border-primary"
+                  >
+                    <div>
+                      <div key={child.urn}>
+                        <p className="font-semibold">
+                          {child.firstName} {child.lastName}
+                        </p>
+                        <p>{child.urn}</p>
+                      </div>
                     </div>
-                  </div>
-                </Link>
-              ))}
+                  </Link>
+                ))
+              ) : (
+                <p>No children found</p>
+              )}
             </div>
           </div>
         </div>

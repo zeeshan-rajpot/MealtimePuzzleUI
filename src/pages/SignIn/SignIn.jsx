@@ -114,7 +114,7 @@ const SignIn = () => {
               type="submit"
               className="w-full py-3 px-4 bg-custom-gradient text-white rounded-full shadow-lg"
             >
-              {isLoading ? " Sign in..." : " Sign In"}
+              {isLoading ? " Signing in..." : " Sign In"}
             </button>
           </div>
 

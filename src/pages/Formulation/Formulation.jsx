@@ -1,16 +1,41 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Header from "../../components/Header";
 import SideBar from "../../components/SideBar";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import "../Home/home.css";
+import {
+  useGetFormulationQuery,
+  useUpdateFormulationMutation,
+} from "../../features/Forms/Pyramids";
+import toast from "react-hot-toast";
 
 const Formulation = () => {
   const navigate = useNavigate();
+  const handleBack = () => {
+    navigate(-1);
+  };
+  const { urn } = useParams();
+
+  const { data: formulationData } = useGetFormulationQuery(urn);
+
+  const [updateFormulation] = useUpdateFormulationMutation();
+
   const [selectedImages, setSelectedImages] = useState([]);
-  const [modalOpen, setModalOpen] = useState(false); // Modal state
-  const [selectedSection, setSelectedSection] = useState(null); // Selected section info
-  const [descriptions, setDescriptions] = useState({}); // Descriptions for sections
-  const [descriptionInput, setDescriptionInput] = useState(""); // Current input for description
+  const [modalOpen, setModalOpen] = useState(false);
+  const [selectedSection, setSelectedSection] = useState(null);
+  const [descriptions, setDescriptions] = useState({});
+  const [descriptionInput, setDescriptionInput] = useState("");
+
+  useEffect(() => {
+    if (formulationData) {
+      // Populate descriptions from the fetched data
+      const initialDescriptions = {};
+      formulationData.formulations.forEach((item) => {
+        initialDescriptions[item.domainName] = item.description;
+      });
+      setDescriptions(initialDescriptions);
+    }
+  }, [formulationData]);
 
   const handleImageClick = (imageId, label) => {
     setSelectedSection({ id: imageId, label });
@@ -42,11 +67,22 @@ const Formulation = () => {
 
   const descriptionsCount = Object.keys(descriptions).length;
 
-  const handleNextClick = () => {
-    if (selectedImages.length === 0) {
-      alert("Add atleast one description");
+  const domains = Object.keys(descriptions).map((label) => ({
+    domainName: label,
+    description: descriptions[label],
+  }));
+
+  const handleUpdateClick = async () => {
+    if (domains.length > 0) {
+      try {
+        await updateFormulation({ urn, domains });
+        toast.success("Formulation updated successfully!");
+        navigate("/childData");
+      } catch (error) {
+        console.error("Failed to update formulation:", error);
+      }
     } else {
-      navigate("/home/options");
+      alert("No descriptions to update.");
     }
   };
 
@@ -57,7 +93,7 @@ const Formulation = () => {
         <SideBar />
         <div className="w-full">
           <div className="flex mt-4 justify-between items-center">
-            <div className="flex">
+            <div className="flex" onClick={handleBack}>
               <img src="/ion_chevron-back.svg" alt="back_arrow" />
               <button className="text-base">Back</button>
             </div>
@@ -68,12 +104,12 @@ const Formulation = () => {
               </p>
             </div>
           </div>
-          <div className="flex justify-center items-center flex-col my-10">
+          <div className="flex justify-center items-center flex-col my-10 pb-8">
             <h1 className="text-2xl font-semibold">Add Formulation</h1>
 
             {/* Section Pyramid */}
             <div
-              className="relative group mt-10 cursor-pointer"
+              className="relative group mt-10 cursor-pointer "
               onClick={() => handleImageClick(1, "Variety & Volume")}
             >
               <img src="/Frame 1261153616.svg" alt="food" />
@@ -286,7 +322,7 @@ const Formulation = () => {
 
             <button
               className="mt-8 w-[30%] rounded-full px-4 py-2 bg-custom-gradient text-white"
-              onClick={handleNextClick}
+              onClick={handleUpdateClick}
             >
               Update
             </button>

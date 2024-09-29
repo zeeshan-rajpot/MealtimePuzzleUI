@@ -6,13 +6,15 @@ import "./print.css";
 
 const DetailPage = () => {
   const navigate = useNavigate();
+  const handleBack = () => {
+    useNavigate(-1);
+  };
   const [childInfo, setChildInfo] = useState(null);
   const [stepData, setStepData] = useState([]);
 
   useEffect(() => {
     // Fetch child information from localStorage
-    const storedChildInfo =
-      JSON.parse(localStorage.getItem("childInformation")) || {};
+    const storedChildInfo = JSON.parse(localStorage.getItem("childData")) || {};
     setChildInfo(storedChildInfo);
   }, []);
 
@@ -32,9 +34,7 @@ const DetailPage = () => {
     setStepData(retrievedData);
   }, []);
 
-  const handlePrint = () => {
-    window.print();
-  };
+  let sessionNumber = localStorage.getItem("sessionNumber");
 
   const handleSave = () => {
     localStorage.clear();
@@ -47,7 +47,7 @@ const DetailPage = () => {
       <section className="flex flex-col lg:flex-row justify-between gap-4 h-auto w-full">
         <SideBar />
         <div className="pt-10 w-full lg:w-[75%] xl:w-[80%] 2xl:w-[85%] h-auto">
-          <div className="flex mt-4">
+          <div className="flex mt-4" onClick={handleBack}>
             <img src="/ion_chevron-back.svg" alt="back_arrow" />
             <button className="text-base">Back</button>
           </div>
@@ -55,7 +55,10 @@ const DetailPage = () => {
           <div id="printableContent" className="w-full max-w-3xl mx-auto pb-12">
             <div className="flex justify-between mb-6">
               <h2 className="text-2xl font-semibold ">Child Information</h2>
-              <h2 className="text-2xl font-semibold ">2nd Session</h2>
+              <h2 className="text-2xl font-semibold ">
+                {" "}
+                Session {sessionNumber? sessionNumber : "1"}
+              </h2>
             </div>
 
             <div className="mt-4 space-y-6">
@@ -74,17 +77,23 @@ const DetailPage = () => {
                 {displayDataOrFallback("parentName")}
               </p>
               <p className="text-sm font-medium">Date of Birth:</p>
-              <p className="border-b-2 ">{displayDataOrFallback("dob")}</p>
+              <p className="border-b-2 ">
+                {displayDataOrFallback("dateOfBirth")}
+              </p>
 
               <p className="text-sm font-medium">Email:</p>
-              <p className="border-b-2 ">{displayDataOrFallback("email")}</p>
+              <p className="border-b-2 ">
+                {displayDataOrFallback("contactEmail")}
+              </p>
               <p className="text-sm font-medium">Contact Number:</p>
-              <p className="border-b-2 ">{displayDataOrFallback("contact")}</p>
+              <p className="border-b-2 ">
+                {displayDataOrFallback("contactPhone")}
+              </p>
             </div>
 
             <div className="mt-10">
               <h2 className="text-2xl font-semibold ">Mealtime</h2>
-              
+
               {stepData.map((step, index) => (
                 <div key={index} className="space-y-6">
                   <h3 className="mt-8 text-lg font-semibold">
@@ -115,7 +124,7 @@ const DetailPage = () => {
                 Save
               </button>
               <button
-                onClick={handlePrint}
+                // onClick={handlePrint}
                 className="border-2 border-primary text-primary px-28 py-2 rounded-full flex"
               >
                 <img src="/lets-icons_print-duotone.svg" alt="print" />

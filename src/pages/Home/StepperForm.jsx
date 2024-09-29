@@ -9,7 +9,7 @@ const StepperForm = () => {
   const navigate = useNavigate();
 
   const [addStepper, { isLoading, isError, error }] = useAddStepperMutation();
-  // Retrieve categories from local storage
+
   const savedCategories =
     JSON.parse(localStorage.getItem("selectedImageLabels")) || [];
 
@@ -18,7 +18,6 @@ const StepperForm = () => {
 
   // Track form input values for each step
   const [formData, setFormData] = useState({
-    // role: "",
     clinicalPrompt: "",
     impression: "",
     recommendation: "",
@@ -66,18 +65,41 @@ const StepperForm = () => {
     }
   };
 
-  // Handle form submission (log data and navigate)
+  let childData = localStorage.getItem("childData");
+  let parsedChildData = JSON.parse(childData);
+  let childUrn = parsedChildData.urn;
+
   const handleSubmit = async () => {
     localStorage.setItem(
       savedCategories[currentStep],
       JSON.stringify(formData)
     );
 
+    const formatCategory = (category) => {
+      return category.toLowerCase().replace(/\s+/g, "_");
+    };
+
+    const domains = savedCategories.map((category) => {
+      const formattedCategory = formatCategory(category);
+      const stepData = JSON.parse(localStorage.getItem(category));
+      return {
+        domainName: formattedCategory,
+        clinicalPrompt: stepData?.clinicalPrompt || "",
+        impression: stepData?.impression || "",
+        recommendation: stepData?.recommendation || "",
+      };
+    });
+
+    const requestBody = {
+      childUrn,
+      domains,
+    };
+
     try {
-      const response = await addStepper({ urn, domainId, formData });
-      console.log("Formulation added successfully:", response);
-      // Navigate to detail page or next step
+      const response = await addStepper(requestBody);
+      console.log("All added successfully:", response);
       navigate("/home/detailpage");
+      localStorage.setItem("stepperInfo", JSON.stringify(requestBody));
       toast.success("All information added successfully!");
     } catch (error) {
       console.error("Failed to add formulation:", error);
@@ -150,14 +172,14 @@ const StepperForm = () => {
                     className="bg-primary text-white rounded-full py-3 px-32 "
                     onClick={handleSubmit}
                   >
-                    Submit
+                    {isLoading ? "Submiting... " : "Submit"}
                   </button>
                 ) : (
                   <button
                     className="bg-primary text-white rounded-full py-3 px-32"
                     onClick={handleNext}
                   >
-                    {isLoading ? isLoading : "Next "}
+                    Next
                   </button>
                 )}
               </div>

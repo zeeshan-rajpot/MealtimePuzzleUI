@@ -64,7 +64,7 @@ function App() {
       element: <Assessments />,
     },
     {
-      path: "/intervention/detailpage",
+      path: "/intervention/detailpage/:urn",
       element: <FormDetailPage />,
     },
     {
@@ -72,7 +72,7 @@ function App() {
       element: <ChildData />,
     },
     {
-      path: "/childData/formulation",
+      path: "/childData/formulation/:urn",
       element: <Formulation />,
     },
 

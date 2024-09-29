@@ -1,6 +1,6 @@
 // formulationApi.js
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
-import { baseUrl } from "../config"; // Assuming you have a base URL
+import { baseUrl } from "../config";
 
 export const formulationApi = createApi({
   reducerPath: "formulationApi",
@@ -17,12 +17,29 @@ export const formulationApi = createApi({
   endpoints: (builder) => ({
     addFormulation: builder.mutation({
       query: ({ urn, domains }) => ({
-        url: `/child/formulation/${urn}`,
+        url: `/child/formulation`,
         method: "POST",
+        body: { urn, domains },
+      }),
+    }),
+    getFormulation: builder.query({
+      query: (urn) => ({
+        url: `/child/formulation/latest/${urn}`,
+        method: "GET",
+      }),
+    }),
+    updateFormulation: builder.mutation({
+      query: ({ urn, domains }) => ({
+        url: `/child/formulation/${urn}`,
+        method: "PUT",
         body: { domains },
       }),
     }),
   }),
 });
 
-export const { useAddFormulationMutation } = formulationApi;
+export const {
+  useAddFormulationMutation,
+  useGetFormulationQuery,
+  useUpdateFormulationMutation,
+} = formulationApi;
