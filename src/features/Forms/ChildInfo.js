@@ -37,8 +37,14 @@ export const childApi = createApi({
         method: "GET",
       }),
     }),
+    fetchIntervention: builder.query({
+      query: (urn) => ({
+        url: `/get/Intervention/${urn}`, 
+        method: "GET",
+      }),
+    }),
 
   }),
 });
 
-export const { useChildUserMutation, useFetchChildrenQuery } = childApi;
+export const { useChildUserMutation, useFetchChildrenQuery, useFetchInterventionQuery } = childApi;

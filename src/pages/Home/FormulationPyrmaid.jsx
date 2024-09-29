@@ -69,26 +69,6 @@ const descriptionsCount = Object.keys(descriptions).length;
         return;
     }
     
-    // Prepare data to send to the API
-    // try {
-    //     const response = await fetch(`http://localhost:5001/api/child/formulation`, {
-    //         method: 'POST',
-    //         headers: {
-    //             'Content-Type': 'application/json',
-    //             Authorization: `Bearer ${token}`, // Include token if authentication is required
-    //         },
-    //         body: JSON.stringify({urn, domains }),
-    //     });
-
-      
-
-    //     const data = await response.json();
-    //     alert('Formulations added successfully!');
-    // } catch (error) {
-    //     console.error( error);
-    //     alert('Failed to add formulations. Please try again later.');
-    // }
-
     try {
       await addFormulation({ urn, domains }).unwrap();
       console.log("Formulation added successfully!");

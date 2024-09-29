@@ -25,6 +25,9 @@ const ChildInformationPage = () => {
       await childUser(data).unwrap();
       toast.success("Child Detail Added");
       navigate(`/home/formulationOptions/${data.urn}`);
+
+      localStorage.setItem("childData", JSON.stringify(data));
+      
     } catch (err) {
       toast.error("Error submitting child information");
       console.error(err);

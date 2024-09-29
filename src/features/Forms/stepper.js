@@ -15,10 +15,10 @@ export const stepperApi = createApi({
   }),
   endpoints: (builder) => ({
     addStepper: builder.mutation({
-      query: ({ urn, domainId, FormData }) => ({
-        url: `/child/${urn}/${domainId}`,
+      query: ({ childUrn, domains }) => ({
+        url: `/post/Intervention`,
         method: "POST",
-        body: FormData,
+        body: { childUrn, domains },
       }),
     }),
   }),
