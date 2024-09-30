@@ -125,7 +125,7 @@ const FormDetailPage = () => {
             </div>
 
             <div className="mt-10 flex justify-center space-x-4">
-              <Link to={`/home/options`}>
+              <Link to={`/home/options/${urn}`}>
                 <button className="bg-custom-gradient text-white px-32 py-2 rounded-full">
                   Update
                 </button>

@@ -1,11 +1,13 @@
 import React, { useState, useEffect } from "react";
 import Header from "../../components/Header";
 import SideBar from "../../components/SideBar";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { useAddStepperMutation } from "../../features/Forms/stepper";
 import toast from "react-hot-toast";
 
 const StepperForm = () => {
+
+  const {urn} = useParams();
   const navigate = useNavigate();
 
   const [addStepper, { isLoading, isError, error }] = useAddStepperMutation();
@@ -67,7 +69,7 @@ const StepperForm = () => {
 
   let childData = localStorage.getItem("childData");
   let parsedChildData = JSON.parse(childData);
-  let childUrn = parsedChildData.urn;
+  
 
   const handleSubmit = async () => {
     localStorage.setItem(
@@ -91,7 +93,7 @@ const StepperForm = () => {
     });
 
     const requestBody = {
-      childUrn,
+      urn,
       domains,
     };
 

@@ -36,7 +36,7 @@ function App() {
       element: <FormulationPyrmaid />,
     },
     {
-      path: "/home/options",
+      path: "/home/options/:urn",
       element: <Pyramid />,
     },
     {
@@ -44,7 +44,7 @@ function App() {
       element: <ChildInformationPage />,
     },
     {
-      path: "/home/stepper",
+      path: "/home/stepper/:urn",
       element: <StepperForm />,
     },
     {

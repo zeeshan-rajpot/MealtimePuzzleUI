@@ -1,9 +1,11 @@
 import React, { useState } from "react";
 import Header from "../../components/Header";
 import SideBar from "../../components/SideBar";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 
 const Pyramid = () => {
+
+  const {urn} = useParams();
   const navigate = useNavigate();
   const handleBack = () => {
     navigate(-1);
@@ -49,7 +51,7 @@ const Pyramid = () => {
       alert("Select at least one category");
     } else {
       // Proceed to next step or navigate
-      navigate("/home/stepper");
+      navigate(`/home/stepper/${urn}`);
     }
   };
 
@@ -59,7 +61,7 @@ const Pyramid = () => {
       <section className="w-full flex gap-4">
         <SideBar />
         <div className="w-full">
-          <div className="flex mt-4">
+          <div className="flex mt-4" onClick={handleBack}>
             <img src="/ion_chevron-back.svg" alt="back_arrow" />
             <button className="text-base">Back</button>
           </div>
