@@ -72,7 +72,7 @@ const descriptionsCount = Object.keys(descriptions).length;
     try {
       await addFormulation({ urn, domains }).unwrap();
       console.log("Formulation added successfully!");
-      navigate("/home/options");
+      navigate(`/home/options/${urn}`);
       toast.success("Formulation added successfully!");
     } catch (err) {
       console.error("Failed to add formulation:", err);
