@@ -10,10 +10,8 @@ const DetailPage = () => {
     useNavigate(-1);
   };
   const [childInfo, setChildInfo] = useState(null);
-  const [stepData, setStepData] = useState([]);
 
   useEffect(() => {
-    // Fetch child information from localStorage
     const storedChildInfo = JSON.parse(localStorage.getItem("childData")) || {};
     setChildInfo(storedChildInfo);
   }, []);
@@ -22,22 +20,43 @@ const DetailPage = () => {
     return childInfo && childInfo[field] ? childInfo[field] : "not found";
   };
 
-  useEffect(() => {
-    const savedCategories =
-      JSON.parse(localStorage.getItem("selectedImageLabels")) || [];
-    const retrievedData = savedCategories.map((category) => {
-      const storedData = JSON.parse(localStorage.getItem(category));
-      return storedData
-        ? { category, ...storedData }
-        : { category, notFound: true };
-    });
-    setStepData(retrievedData);
-  }, []);
+  const displaySortedData = () => {
+    const stepperInfo = JSON.parse(localStorage.getItem("stepperInfo")) || {};
 
-  let sessionNumber = localStorage.getItem("sessionNumber");
+    const priorityMap = {
+      high: 3,
+      moderate: 2,
+      low: 1,
+    };
+
+    const stepperArray = Object.keys(stepperInfo).map((key) => ({
+      id: key,
+      ...stepperInfo[key],
+      priorityValue: priorityMap[stepperInfo[key].priority] || 0,
+    }));
+
+    // Sort the array by priorityValue in descending order
+    const sortedStepperArray = stepperArray.sort(
+      (a, b) => b.priorityValue - a.priorityValue
+    );
+
+    // Display the sorted data
+    // console.log("Sorted data based on priority:", sortedStepperArray);
+
+    return sortedStepperArray;
+  };
+
+  // Call this function where you need to display or use the sorted data
+  const sortedData = displaySortedData();
+
+  let sessionNumber = localStorage.getItem("session");
 
   const handleSave = () => {
+    const token = localStorage.getItem("token");
     localStorage.clear();
+    if (token) {
+      localStorage.setItem("token", token);
+    }
     navigate("/home");
   };
 
@@ -57,7 +76,7 @@ const DetailPage = () => {
               <h2 className="text-2xl font-semibold ">Child Information</h2>
               <h2 className="text-2xl font-semibold ">
                 {" "}
-                Session {sessionNumber? sessionNumber : "1"}
+                Session {sessionNumber ? sessionNumber : "1"}
               </h2>
             </div>
 
@@ -94,20 +113,18 @@ const DetailPage = () => {
             <div className="mt-10">
               <h2 className="text-2xl font-semibold ">Mealtime</h2>
 
-              {stepData.map((step, index) => (
+              {sortedData.map((step, index) => (
                 <div key={index} className="space-y-6">
-                  <h3 className="mt-8 text-lg font-semibold">
-                    {step.category}
-                  </h3>
+                  <h3 className="mt-8 text-lg font-semibold">{step.label}</h3>
                   {/* <p>Role: {step.role || "not found"}</p> */}
                   <p className="text-sm font-medium">Clinical Prompt: </p>
                   <p className="border-b-2 ">
                     {step.clinicalPrompt || "not found"}
                   </p>
-                  <p className="text-sm font-medium">Impression: </p>
+                  {/* <p className="text-sm font-medium">Impression: </p>
                   <p className="border-b-2 ">
                     {step.impression || "not found"}
-                  </p>
+                  </p> */}
                   <p className="text-sm font-medium">Recommendation: </p>
                   <p className="border-b-2 ">
                     {step.recommendation || "not found"}

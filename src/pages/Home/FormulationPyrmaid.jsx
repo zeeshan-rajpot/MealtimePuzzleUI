@@ -14,14 +14,14 @@ const FormulationPyramid = () => {
   };
   const { urn } = useParams();
 
-  const [addFormulation,{ isLoading, isError, error }] = useAddFormulationMutation();
-
+  const [addFormulation, { isLoading, isError, error }] =
+    useAddFormulationMutation();
 
   const [selectedImages, setSelectedImages] = useState([]);
-  const [modalOpen, setModalOpen] = useState(false); 
-  const [selectedSection, setSelectedSection] = useState(null); 
-  const [descriptions, setDescriptions] = useState({}); 
-  const [descriptionInput, setDescriptionInput] = useState(""); 
+  const [modalOpen, setModalOpen] = useState(false);
+  const [selectedSection, setSelectedSection] = useState(null);
+  const [descriptions, setDescriptions] = useState({});
+  const [descriptionInput, setDescriptionInput] = useState("");
 
   const handleImageClick = (imageId, label) => {
     setSelectedSection({ id: imageId, label });
@@ -51,34 +51,30 @@ const FormulationPyramid = () => {
 
   const totalSections = 17;
 
+  const descriptionsCount = Object.keys(descriptions).length;
 
-const descriptionsCount = Object.keys(descriptions).length;
-
-
-  const domains = Object.keys(descriptions).map(label => ({
+  const domains = Object.keys(descriptions).map((label) => ({
     domainName: label,
     description: descriptions[label],
-}));
-
+  }));
 
   const handleNextClick = async () => {
-
-    console.log(domains)
+    console.log(domains);
     if (selectedImages.length === 0) {
-        alert("Add at least one description");
-        return;
+      alert("Add at least one description");
+      return;
     }
-    
+
     try {
       await addFormulation({ urn, domains }).unwrap();
-      console.log("Formulation added successfully!");
+      // console.log("Formulation added successfully!");
       navigate(`/home/options/${urn}`);
       toast.success("Formulation added successfully!");
     } catch (err) {
       console.error("Failed to add formulation:", err);
       toast.error("Failed to add formulation");
     }
-};
+  };
   return (
     <>
       <Header />
@@ -87,14 +83,14 @@ const descriptionsCount = Object.keys(descriptions).length;
         <div className="w-full">
           <div className="flex mt-4 justify-between items-center">
             <div className="flex" onClick={handleBack}>
-            <img src="/ion_chevron-back.svg" alt="back_arrow" />
-            <button className="text-base">Back</button>
+              <img src="/ion_chevron-back.svg" alt="back_arrow" />
+              <button className="text-base">Back</button>
             </div>
-           
+
             <div>
-            <p className="mt-4 mx-20 font-semibold text-large">
-            Descriptions added: {descriptionsCount}/{totalSections}
-          </p>
+              <p className="mt-4 mx-20 font-semibold text-large">
+                Descriptions added: {descriptionsCount}/{totalSections}
+              </p>
             </div>
           </div>
           <div className="flex justify-center items-center flex-col my-10">
@@ -317,7 +313,7 @@ const descriptionsCount = Object.keys(descriptions).length;
               className="mt-8 w-[30%] rounded-full px-4 py-2 bg-custom-gradient text-white"
               onClick={handleNextClick}
             >
-             {isLoading? isLoading: "Next" } 
+              {isLoading ? "Submitting...." : "Next"}
             </button>
           </div>
         </div>
