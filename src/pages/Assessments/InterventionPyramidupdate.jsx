@@ -6,9 +6,9 @@ import { useNavigate, useParams } from "react-router-dom";
 import { useAddInterventionMutation } from "../../features/Forms/Intervention";
 import toast from "react-hot-toast";
 
-const InterventionPyramid = () => {
+const InterventionPyramidupdate = () => {
   const { register, handleSubmit, setValue, reset } = useForm();
-  const { urn } = useParams();
+  const { urn ,id } = useParams();
   const navigate = useNavigate();
   const [selectedImages, setSelectedImages] = useState([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -301,4 +301,4 @@ const InterventionPyramid = () => {
   );
 };
 
-export default InterventionPyramid;
+export default InterventionPyramidupdate;

@@ -16,6 +16,8 @@ import ChildData from "./pages/Formulation/ChildData";
 import Formulation from "./pages/Formulation/Formulation";
 import FormulationPyrmaid from "./pages/Home/FormulationPyrmaid";
 import HistoryDetail from "./pages/History/HistoryDetail";
+import Buttunpage from "./pages/Assessments/Buttunpage";
+import InterventionPyramidupdate from "./pages/Assessments/InterventionPyramidupdate";
 
 function App() {
   const router = createBrowserRouter([
@@ -44,7 +46,7 @@ function App() {
       element: <ChildInformationPage />,
     },
     {
-      path: "/home/detailpage",
+      path: "/home/detailpage/:urn/:id",
       element: <DetailPage />,
     },
     {
@@ -58,6 +60,10 @@ function App() {
     {
       path: "/Profile",
       element: <Profile />,
+    }, 
+     {
+      path: "/Buttunpage/:urn",
+      element: <Buttunpage />,
     },
     {
       path: "/intervention",
@@ -66,6 +72,11 @@ function App() {
     {
       path: "/intervention/pyramid/:urn",
       element: <InterventionPyramid />,
+    },
+    
+    {
+      path: "/interventionupdate/pyramid/:urn/:id",
+      element: <InterventionPyramidupdate />,
     },
     
     {
