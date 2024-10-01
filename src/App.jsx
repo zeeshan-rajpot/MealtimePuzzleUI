@@ -15,6 +15,7 @@ import DetailPage from "./pages/Home/DetailPage";
 import ChildData from "./pages/Formulation/ChildData";
 import Formulation from "./pages/Formulation/Formulation";
 import FormulationPyrmaid from "./pages/Home/FormulationPyrmaid";
+import HistoryDetail from "./pages/History/HistoryDetail";
 import Buttunpage from "./pages/Assessments/Buttunpage";
 import InterventionPyramidupdate from "./pages/Assessments/InterventionPyramidupdate";
 
@@ -51,6 +52,10 @@ function App() {
     {
       path: "/history",
       element: <History />,
+    },
+    {
+      path: "/history/DetailPage/:urn",
+      element: <HistoryDetail />,
     },
     {
       path: "/Profile",
