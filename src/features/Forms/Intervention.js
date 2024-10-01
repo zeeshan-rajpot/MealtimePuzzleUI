@@ -21,15 +21,7 @@ export const interventionApi = createApi({
         body: { childUrn, domains },
       }),
     }),
-
-    fetchIntervention: builder.query({
-      query: (urn) => ({
-        url: `get/Intervention/${urn}`,
-        method: "GET",
-      }),
-    }),
   }),
 });
 
-export const { useAddInterventionMutation, useFetchInterventionQuery } =
-  interventionApi;
+export const { useAddInterventionMutation } = interventionApi;
