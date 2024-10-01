@@ -27,7 +27,6 @@ const ChildInformationPage = () => {
       navigate(`/home/formulationOptions/${data.urn}`);
 
       localStorage.setItem("childData", JSON.stringify(data));
-      
     } catch (err) {
       toast.error("Error submitting child information");
       console.error(err);
@@ -167,12 +166,15 @@ const ChildInformationPage = () => {
               {/* Gender & FIN Number */}
               <div className="flex space-x-3">
                 <div className="w-full">
-                  <input
-                    type="text"
+                  <select
                     {...register("gender", { required: "Gender is required" })}
-                    placeholder="Child Gender"
-                    className="w-full p-3 border rounded "
-                  />
+                    className="w-full p-3 border rounded"
+                  >
+                    <option value="">Select Gender</option>
+                    <option value="male">Male</option>
+                    <option value="female">Female</option>
+                    <option value="intersex">Intersex</option>
+                  </select>
                   {errors.gender && (
                     <p className="text-red-500 ">{errors.gender.message}</p>
                   )}
@@ -199,7 +201,7 @@ const ChildInformationPage = () => {
                   type="submit"
                   className="bg-primary text-white rounded-full py-3 px-32"
                 >
-                  {isLoading ? isLoading : "Next"}
+                  {isLoading ? "Submitting..." : "Next"}
                 </button>
               </div>
             </form>

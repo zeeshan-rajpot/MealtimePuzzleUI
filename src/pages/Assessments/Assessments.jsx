@@ -45,7 +45,7 @@ const Assessments = () => {
               {filteredChildren?.length > 0 ? (
                 filteredChildren.map((child) => (
                   <Link
-                    to={`/intervention/detailpage/${child.urn}`}
+                    to={`/intervention/pyramid/${child.urn}`}
                     className="border-2 border-gray-100 p-4 flex justify-between rounded-lg shadow-sm hover:border-primary"
                   >
                     <div>

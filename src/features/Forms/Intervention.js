@@ -1,8 +1,8 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 import { baseUrl } from "../config";
 
-export const stepperApi = createApi({
-  reducerPath: "stepperApi",
+export const interventionApi = createApi({
+  reducerPath: "interventionApi",
   baseQuery: fetchBaseQuery({
     baseUrl,
     prepareHeaders: (headers) => {
@@ -14,7 +14,7 @@ export const stepperApi = createApi({
     },
   }),
   endpoints: (builder) => ({
-    addStepper: builder.mutation({
+    addIntervention: builder.mutation({
       query: ({ childUrn, domains }) => ({
         url: `/post/Intervention`,
         method: "POST",
@@ -24,4 +24,4 @@ export const stepperApi = createApi({
   }),
 });
 
-export const { useAddStepperMutation } = stepperApi;
+export const { useAddInterventionMutation } = interventionApi;

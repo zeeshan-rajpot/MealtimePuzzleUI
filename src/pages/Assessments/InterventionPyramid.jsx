@@ -6,7 +6,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import { useAddInterventionMutation } from "../../features/Forms/Intervention";
 import toast from "react-hot-toast";
 
-const Pyramid = () => {
+const InterventionPyramid = () => {
   const { register, handleSubmit, setValue, reset } = useForm();
   const { urn } = useParams();
   const navigate = useNavigate();
@@ -301,4 +301,4 @@ const Pyramid = () => {
   );
 };
 
-export default Pyramid;
+export default InterventionPyramid;
