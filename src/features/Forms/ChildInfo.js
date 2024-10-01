@@ -1,5 +1,5 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
-import { baseUrl } from "../config"; 
+import { baseUrl } from "../config";
 
 export const childApi = createApi({
   reducerPath: "childApi",
@@ -33,18 +33,11 @@ export const childApi = createApi({
 
     fetchChildren: builder.query({
       query: () => ({
-        url: "/children", 
+        url: "/children",
         method: "GET",
       }),
     }),
-    fetchIntervention: builder.query({
-      query: (urn) => ({
-        url: `/get/Intervention/${urn}`, 
-        method: "GET",
-      }),
-    }),
-
   }),
 });
 
-export const { useChildUserMutation, useFetchChildrenQuery, useFetchInterventionQuery } = childApi;
+export const { useChildUserMutation, useFetchChildrenQuery } = childApi;
