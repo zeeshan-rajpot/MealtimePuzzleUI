@@ -340,6 +340,7 @@ const InterventionPyramidupdate = () => {
                 }
                 placeholder="Enter clinical prompt"
                 className="input-field border-2 py-1"
+                required
               />
             </div>
 
@@ -354,6 +355,7 @@ const InterventionPyramidupdate = () => {
                   }))
                 }
                 className="select-field border-2 py-1"
+                required
               >
                 <option value="">Select Priority</option>
                 <option value="high">High</option>
@@ -374,6 +376,7 @@ const InterventionPyramidupdate = () => {
                 }
                 placeholder="Enter recommendation"
                 className="input-field border-2 py-1"
+                required
               />
             </div>
 

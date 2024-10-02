@@ -44,9 +44,7 @@ const FormulationPyramid = () => {
         setSelectedImages([...selectedImages, selectedSection.id]);
       }
       handleCloseModal();
-    } else {
-      alert("Please enter a description.");
-    }
+    } 
   };
 
   const totalSections = 17;
@@ -334,6 +332,7 @@ const FormulationPyramid = () => {
               placeholder="Add Descriptions"
               className="w-full"
               rows={4}
+              required
             />
             <div className="flex justify-center">
               <button
