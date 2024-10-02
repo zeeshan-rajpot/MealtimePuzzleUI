@@ -252,6 +252,7 @@ const InterventionPyramid = () => {
                   {...register("clinicalPrompt")}
                   placeholder="Enter clinical prompt"
                   className="input-field border-2 py-1"
+                  required
                 />
               </div>
 
@@ -261,6 +262,7 @@ const InterventionPyramid = () => {
                   {...register("priority")}
                   placeholder="Enter Priority"
                   className="select-field border-2 py-1"
+                  required
                 >
                   <option value="">Select Priority</option>
                   <option value="high">High</option>
@@ -275,6 +277,7 @@ const InterventionPyramid = () => {
                   {...register("recommendation")}
                   placeholder="Enter recommendation"
                   className="input-field border-2 py-1"
+                  required
                 />
               </div>
 
