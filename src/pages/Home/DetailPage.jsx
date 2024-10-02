@@ -46,6 +46,11 @@ const DetailPage = () => {
     };
 
     fetchInterventionData();
+
+    const intervalId = setInterval(fetchInterventionData, 2000);
+
+    // Cleanup the interval on component unmount
+    return () => clearInterval(intervalId)
   }, [urn, id]);
 
   const displayDataOrFallback = (field) => {
