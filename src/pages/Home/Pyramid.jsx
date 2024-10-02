@@ -67,6 +67,7 @@ const Pyramid = () => {
         console.log("Intervention added successfully:", response);
         localStorage.setItem("session", response.session);
         toast.success("Intervention added successfully!");
+
         navigate(`/home/detailpage/${urn}/${response.session}`);
       } catch (err) {
         console.error("Failed to add intervention:", err);
