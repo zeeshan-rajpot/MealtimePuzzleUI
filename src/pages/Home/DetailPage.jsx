@@ -5,29 +5,23 @@ import { useNavigate, useParams } from "react-router-dom";
 import "./print.css";
 
 const DetailPage = () => {
-  const { urn, id } = useParams();
-  console.log(urn, id);
+  const { urn, session } = useParams();
+  console.log(urn, session);
 
   const navigate = useNavigate();
   const handleBack = () => {
     navigate(-1);
   };
 
-  const [childInfo, setChildInfo] = useState(null);
   const [interventionData, setInterventionData] = useState(null);
   const [loading, setLoading] = useState(true); // Loading state for the API call
-
-  useEffect(() => {
-    const storedChildInfo = JSON.parse(localStorage.getItem("childData")) || {};
-    setChildInfo(storedChildInfo);
-  }, []);
 
   // Fetch intervention data from API
   useEffect(() => {
     const fetchInterventionData = async () => {
       try {
         const token = localStorage.getItem("token"); // Retrieve the token from local storage
-        const response = await fetch(`http://localhost:5001/api/get/Intervention/${urn}/${id}`, {
+        const response = await fetch(`http://localhost:5001/api/get/Intervention/${urn}/${session}`, {
           method: 'GET',
           headers: {
             'Authorization': `Bearer ${token}`, // Add the token to the Authorization header
@@ -47,11 +41,13 @@ const DetailPage = () => {
 
     fetchInterventionData();
 
+
     const intervalId = setInterval(fetchInterventionData, 2000);
 
     // Cleanup the interval on component unmount
     return () => clearInterval(intervalId)
   }, [urn, id]);
+
 
   const displayDataOrFallback = (field) => {
     return childInfo && childInfo[field] ? childInfo[field] : "not found";
@@ -81,7 +77,7 @@ const DetailPage = () => {
   };
 
   const sortedData = displaySortedData();
-  const sessionNumber = localStorage.getItem("session");
+ 
 
   const handleSave = () => {
     const token = localStorage.getItem("token");
@@ -107,7 +103,7 @@ const DetailPage = () => {
             <div className="flex justify-between mb-6">
               <h2 className="text-2xl font-semibold ">Child Information</h2>
               <h2 className="text-2xl font-semibold ">
-                Session {id ? id : "1"}
+                Session {interventionData?.sessionNumber}
               </h2>
             </div>
 

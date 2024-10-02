@@ -20,19 +20,15 @@ const SignUp = () => {
     try {
       const response = await signupUser(userData).unwrap();
       // console.log("Signup body", response);
-      toast.success("New User Created")
+      toast.success("New User Created");
       navigate("/");
       // console.log("Data ", userData);
-      
     } catch (err) {
-      toast.error(err.data.error)
+      toast.error(err.data.error);
       console.error("Failed to login:", err);
       console.log("Data ", userData);
-
     }
   };
-
-
 
   return (
     <div className="flex items-center justify-center min-h-screen relative">
@@ -46,7 +42,9 @@ const SignUp = () => {
           <h1 className="text-4xl font-bold text-primary">Logo</h1>
         </div>
 
-        <h2 className="text-center text-2xl font-medium text-gray-900">Sign Up</h2>
+        <h2 className="text-center text-2xl font-medium text-gray-900">
+          Sign Up
+        </h2>
 
         <form className="mt-8 space-y-6" onSubmit={handleSubmit(onSubmit)}>
           <div className="flex space-x-2">
@@ -56,34 +54,78 @@ const SignUp = () => {
               </label>
               <div className="flex items-center border rounded-full p-2 shadow-md">
                 <span className="pl-3 pr-2">
-                  <img src="/fluent_person-32-light.svg" alt="person" className="w-6 h-6" />
+                  <img
+                    src="/fluent_person-32-light.svg"
+                    alt="person"
+                    className="w-6 h-6"
+                  />
                 </span>
                 <input
                   id="first_name"
-                  {...register("firstName", { required: "First Name is required" })}
+                  {...register("firstName", {
+                    required: "First Name is required",
+                    minLength: {
+                      value: 2,
+                      message: "Must be at least 2 characters",
+                    },
+                    maxLength: {
+                      value: 20,
+                      message: "Cannot exceed 20 characters",
+                    },
+                    pattern: {
+                      value: /^[A-Za-z]+$/,
+                      message: "Alphabetical characters only",
+                    },
+                  })}
                   className="flex-1 px-2 py-2 rounded-full bg-transparent outline-none text-gray-700"
                   placeholder="First Name"
                 />
               </div>
-              {errors.first_name && <p className="text-red-500 text-sm">{errors.first_name.message}</p>}
+              {errors.firstName && (
+                <p className="text-red-500 text-sm">
+                  {errors.firstName.message}
+                </p>
+              )}
             </div>
 
             <div className="relative w-[48%]">
-              <label htmlFor="lastName" className="sr-only">
+              <label htmlFor="last_name" className="sr-only">
                 Last Name
               </label>
               <div className="flex items-center border rounded-full p-2 shadow-md">
                 <span className="pl-3 pr-2">
-                  <img src="/fluent_person-32-light.svg" alt="person" className="w-6 h-6" />
+                  <img
+                    src="/fluent_person-32-light.svg"
+                    alt="person"
+                    className="w-6 h-6"
+                  />
                 </span>
                 <input
                   id="last_name"
-                  {...register("lastName", { required: "Last Name is required" })}
+                  {...register("lastName", {
+                    required: "Last Name is required",
+                    minLength: {
+                      value: 2,
+                      message: "Must be at least 2 characters",
+                    },
+                    maxLength: {
+                      value: 20,
+                      message: "Cannot exceed 20 characters",
+                    },
+                    pattern: {
+                      value: /^[A-Za-z]+$/,
+                      message: "Alphabetical characters only",
+                    },
+                  })}
                   className="flex-1 px-2 py-2 rounded-full bg-transparent outline-none text-gray-700"
                   placeholder="Last Name"
                 />
               </div>
-              {errors.last_name && <p className="text-red-500 text-sm">{errors.last_name.message}</p>}
+              {errors.lastName && (
+                <p className="text-red-500 text-sm">
+                  {errors.lastName.message}
+                </p>
+              )}
             </div>
           </div>
 
@@ -93,16 +135,32 @@ const SignUp = () => {
             </label>
             <div className="flex items-center border rounded-full p-2 shadow-md">
               <span className="pl-3 pr-2">
-                <img src="/fluent_person-32-light.svg" alt="person" className="w-8 h-8" />
+                <img
+                  src="/fluent_person-32-light.svg"
+                  alt="person"
+                  className="w-8 h-8"
+                />
               </span>
               <input
                 id="username"
-                {...register("username", { required: "Username is required" })}
+                {...register("username", {
+                  required: "Username is required",
+                  minLength: {
+                    value: 4,
+                    message: "Username must be at least 4 characters",
+                  },
+                  pattern: {
+                    value: /^[A-Za-z0-9_]+$/,
+                    message: "Only alphanumeric and underscores allowed",
+                  },
+                })}
                 className="flex-1 px-2 py-2 rounded-full bg-transparent outline-none text-gray-700"
                 placeholder="Username"
               />
             </div>
-            {errors.username && <p className="text-red-500 text-sm">{errors.username.message}</p>}
+            {errors.username && (
+              <p className="text-red-500 text-sm">{errors.username.message}</p>
+            )}
           </div>
 
           <div className="relative">
@@ -127,7 +185,9 @@ const SignUp = () => {
                 placeholder="Email"
               />
             </div>
-            {errors.email && <p className="text-red-500 text-sm">{errors.email.message}</p>}
+            {errors.email && (
+              <p className="text-red-500 text-sm">{errors.email.message}</p>
+            )}
           </div>
 
           <div className="relative">
@@ -140,12 +200,20 @@ const SignUp = () => {
               </span>
               <input
                 id="phone_number"
-                {...register("phone", { required: "Phone number is required" })}
+                {...register("phone", {
+                  required: "Phone number is required",
+                  pattern: {
+                    value: /^\d{9}$/, // Example regex for a 10-digit phone number
+                    message: "Invalid phone number format",
+                  },
+                })}
                 className="flex-1 px-2 py-2 rounded-full bg-transparent outline-none text-gray-700"
                 placeholder="Phone Number"
               />
             </div>
-            {errors.phone_number && <p className="text-red-500 text-sm">{errors.phone_number.message}</p>}
+            {errors.phone && (
+              <p className="text-red-500 text-sm">{errors.phone.message}</p>
+            )}
           </div>
 
           <div className="relative">
@@ -159,77 +227,49 @@ const SignUp = () => {
               <input
                 id="password"
                 type="password"
-                {...register("password", { required: "Password is required" })}
+                {...register("password", {
+                  required: "Password is required",
+                  minLength: {
+                    value: 8,
+                    message: "Password must be at least 8 characters",
+                  },
+                  pattern: {
+                    value:
+                      /^(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&#])[A-Za-z\d@$!%*?&#]{8,}$/,
+                    message:
+                      "Password must contain at least one uppercase letter, one number, and one special character",
+                  },
+                })}
                 className="flex-1 px-2 py-2 rounded-full bg-transparent outline-none text-gray-700"
                 placeholder="Password"
               />
             </div>
-            {errors.password && <p className="text-red-500 text-sm">{errors.password.message}</p>}
-          </div>
-
-          {/* <div className="relative">
-            <label htmlFor="confirm_password" className="sr-only">
-              Confirm Password
-            </label>
-            <div className="flex items-center border rounded-full p-2 shadow-md">
-              <span className="pl-3 pr-2">
-                <img src="/Frame 34.svg" alt="password" className="w-8 h-8" />
-              </span>
-              <input
-                id="confirm_password"
-                type="password"
-                {...register("confirm_password", { required: "Confirm Password is required" })}
-                className="flex-1 px-2 py-2 rounded-full bg-transparent outline-none text-gray-700"
-                placeholder="Confirm Password"
-              />
-            </div>
-            {errors.confirm_password && <p className="text-red-500 text-sm">{errors.confirm_password.message}</p>}
-          </div> */}
-
-          {/* Dropdown for Role */}
-          <div className="relative">
-            <label htmlFor="role" className="sr-only">
-              Role
-            </label>
-            <div className="flex items-center border rounded-full p-2 shadow-md">
-              <span className="pl-3 pr-2">
-                <img src="/fluent_person-32-light.svg" alt="role" className="w-6 h-6" />
-              </span>
-              <select
-                id="role"
-                {...register("role", { required: "Role is required" })}
-                className="flex-1 px-2 py-2 rounded-full bg-transparent outline-none text-gray-700 appearance-none"
-              >
-                <option value="">Select a role</option>
-                <option value="Psychologist">Psychologist</option>
-                <option value="Speech Pathologist">Speech Pathologist</option>
-                <option value="Occupational Therapist">Occupational therapist</option>
-                <option value="Paediatric Dietitian">Paediatric Dietitian</option>
-                <option value="Paediatrician">Paediatrician</option>
-              </select>
-            </div>
-            {errors.role && <p className="text-red-500 text-sm">{errors.role.message}</p>}
+            {errors.password && (
+              <p className="text-red-500 text-sm">{errors.password.message}</p>
+            )}
           </div>
 
           <div>
-            <button type="submit" className="w-full py-3 px-4 bg-custom-gradient text-white rounded-full shadow-lg">
-               {isLoading ? "  Signing Up..." : "  Sign Up"}
+            <button
+              type="submit"
+              disabled={isLoading}
+              className={`w-full p-3 rounded-full bg-primary text-white ${
+                isLoading ? "opacity-50 cursor-not-allowed" : ""
+              }`}
+            >
+              {isLoading ? "Signing up..." : "Sign Up"}
             </button>
           </div>
-
-          {isError && (
-            <p className="text-red-500">
-              {error?.data?.error || "Error during login"}
-            </p>
-          )}
-
-          <div className="text-center text-sm text-gray-600">
-            I have an account?{" "}
-            <Link to="/" className="font-medium text-primary hover:underline">
-              Sign in
-            </Link>
-          </div>
         </form>
+
+        <div className="text-center">
+          <p className="text-sm">
+            Already have an account?{" "}
+            <Link to="/" className="text-primary">
+              Login here
+            </Link>
+          </p>
+        </div>
       </div>
     </div>
   );

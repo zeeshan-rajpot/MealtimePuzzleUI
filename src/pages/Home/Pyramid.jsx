@@ -14,6 +14,7 @@ const Pyramid = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [currentImageLabel, setCurrentImageLabel] = useState("");
   const [imageId, setImageId] = useState(null);
+  const [imageData, setImageData] = useState({}); // Store data for each image
   const [imageDataCounter, setImageDataCounter] = useState(0); // Counter for images with data
 
   const [addIntervention, { isLoading, isError, error }] =
@@ -41,26 +42,23 @@ const Pyramid = () => {
 
   useEffect(() => {
     if (imageId) {
-      const storedData = JSON.parse(localStorage.getItem("stepperInfo")) || {};
-      const imageData = storedData[imageId] || {};
-      setValue("clinicalPrompt", imageData.clinicalPrompt || "");
-      setValue("priority", imageData.priority || "");
-      setValue("recommendation", imageData.recommendation || "");
+      const imageDataForCurrentImage = imageData[imageId] || {};
+      setValue("clinicalPrompt", imageDataForCurrentImage.clinicalPrompt || "");
+      setValue("priority", imageDataForCurrentImage.priority || "");
+      setValue("recommendation", imageDataForCurrentImage.recommendation || "");
     }
-  }, [imageId, setValue]);
+  }, [imageId, setValue, imageData]);
 
   const handleNextClick = async () => {
     if (selectedImages.length === 0) {
       alert("Select at least one category");
     } else {
       try {
-        const storedData =
-          JSON.parse(localStorage.getItem("stepperInfo")) || {};
         const domains = selectedImages.map((imageId) => ({
-          domainName: storedData[imageId]?.label || "",
-          clinicalPrompt: storedData[imageId]?.clinicalPrompt || "",
-          priority: storedData[imageId]?.priority || "",
-          recommendation: storedData[imageId]?.recommendation || "",
+          domainName: imageData[imageId]?.label || "",
+          clinicalPrompt: imageData[imageId]?.clinicalPrompt || "",
+          priority: imageData[imageId]?.priority || "",
+          recommendation: imageData[imageId]?.recommendation || "",
         }));
 
         const childUrn = urn;
@@ -69,8 +67,8 @@ const Pyramid = () => {
         console.log("Intervention added successfully:", response);
         localStorage.setItem("session", response.session);
         toast.success("Intervention added successfully!");
-        navigate(`/home/detailpage/${urn}/${response?.session}`);
 
+        navigate(`/home/detailpage/${urn}/${response.session}`);
       } catch (err) {
         console.error("Failed to add intervention:", err);
         toast.error("Failed to add intervention");
@@ -83,14 +81,23 @@ const Pyramid = () => {
   };
 
   const onSubmit = (data) => {
-    const storedData = JSON.parse(localStorage.getItem("stepperInfo")) || {};
-    storedData[imageId] = {
-      ...data,
-      label: currentImageLabel, // Store label for API
+    const updatedImageData = {
+      ...imageData,
+      [imageId]: {
+        ...data,
+        label: currentImageLabel, // Store label for API
+      },
     };
-    localStorage.setItem("stepperInfo", JSON.stringify(storedData));
-    setImageDataCounter((prevCount) => prevCount + 1); // Increment counter for images with data
+    setImageData(updatedImageData);
+    setImageDataCounter(
+      Object.keys(updatedImageData).length // Update counter based on image data
+    );
     setIsModalOpen(false);
+  };
+
+  const getImageOpacity = (imageId) => {
+    // If the image has data, opacity should be 1, otherwise 0.5
+    return imageData[imageId] ? 1 : 0.5;
   };
 
   return (
@@ -115,6 +122,7 @@ const Pyramid = () => {
             <div
               data-label="Variety & Volume"
               onClick={() => handleImageClick(1, "Variety & Volume")}
+              style={{ opacity: getImageOpacity(2) }}
               className="mt-8"
             >
               <img src="/Frame 1261153616.svg" alt="food" />
@@ -123,6 +131,7 @@ const Pyramid = () => {
             <div
               data-label="New Food Learning"
               onClick={() => handleImageClick(2, "New Food Learning")}
+              style={{ opacity: getImageOpacity(2) }}
             >
               <img src="/Frame 1261153617.svg" alt="food" />
             </div>
@@ -130,6 +139,7 @@ const Pyramid = () => {
             <div
               data-label="Food Mapping"
               onClick={() => handleImageClick(3, "Food Mapping")}
+              style={{ opacity: getImageOpacity(3) }}
             >
               <img src="/Frame 1261153618.svg" alt="food" />
             </div>
@@ -138,6 +148,7 @@ const Pyramid = () => {
               <div
                 data-label="Sensory"
                 onClick={() => handleImageClick(4, "Sensory")}
+                style={{ opacity: getImageOpacity(4) }}
               >
                 <img src="/Frame 1261153619.svg" alt="food" />
               </div>
@@ -145,6 +156,7 @@ const Pyramid = () => {
               <div
                 data-label="Oral Motor"
                 onClick={() => handleImageClick(5, "Oral Motor")}
+                style={{ opacity: getImageOpacity(5) }}
               >
                 <img src="/Frame 1261153620.svg" alt="food" />
               </div>
@@ -153,12 +165,14 @@ const Pyramid = () => {
               <div
                 data-label="Self Feeding"
                 onClick={() => handleImageClick(6, "Self Feeding")}
+                style={{ opacity: getImageOpacity(6) }}
               >
                 <img src="/Frame 1261153621.svg" alt="food" />
               </div>
               <div
                 data-label="Mealtime Engagement"
                 onClick={() => handleImageClick(7, "Mealtime Engagement")}
+                style={{ opacity: getImageOpacity(7) }}
               >
                 <img src="/Frame 1261153622.svg" alt="food" />
               </div>
@@ -167,18 +181,21 @@ const Pyramid = () => {
               <div
                 data-label="Food Exposure"
                 onClick={() => handleImageClick(8, "Food Exposure")}
+                style={{ opacity: getImageOpacity(8) }}
               >
                 <img src="/Frame 1261153624.svg" alt="food" />
               </div>
               <div
                 data-label="Mealtime Environment"
                 onClick={() => handleImageClick(9, "Mealtime Environment")}
+                style={{ opacity: getImageOpacity(9) }}
               >
                 <img src="/Frame 1261153625.svg" alt="food" />
               </div>
               <div
                 data-label="Flexibility"
                 onClick={() => handleImageClick(10, "Flexibility")}
+                style={{ opacity: getImageOpacity(10) }}
               >
                 <img src="/Frame 1261153626.svg" alt="food" />
               </div>
@@ -187,24 +204,28 @@ const Pyramid = () => {
               <div
                 data-label="Hunger Cycle"
                 onClick={() => handleImageClick(11, "Hunger Cycle")}
+                style={{ opacity: getImageOpacity(11) }}
               >
                 <img src="/Frame 1261153627.svg" alt="food" />
               </div>
               <div
                 data-label="Mealtime Roles"
                 onClick={() => handleImageClick(12, "Mealtime Roles")}
+                style={{ opacity: getImageOpacity(12) }}
               >
                 <img src="/Frame 1261153628.svg" alt="food" />
               </div>
               <div
                 data-label="Caregivers Influence"
                 onClick={() => handleImageClick(13, "Caregivers Influence")}
+                style={{ opacity: getImageOpacity(13) }}
               >
                 <img src="/Frame 1261153629.svg" alt="food" />
               </div>
               <div
                 data-label="Calm Mealtimes"
                 onClick={() => handleImageClick(14, "Calm Mealtimes")}
+                style={{ opacity: getImageOpacity(14) }}
               >
                 <img src="/Frame 1261153630.svg" alt="food" />
               </div>
@@ -213,18 +234,21 @@ const Pyramid = () => {
               <div
                 data-label="Development"
                 onClick={() => handleImageClick(15, "Development")}
+                style={{ opacity: getImageOpacity(15) }}
               >
                 <img src="/Frame 1261153631.svg" alt="food" />
               </div>
               <div
                 data-label="Medical / Nutrition"
                 onClick={() => handleImageClick(16, "Medical or Nutrition")}
+                style={{ opacity: getImageOpacity(16) }}
               >
                 <img src="/Frame 1261153632.svg" alt="food" />
               </div>
               <div
                 data-label="Temperament"
                 onClick={() => handleImageClick(17, "Temperament")}
+                style={{ opacity: getImageOpacity(17) }}
               >
                 <img src="/Frame 1261153633.svg" alt="food" />
               </div>

@@ -56,9 +56,15 @@ const ChildInformationPage = () => {
               <div>
                 <input
                   type="text"
-                  {...register("urn", { required: "URN is required" })}
+                  {...register("urn", {
+                    required: "URN is required",
+                    minLength: {
+                      value: 6,
+                      message: "URN must be at least 6 characters",
+                    },
+                  })}
                   placeholder="Child's URN (Unit Record Number)"
-                  className="w-full p-3 border rounded "
+                  className="w-full p-3 border rounded"
                 />
                 {errors.urn && (
                   <p className="text-red-500 ">{errors.urn.message}</p>
@@ -66,15 +72,19 @@ const ChildInformationPage = () => {
               </div>
 
               {/* First Name & Last Name */}
-              <div className="flex space-x-3 ">
+              <div className="flex space-x-3">
                 <div className="w-full">
                   <input
                     type="text"
                     {...register("firstName", {
                       required: "First name is required",
+                      minLength: {
+                        value: 2,
+                        message: "First name must be at least 2 characters",
+                      },
                     })}
                     placeholder="Child First Name"
-                    className="w-full p-3 border rounded "
+                    className="w-full p-3 border rounded"
                   />
                   {errors.firstName && (
                     <p className="text-red-500 ">{errors.firstName.message}</p>
@@ -85,9 +95,13 @@ const ChildInformationPage = () => {
                     type="text"
                     {...register("lastName", {
                       required: "Last name is required",
+                      minLength: {
+                        value: 2,
+                        message: "Last name must be at least 2 characters",
+                      },
                     })}
                     placeholder="Child Last Name"
-                    className="w-full p-3 border rounded "
+                    className="w-full p-3 border rounded"
                   />
                   {errors.lastName && (
                     <p className="text-red-500 ">{errors.lastName.message}</p>
@@ -102,9 +116,16 @@ const ChildInformationPage = () => {
                     type="date"
                     {...register("dateOfBirth", {
                       required: "Date of birth is required",
+                      validate: (value) => {
+                        const today = new Date();
+                        const dob = new Date(value);
+                        return (
+                          dob < today || "Date of birth cannot be in the future"
+                        );
+                      },
                     })}
                     placeholder="Date of Birth"
-                    className="w-full p-3 border rounded "
+                    className="w-full p-3 border rounded"
                   />
                   {errors.dateOfBirth && (
                     <p className="text-red-500 ">
@@ -118,9 +139,13 @@ const ChildInformationPage = () => {
                     type="text"
                     {...register("parentName", {
                       required: "Parent name is required",
+                      minLength: {
+                        value: 2,
+                        message: "Parent name must be at least 2 characters",
+                      },
                     })}
                     placeholder="Parent/Caretaker Name"
-                    className="w-full p-3 border rounded "
+                    className="w-full p-3 border rounded"
                   />
                   {errors.parentName && (
                     <p className="text-red-500 ">{errors.parentName.message}</p>
@@ -135,9 +160,14 @@ const ChildInformationPage = () => {
                     type="email"
                     {...register("contactEmail", {
                       required: "Email is required",
+                      pattern: {
+                        value:
+                          /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/,
+                        message: "Invalid email address",
+                      },
                     })}
                     placeholder="Parent/Caretaker Email Address"
-                    className="w-full p-3 border rounded "
+                    className="w-full p-3 border rounded"
                   />
                   {errors.contactEmail && (
                     <p className="text-red-500 ">
@@ -148,12 +178,16 @@ const ChildInformationPage = () => {
 
                 <div className="w-full">
                   <input
-                    type="number"
+                    type="tel"
                     {...register("contactPhone", {
                       required: "Phone number is required",
+                      pattern: {
+                        value: /^[0-9]{9}$/,
+                        message: "Phone number must be 9 digits",
+                      },
                     })}
                     placeholder="Parent/Caretaker Contact Number"
-                    className="w-full p-3 border rounded "
+                    className="w-full p-3 border rounded"
                   />
                   {errors.contactPhone && (
                     <p className="text-red-500 ">
@@ -185,9 +219,13 @@ const ChildInformationPage = () => {
                     type="text"
                     {...register("finnumber", {
                       required: "FIN number is required",
+                      pattern: {
+                        value: /^[A-Za-z0-9]{6}$/,
+                        message: "FIN number must be 6 characters",
+                      },
                     })}
                     placeholder="Child FIN Number"
-                    className="w-full p-3 border rounded "
+                    className="w-full p-3 border rounded"
                   />
                   {errors.finnumber && (
                     <p className="text-red-500 ">{errors.finnumber.message}</p>
