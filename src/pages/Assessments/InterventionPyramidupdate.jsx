@@ -101,6 +101,8 @@ const InterventionPyramidupdate = () => {
       try {
         const token = localStorage.getItem("token");
         const domains = selectedImages.map((label) => {
+          console.log("label", label);
+
           const entry = interventionData.sessionEntries.find(
             (entry) => entry.domainname === label
           );
