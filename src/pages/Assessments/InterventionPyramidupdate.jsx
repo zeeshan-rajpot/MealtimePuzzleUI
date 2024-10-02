@@ -72,6 +72,16 @@ const InterventionPyramidupdate = () => {
   };
 
   const handleModalSave = () => {
+    
+    if (
+      !modalData.clinicalPrompt ||
+      !modalData.priority ||
+      !modalData.recommendation
+    ) {
+      toast.error("All fields are required");
+      return;
+    }
+
     const updatedEntries = interventionData.sessionEntries.map((entry) =>
       entry.domainname === currentImageLabel
         ? { ...entry, ...modalData }
