@@ -46,7 +46,7 @@ const DetailPage = () => {
 
     // Cleanup the interval on component unmount
     return () => clearInterval(intervalId)
-  }, [urn, id]);
+  }, [urn, session]);
 
 
   const displayDataOrFallback = (field) => {
