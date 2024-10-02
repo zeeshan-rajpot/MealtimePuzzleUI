@@ -1,4 +1,6 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState ,useRef} from "react";
+
+import { useReactToPrint } from "react-to-print";
 import Header from "../../components/Header";
 import SideBar from "../../components/SideBar";
 import { useNavigate, useParams } from "react-router-dom";
@@ -11,6 +13,19 @@ const DetailPage = () => {
   const navigate = useNavigate();
   const handleBack = () => {
     navigate(-1);
+  };
+
+  const printRef = useRef();
+
+  // Function to handle printing
+  const handlePrint = () => {
+    const printableContent = printRef.current.innerHTML; // Get the HTML content of the div
+    const originalContent = document.body.innerHTML;     // Store original body content
+
+    document.body.innerHTML = printableContent;          // Replace body with the printable div
+    window.print();                                      // Trigger the print
+    document.body.innerHTML = originalContent;           // Restore original body content
+    // window.location.reload();                            // Reload to restore event listeners
   };
 
   const [interventionData, setInterventionData] = useState(null);
@@ -99,7 +114,7 @@ const DetailPage = () => {
             <button className="text-base">Back</button>
           </div>
 
-          <div id="printableContent" className="w-full max-w-3xl mx-auto pb-12">
+          <div ref={printRef} id="printableContent" className="w-full max-w-3xl mx-auto pb-12">
             <div className="flex justify-between mb-6">
               <h2 className="text-2xl font-semibold ">Child Information</h2>
               <h2 className="text-2xl font-semibold ">
@@ -147,6 +162,7 @@ const DetailPage = () => {
 
             <div className="mt-10 flex justify-center space-x-4">
               <button
+              onClick={handlePrint}
                 className="border-2 border-primary text-primary px-28 py-2 rounded-full flex"
               >
                 <img src="/lets-icons_print-duotone.svg" alt="print" />
