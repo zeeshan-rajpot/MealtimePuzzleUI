@@ -40,7 +40,14 @@ const DetailPage = () => {
     };
 
     fetchInterventionData();
-  }, [urn, session]);
+
+
+    const intervalId = setInterval(fetchInterventionData, 2000);
+
+    // Cleanup the interval on component unmount
+    return () => clearInterval(intervalId)
+  }, [urn, id]);
+
 
   const displayDataOrFallback = (field) => {
     return childInfo && childInfo[field] ? childInfo[field] : "not found";
