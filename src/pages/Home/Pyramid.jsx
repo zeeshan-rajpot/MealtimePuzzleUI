@@ -277,6 +277,7 @@ const Pyramid = () => {
                   {...register("clinicalPrompt")}
                   placeholder="Enter clinical prompt"
                   className="input-field border-2 py-1"
+                  required
                 />
               </div>
 
@@ -286,6 +287,7 @@ const Pyramid = () => {
                   {...register("priority")}
                   placeholder="Enter Priority"
                   className="select-field border-2 py-1"
+                  required
                 >
                   <option value="">Select Priority</option>
                   <option value="high">High</option>
@@ -300,6 +302,7 @@ const Pyramid = () => {
                   {...register("recommendation")}
                   placeholder="Enter recommendation"
                   className="input-field border-2 py-1"
+                  required
                 />
               </div>
 
