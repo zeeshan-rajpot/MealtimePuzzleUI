@@ -21,7 +21,27 @@ export const interventionApi = createApi({
         body: { childUrn, domains },
       }),
     }),
+
+    getIntervention: builder.query({
+      query: ({ urn, session }) => ({
+        url: `/get/Intervention/${urn}/${session}`,
+        method: "GET",
+      }),
+    }),
+
+    // PUT request to update intervention data
+    updateIntervention: builder.mutation({
+      query: ({ urn, session, domains }) => ({
+        url: `/put/Intervention/${urn}/${session}`,
+        method: "PUT",
+        body: { domains },
+      }),
+    }),
   }),
 });
 
-export const { useAddInterventionMutation } = interventionApi;
+export const {
+  useAddInterventionMutation,
+  useGetInterventionQuery,
+  useUpdateInterventionMutation,
+} = interventionApi;

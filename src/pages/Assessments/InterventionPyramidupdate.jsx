@@ -1,95 +1,140 @@
 import React, { useState, useEffect } from "react";
-import { useForm } from "react-hook-form";
 import Header from "../../components/Header";
 import SideBar from "../../components/SideBar";
 import { useNavigate, useParams } from "react-router-dom";
-import { useAddInterventionMutation } from "../../features/Forms/Intervention";
+import axios from "axios";
 import toast from "react-hot-toast";
+import { baseUrl } from "../../features/config";
 
 const InterventionPyramidupdate = () => {
-  const { register, handleSubmit, setValue, reset } = useForm();
-  const { urn ,id } = useParams();
+  const { urn, session } = useParams();
   const navigate = useNavigate();
   const [selectedImages, setSelectedImages] = useState([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [currentImageLabel, setCurrentImageLabel] = useState("");
-  const [imageId, setImageId] = useState(null);
-  const [imageDataCounter, setImageDataCounter] = useState(0); // Counter for images with data
-
-  const [addIntervention, { isLoading, isError, error }] =
-    useAddInterventionMutation();
-
-  const handleBack = () => {
-    navigate(-1);
-  };
-
-  const handleImageClick = (imageId, label) => {
-    let updatedSelectedImages;
-
-    if (selectedImages.includes(imageId)) {
-      updatedSelectedImages = selectedImages.filter((id) => id !== imageId);
-      setIsModalOpen(false);
-    } else {
-      updatedSelectedImages = [...selectedImages, imageId];
-      setCurrentImageLabel(label);
-      setIsModalOpen(true);
-    }
-
-    setSelectedImages(updatedSelectedImages);
-    setImageId(imageId);
-  };
+  const [imageDataCounter, setImageDataCounter] = useState(0);
+  const [modalData, setModalData] = useState({
+    clinicalPrompt: "",
+    priority: "",
+    recommendation: "",
+  });
+  const [interventionData, setInterventionData] = useState(null);
 
   useEffect(() => {
-    if (imageId) {
-      const storedData = JSON.parse(localStorage.getItem("stepperInfo")) || {};
-      const imageData = storedData[imageId] || {};
-      setValue("clinicalPrompt", imageData.clinicalPrompt || "");
-      setValue("priority", imageData.priority || "");
-      setValue("recommendation", imageData.recommendation || "");
+    const fetchInterventionData = async () => {
+      try {
+        const token = localStorage.getItem("token");
+        const response = await axios.get(
+          `${baseUrl}/get/intervention/${urn}/${session}`,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+        setInterventionData(response.data);
+      } catch (err) {
+        console.error("Error fetching intervention data:", err);
+        toast.error("Failed to load intervention data");
+      }
+    };
+
+    fetchInterventionData();
+  }, [urn, session]);
+
+  const handleImageClick = (label) => {
+    setCurrentImageLabel(label);
+
+    const entry = interventionData?.sessionEntries?.find(
+      (entry) => entry.domainname === label
+    );
+
+    if (entry) {
+      setModalData({
+        clinicalPrompt: entry.clinicalPrompt,
+        priority: entry.priority,
+        recommendation: entry.recommendation,
+      });
+    } else {
+      setModalData({
+        clinicalPrompt: "",
+        priority: "",
+        recommendation: "",
+      });
     }
-  }, [imageId, setValue]);
+
+    setIsModalOpen(true);
+  };
+
+  const handleModalSave = () => {
+    const updatedEntries = interventionData.sessionEntries.map((entry) =>
+      entry.domainname === currentImageLabel
+        ? { ...entry, ...modalData }
+        : entry
+    );
+
+    const isNewData = !interventionData.sessionEntries.find(
+      (entry) => entry.domainname === currentImageLabel
+    );
+
+    if (isNewData) {
+      updatedEntries.push({ domainname: currentImageLabel, ...modalData });
+      setImageDataCounter((prevCount) => prevCount + 1);
+    }
+
+    setInterventionData((prev) => ({
+      ...prev,
+      sessionEntries: updatedEntries,
+    }));
+
+    setSelectedImages((prev) =>
+      prev.includes(currentImageLabel) ? prev : [...prev, currentImageLabel]
+    );
+
+    setIsModalOpen(false);
+  };
 
   const handleNextClick = async () => {
     if (selectedImages.length === 0) {
       alert("Select at least one category");
     } else {
       try {
-        const storedData =
-          JSON.parse(localStorage.getItem("stepperInfo")) || {};
-        const domains = selectedImages.map((imageId) => ({
-          domainName: storedData[imageId]?.label || "",
-          clinicalPrompt: storedData[imageId]?.clinicalPrompt || "",
-          priority: storedData[imageId]?.priority || "",
-          recommendation: storedData[imageId]?.recommendation || "",
-        }));
+        const token = localStorage.getItem("token");
+        const domains = selectedImages.map((label) => {
+          const entry = interventionData.sessionEntries.find(
+            (entry) => entry.domainname === label
+          );
+          return {
+            domainName: entry?.domainname || label,
+            clinicalPrompt: entry?.clinicalPrompt || "",
+            priority: entry?.priority || "",
+            recommendation: entry?.recommendation || "",
+          };
+        });
 
-        const childUrn = urn;
+        await axios.put(
+          `${baseUrl}/update/intervention/${urn}/${session}`,
+          {
+            domains,
+          },
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
 
-        const response = await addIntervention({ childUrn, domains }).unwrap();
-        console.log("Intervention added successfully:", response);
-        localStorage.setItem("session", response.session);
-        toast.success("Intervention added successfully!");
-        navigate(`/home/detailpage/${childUrn}/${response?.session}`);
+        toast.success("Intervention updated successfully!");
+        navigate(`/home/detailpage/${urn}/${session}`);
       } catch (err) {
-        console.error("Failed to add intervention:", err);
-        toast.error("Failed to add intervention");
+        console.error("Failed to update intervention:", err);
+        toast.error("Failed to update intervention");
       }
     }
   };
 
-  const onClose = () => {
-    setIsModalOpen(false);
-  };
-
-  const onSubmit = (data) => {
-    const storedData = JSON.parse(localStorage.getItem("stepperInfo")) || {};
-    storedData[imageId] = {
-      ...data,
-      label: currentImageLabel, // Store label for API
-    };
-    localStorage.setItem("stepperInfo", JSON.stringify(storedData));
-    setImageDataCounter((prevCount) => prevCount + 1); // Increment counter for images with data
-    setIsModalOpen(false);
+  const handleBack = () => {
+    navigate(-1);
   };
 
   return (
@@ -105,7 +150,7 @@ const InterventionPyramidupdate = () => {
             </div>
             <div className="text-base font-semibold mr-12">
               <br />
-              {`  Domains added: ${imageDataCounter}/ 17`}
+              {`Domains added: ${imageDataCounter}/ 17`}
             </div>
           </div>
 
@@ -233,7 +278,7 @@ const InterventionPyramidupdate = () => {
               className="mt-8 w-[30%] rounded-full px-4 py-2 bg-custom-gradient text-white"
               onClick={handleNextClick}
             >
-              {isLoading ? "Submitting" : "Next"}
+              Update
             </button>
           </div>
         </div>
@@ -242,58 +287,75 @@ const InterventionPyramidupdate = () => {
       {isModalOpen && (
         <div className="fixed inset-0 bg-gray-600 bg-opacity-75 flex justify-center items-center">
           <div className="bg-white p-8 rounded-lg w-1/2">
-            <form onSubmit={handleSubmit(onSubmit)}>
-              <div className="text-center mb-3 text-lg font-semibold ">
-                Add Domain
-              </div>
-              <div className="flex flex-col my-2 ">
-                <label>Clinical Prompt</label>
-                <input
-                  {...register("clinicalPrompt")}
-                  placeholder="Enter clinical prompt"
-                  className="input-field border-2 py-1"
-                />
-              </div>
+            <div className="text-center mb-3 text-lg font-semibold ">
+              Edit Domain
+            </div>
 
-              <div className="flex flex-col my-2">
-                <label>Priority</label>
-                <select
-                  {...register("priority")}
-                  placeholder="Enter Priority"
-                  className="select-field border-2 py-1"
-                >
-                  <option value="">Select Priority</option>
-                  <option value="high">High</option>
-                  <option value="moderate">Moderate</option>
-                  <option value="low">Low</option>
-                </select>
-              </div>
+            <div className="flex flex-col my-2">
+              <label>Clinical Prompt</label>
+              <input
+                value={modalData.clinicalPrompt}
+                onChange={(e) =>
+                  setModalData((prev) => ({
+                    ...prev,
+                    clinicalPrompt: e.target.value,
+                  }))
+                }
+                placeholder="Enter clinical prompt"
+                className="input-field border-2 py-1"
+              />
+            </div>
 
-              <div className="flex flex-col my-2">
-                <label>Recommendation</label>
-                <input
-                  {...register("recommendation")}
-                  placeholder="Enter recommendation"
-                  className="input-field border-2 py-1"
-                />
-              </div>
+            <div className="flex flex-col my-2">
+              <label>Priority</label>
+              <select
+                value={modalData.priority}
+                onChange={(e) =>
+                  setModalData((prev) => ({
+                    ...prev,
+                    priority: e.target.value,
+                  }))
+                }
+                className="select-field border-2 py-1"
+              >
+                <option value="">Select Priority</option>
+                <option value="high">High</option>
+                <option value="moderate">Moderate</option>
+                <option value="low">Low</option>
+              </select>
+            </div>
 
-              <div className="mt-4 flex justify-center">
-                <button
-                  type="button"
-                  onClick={onClose}
-                  className="bg-red-500 text-white px-8 py-2 rounded-full mr-2"
-                >
-                  Cancel
-                </button>
-                <button
-                  type="submit"
-                  className="bg-custom-gradient text-white px-8 py-2 rounded-full"
-                >
-                  Save
-                </button>
-              </div>
-            </form>
+            <div className="flex flex-col my-2">
+              <label>Recommendation</label>
+              <input
+                value={modalData.recommendation}
+                onChange={(e) =>
+                  setModalData((prev) => ({
+                    ...prev,
+                    recommendation: e.target.value,
+                  }))
+                }
+                placeholder="Enter recommendation"
+                className="input-field border-2 py-1"
+              />
+            </div>
+
+            <div className="mt-4 flex justify-center">
+              <button
+                type="button"
+                onClick={() => setIsModalOpen(false)}
+                className="bg-red-500 text-white px-8 py-2 rounded-full mr-2"
+              >
+                Cancel
+              </button>
+              <button
+                type="button"
+                onClick={handleModalSave}
+                className="bg-custom-gradient text-white px-8 py-2 rounded-full"
+              >
+                Save
+              </button>
+            </div>
           </div>
         </div>
       )}

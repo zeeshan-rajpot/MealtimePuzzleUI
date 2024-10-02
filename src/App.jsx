@@ -46,7 +46,7 @@ function App() {
       element: <ChildInformationPage />,
     },
     {
-      path: "/home/detailpage/:urn/:id",
+      path: "/home/detailpage/:urn/:session",
       element: <DetailPage />,
     },
     {
@@ -75,7 +75,7 @@ function App() {
     },
     
     {
-      path: "/interventionupdate/pyramid/:urn/:id",
+      path: "/interventionupdate/pyramid/:urn/:session",
       element: <InterventionPyramidupdate />,
     },
     
