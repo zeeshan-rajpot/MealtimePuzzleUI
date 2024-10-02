@@ -37,7 +37,15 @@ export const childApi = createApi({
         method: "GET",
       }),
     }),
+
+    deleteChild: builder.mutation({
+      query: (urn) => ({
+        url: `/child/${urn}`,
+        method: "DELETE",
+      }),
+    }),
+
   }),
 });
 
-export const { useChildUserMutation, useFetchChildrenQuery } = childApi;
+export const { useChildUserMutation, useFetchChildrenQuery, useDeleteChildMutation  } = childApi;
