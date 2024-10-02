@@ -122,7 +122,7 @@ const Pyramid = () => {
             <div
               data-label="Variety & Volume"
               onClick={() => handleImageClick(1, "Variety & Volume")}
-              style={{ opacity: getImageOpacity(2) }}
+              style={{ opacity: getImageOpacity(1) }}
               className="mt-8"
             >
               <img src="/Frame 1261153616.svg" alt="food" />

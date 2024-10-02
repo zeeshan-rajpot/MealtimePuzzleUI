@@ -9,6 +9,7 @@ const HistoryDetail = () => {
   const navigate = useNavigate();
   const [childData, setChildData] = useState(null);
   const [sessionData, setSessionData] = useState(null);
+  const [selectedSession, setSelectedSession] = useState("");
 
   useEffect(() => {
     const fetchData = async () => {
@@ -24,6 +25,10 @@ const HistoryDetail = () => {
         );
         setChildData(response.data.childData);
         setSessionData(response.data.data);
+
+        if (response.data.data) {
+          setSelectedSession(Object.keys(response.data.data)[0]);
+        }
       } catch (error) {
         console.error("Error fetching data:", error);
       }
@@ -79,13 +84,32 @@ const HistoryDetail = () => {
 
             <div className="mt-10">
               <h2 className="text-2xl font-semibold">Mealtime</h2>
+              {/* Dropdown to select session */}
+              {sessionData && (
+                <div className="flex items-center mb-4 justify-between">
+                  <h3 className="text-xl font-semibold my-3 mr-4">
+                    Select Session:
+                  </h3>
+                  <select
+                    value={selectedSession}
+                    onChange={(e) => setSelectedSession(e.target.value)}
+                    className="border p-2"
+                  >
+                    {Object.keys(sessionData).map((sessionKey) => (
+                      <option key={sessionKey} value={sessionKey}>
+                        {sessionKey} 
+                      </option>
+                    ))}
+                  </select>
+                </div>
+              )}
               {sessionData &&
-                Object.keys(sessionData).map((sessionKey) => (
-                  <div key={sessionKey}>
-                    <h3 className="text-xl font-semibold my-3">{sessionKey}</h3>
-                    {sessionData[sessionKey].map((intervention, index) => (
-                      <div key={index}>
-                        <h3 className=" text-lg font-semibold mb-2">
+                selectedSession &&
+                sessionData[selectedSession] && (
+                  <div>
+                    {sessionData[selectedSession].map((intervention, index) => (
+                      <div key={index} className="mb-4">
+                        <h3 className="text-lg font-semibold mb-2">
                           {intervention.domainname}
                         </h3>
                         <p className="text-sm font-medium mb-1">
@@ -103,7 +127,7 @@ const HistoryDetail = () => {
                       </div>
                     ))}
                   </div>
-                ))}
+                )}
             </div>
           </div>
         </div>

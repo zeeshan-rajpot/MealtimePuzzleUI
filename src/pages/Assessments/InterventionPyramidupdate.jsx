@@ -12,6 +12,7 @@ const InterventionPyramidupdate = () => {
   const [selectedImages, setSelectedImages] = useState([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [currentImageLabel, setCurrentImageLabel] = useState("");
+  const [imageData, setImageData] = useState({});
   const [imageDataCounter, setImageDataCounter] = useState(0);
   const [modalData, setModalData] = useState({
     clinicalPrompt: "",
@@ -32,7 +33,7 @@ const InterventionPyramidupdate = () => {
             },
           }
         );
-        console.log(response.data)
+        console.log(response.data);
         setInterventionData(response.data);
       } catch (err) {
         console.error("Error fetching intervention data:", err);
@@ -46,11 +47,11 @@ const InterventionPyramidupdate = () => {
   const handleImageClick = (id, label) => {
     setCurrentImageLabel(label); // Set the label instead of ID
     console.log(label); // Console the label text
-    
+
     const entry = interventionData?.sessionEntries?.find((entry) => {
-        console.log("Entry object:", entry);  // Log the entire entry object
-        console.log("Domain Name:", entry.domainname);  // Log the domainname of each entry
-        return entry.domainname === label;  // Ensure case-insensitive comparison
+      console.log("Entry object:", entry); // Log the entire entry object
+      console.log("Domain Name:", entry.domainname); // Log the domainname of each entry
+      return entry.domainname === label; // Ensure case-insensitive comparison
     });
 
     if (entry) {
@@ -68,7 +69,7 @@ const InterventionPyramidupdate = () => {
     }
 
     setIsModalOpen(true);
-}
+  };
 
   const handleModalSave = () => {
     const updatedEntries = interventionData.sessionEntries.map((entry) =>
@@ -143,6 +144,19 @@ const InterventionPyramidupdate = () => {
     navigate(-1);
   };
 
+  const getImageOpacity = (label) => {
+    // Find the entry for the current image label
+    const entry = interventionData?.sessionEntries?.find(
+      (entry) => entry.domainname === label
+    );
+
+    // If the entry exists and has valid data, set opacity to 1, otherwise 0.5
+    return entry &&
+      (entry.clinicalPrompt || entry.priority || entry.recommendation)
+      ? 1
+      : 0.5;
+  };
+
   return (
     <>
       <Header />
@@ -166,6 +180,7 @@ const InterventionPyramidupdate = () => {
               data-label="Variety & Volume"
               onClick={() => handleImageClick(1, "Variety & Volume")}
               className="mt-8"
+              style={{ opacity: getImageOpacity("Variety & Volume") }}
             >
               <img src="/Frame 1261153616.svg" alt="food" />
             </div>
@@ -173,6 +188,7 @@ const InterventionPyramidupdate = () => {
             <div
               data-label="New Food Learning"
               onClick={() => handleImageClick(2, "New Food Learning")}
+              style={{ opacity: getImageOpacity("New Food Learning") }}
             >
               <img src="/Frame 1261153617.svg" alt="food" />
             </div>
@@ -180,6 +196,7 @@ const InterventionPyramidupdate = () => {
             <div
               data-label="Food Mapping"
               onClick={() => handleImageClick(3, "Food Mapping")}
+              style={{ opacity: getImageOpacity("Food Mapping") }}
             >
               <img src="/Frame 1261153618.svg" alt="food" />
             </div>
@@ -188,6 +205,7 @@ const InterventionPyramidupdate = () => {
               <div
                 data-label="Sensory"
                 onClick={() => handleImageClick(4, "Sensory")}
+                style={{ opacity: getImageOpacity("Sensory") }}
               >
                 <img src="/Frame 1261153619.svg" alt="food" />
               </div>
@@ -195,6 +213,7 @@ const InterventionPyramidupdate = () => {
               <div
                 data-label="Oral Motor"
                 onClick={() => handleImageClick(5, "Oral Motor")}
+                style={{ opacity: getImageOpacity("Oral Motor") }}
               >
                 <img src="/Frame 1261153620.svg" alt="food" />
               </div>
@@ -203,12 +222,14 @@ const InterventionPyramidupdate = () => {
               <div
                 data-label="Self Feeding"
                 onClick={() => handleImageClick(6, "Self Feeding")}
+                style={{ opacity: getImageOpacity("Self Feeding") }}
               >
                 <img src="/Frame 1261153621.svg" alt="food" />
               </div>
               <div
                 data-label="Mealtime Engagement"
                 onClick={() => handleImageClick(7, "Mealtime Engagement")}
+                style={{ opacity: getImageOpacity("Mealtime Engagement") }}
               >
                 <img src="/Frame 1261153622.svg" alt="food" />
               </div>
@@ -217,18 +238,21 @@ const InterventionPyramidupdate = () => {
               <div
                 data-label="Food Exposure"
                 onClick={() => handleImageClick(8, "Food Exposure")}
+                style={{ opacity: getImageOpacity("Food Exposure") }}
               >
                 <img src="/Frame 1261153624.svg" alt="food" />
               </div>
               <div
                 data-label="Mealtime Environment"
                 onClick={() => handleImageClick(9, "Mealtime Environment")}
+                style={{ opacity: getImageOpacity("Mealtime Environment") }}
               >
                 <img src="/Frame 1261153625.svg" alt="food" />
               </div>
               <div
                 data-label="Flexibility"
                 onClick={() => handleImageClick(10, "Flexibility")}
+                style={{ opacity: getImageOpacity("Flexibility") }}
               >
                 <img src="/Frame 1261153626.svg" alt="food" />
               </div>
@@ -237,24 +261,28 @@ const InterventionPyramidupdate = () => {
               <div
                 data-label="Hunger Cycle"
                 onClick={() => handleImageClick(11, "Hunger Cycle")}
+                style={{ opacity: getImageOpacity("Hunger Cycle") }}
               >
                 <img src="/Frame 1261153627.svg" alt="food" />
               </div>
               <div
                 data-label="Mealtime Roles"
                 onClick={() => handleImageClick(12, "Mealtime Roles")}
+                style={{ opacity: getImageOpacity("Mealtime Roles") }}
               >
                 <img src="/Frame 1261153628.svg" alt="food" />
               </div>
               <div
                 data-label="Caregivers Influence"
                 onClick={() => handleImageClick(13, "Caregivers Influence")}
+                style={{ opacity: getImageOpacity("Caregivers Influence") }}
               >
                 <img src="/Frame 1261153629.svg" alt="food" />
               </div>
               <div
                 data-label="Calm Mealtimes"
                 onClick={() => handleImageClick(14, "Calm Mealtimes")}
+                style={{ opacity: getImageOpacity("Calm Mealtimes") }}
               >
                 <img src="/Frame 1261153630.svg" alt="food" />
               </div>
@@ -263,18 +291,21 @@ const InterventionPyramidupdate = () => {
               <div
                 data-label="Development"
                 onClick={() => handleImageClick(15, "Development")}
+                style={{ opacity: getImageOpacity("Development") }}
               >
                 <img src="/Frame 1261153631.svg" alt="food" />
               </div>
               <div
                 data-label="Medical / Nutrition"
                 onClick={() => handleImageClick(16, "Medical or Nutrition")}
+                style={{ opacity: getImageOpacity("Medical or Nutrition") }}
               >
                 <img src="/Frame 1261153632.svg" alt="food" />
               </div>
               <div
                 data-label="Temperament"
                 onClick={() => handleImageClick(17, "Temperament")}
+                style={{ opacity: getImageOpacity("Temperament") }}
               >
                 <img src="/Frame 1261153633.svg" alt="food" />
               </div>
