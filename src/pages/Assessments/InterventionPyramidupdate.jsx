@@ -32,6 +32,7 @@ const InterventionPyramidupdate = () => {
             },
           }
         );
+        console.log(response.data)
         setInterventionData(response.data);
       } catch (err) {
         console.error("Error fetching intervention data:", err);
@@ -42,12 +43,15 @@ const InterventionPyramidupdate = () => {
     fetchInterventionData();
   }, [urn, session]);
 
-  const handleImageClick = (label) => {
-    setCurrentImageLabel(label);
-
-    const entry = interventionData?.sessionEntries?.find(
-      (entry) => entry.domainname === label
-    );
+  const handleImageClick = (id, label) => {
+    setCurrentImageLabel(label); // Set the label instead of ID
+    console.log(label); // Console the label text
+    
+    const entry = interventionData?.sessionEntries?.find((entry) => {
+        console.log("Entry object:", entry);  // Log the entire entry object
+        console.log("Domain Name:", entry.domainname);  // Log the domainname of each entry
+        return entry.domainname === label;  // Ensure case-insensitive comparison
+    });
 
     if (entry) {
       setModalData({
@@ -64,7 +68,7 @@ const InterventionPyramidupdate = () => {
     }
 
     setIsModalOpen(true);
-  };
+}
 
   const handleModalSave = () => {
     const updatedEntries = interventionData.sessionEntries.map((entry) =>
