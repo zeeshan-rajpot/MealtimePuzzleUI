@@ -41,6 +41,11 @@ const HistoryDetail = () => {
     navigate(-1);
   };
 
+
+
+
+
+  
   return (
     <>
       <Header />
