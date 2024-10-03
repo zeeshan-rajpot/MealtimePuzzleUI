@@ -1,4 +1,4 @@
-import React from "react";
+import { useState } from "react";
 import { Link } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import { useSignupUserMutation } from "../../features/auth/authApi";
@@ -11,6 +11,7 @@ const SignUp = () => {
     register,
     handleSubmit,
     reset,
+    watch,
     formState: { errors },
   } = useForm();
 
@@ -18,16 +19,28 @@ const SignUp = () => {
 
   const onSubmit = async (userData) => {
     try {
-      const response = await signupUser(userData).unwrap();
-      // console.log("Signup body", response);
+      const { confirmPassword, ...rest } = userData;
+
+      await signupUser(rest).unwrap();
       toast.success("New User Created");
       navigate("/");
-      // console.log("Data ", userData);
+      reset();
     } catch (err) {
-      toast.error(err.data.error);
-      console.error("Failed to login:", err);
-      console.log("Data ", userData);
+      toast.error("SignUp Failed");
+      console.error("Failed to signup:", err);
     }
+  };
+
+  const [isPasswordVisible, setIsPasswordVisible] = useState(false);
+  const [isConfirmPasswordVisible, setIsConfirmPasswordVisible] =
+    useState(false);
+
+  // Function to toggle password visibility
+  const togglePasswordVisibility = () => {
+    setIsPasswordVisible(!isPasswordVisible);
+  };
+  const toggleConfirmPasswordVisibility = () => {
+    setIsConfirmPasswordVisible(!isConfirmPasswordVisible);
   };
 
   return (
@@ -226,7 +239,7 @@ const SignUp = () => {
               </span>
               <input
                 id="password"
-                type="password"
+                type={isPasswordVisible ? "text" : "password"}
                 {...register("password", {
                   required: "Password is required",
                   minLength: {
@@ -243,9 +256,50 @@ const SignUp = () => {
                 className="flex-1 px-2 py-2 rounded-full bg-transparent outline-none text-gray-700"
                 placeholder="Password"
               />
+              <button
+                type="button"
+                className="text-gray-400 pr-3"
+                onClick={togglePasswordVisibility}
+              >
+                <img src="/ion_eye-off.svg" alt="eye_icon" />
+              </button>
             </div>
             {errors.password && (
               <p className="text-red-500 text-sm">{errors.password.message}</p>
+            )}
+          </div>
+
+          <div className="relative">
+            <label htmlFor="confirm_password" className="sr-only">
+              Confirm Password
+            </label>
+            <div className="flex items-center border rounded-full p-2 shadow-md">
+              <span className="pl-3 pr-2">
+                <img src="/Frame 34.svg" alt="password" className="w-8 h-8" />
+              </span>
+              <input
+                id="confirm_password"
+                type={isConfirmPasswordVisible ? "text" : "password"}
+                {...register("confirmPassword", {
+                  required: "Confirm Password is required",
+                  validate: (value) =>
+                    value === watch("password") || "Passwords do not match",
+                })}
+                className="flex-1 px-2 py-2 rounded-full bg-transparent outline-none text-gray-700"
+                placeholder="Confirm Password"
+              />
+              <button
+                type="button"
+                className="text-gray-400 pr-3"
+                onClick={toggleConfirmPasswordVisibility}
+              >
+                <img src="/ion_eye-off.svg" alt="eye_icon" />
+              </button>
+            </div>
+            {errors.confirmPassword && (
+              <p className="text-red-500 text-sm">
+                {errors.confirmPassword.message}
+              </p>
             )}
           </div>
 
