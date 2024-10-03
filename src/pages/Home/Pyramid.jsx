@@ -2,13 +2,13 @@ import React, { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import Header from "../../components/Header";
 import SideBar from "../../components/SideBar";
-import { useNavigate, useParams } from "react-router-dom";
+import { json, useNavigate, useParams } from "react-router-dom";
 import { useAddInterventionMutation } from "../../features/Forms/Intervention";
 import toast from "react-hot-toast";
 
 const Pyramid = () => {
   const { register, handleSubmit, setValue, reset } = useForm();
-  const { urn } = useParams();
+  const { urn, childName } = useParams();
   const navigate = useNavigate();
   const [selectedImages, setSelectedImages] = useState([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -120,6 +120,7 @@ const Pyramid = () => {
           </div>
 
           <div className="flex justify-center items-center flex-col my-10 ">
+            <h1 className="text-2xl font-bold mb-3">{childName}</h1>
             <h1 className="text-2xl font-semibold">Select The Domain</h1>
             <div
               data-label="Variety & Volume"
@@ -268,13 +269,13 @@ const Pyramid = () => {
 
       {isModalOpen && (
         <div className="fixed inset-0 bg-gray-600 bg-opacity-75 flex justify-center items-center">
-          <div className="bg-white p-8 rounded-lg w-1/2">
+          <div className="bg-white p-8 rounded-lg w-[60%] ">
             <form onSubmit={handleSubmit(onSubmit)}>
-              <div className="text-center mb-3 text-lg font-semibold ">
+              <div className="text-center mb-6 text-2xl font-semibold ">
                 Add Domain
               </div>
-              <div className="flex flex-col my-2 ">
-                <label>Clinical Prompt</label>
+              <div className="flex flex-col my-4 ">
+                <label className="pb-1">Clinical Prompt</label>
                 <input
                   {...register("clinicalPrompt")}
                   placeholder="Enter clinical prompt"
@@ -283,8 +284,8 @@ const Pyramid = () => {
                 />
               </div>
 
-              <div className="flex flex-col my-2">
-                <label>Priority</label>
+              <div className="flex flex-col my-4">
+                <label className="pb-1">Priority</label>
                 <select
                   {...register("priority")}
                   placeholder="Enter Priority"
@@ -298,8 +299,8 @@ const Pyramid = () => {
                 </select>
               </div>
 
-              <div className="flex flex-col my-2">
-                <label>Recommendation</label>
+              <div className="flex flex-col my-4">
+                <label className="pb-1">Recommendation</label>
                 <input
                   {...register("recommendation")}
                   placeholder="Enter recommendation"
@@ -308,8 +309,8 @@ const Pyramid = () => {
                 />
               </div>
               
-               <div className="flex flex-col my-2">
-                <label>Formulation</label>
+               <div className="flex flex-col my-4">
+                <label className="pb-1">Formulation</label>
                 <input
                   {...register("formulation")}
                   placeholder="Enter Formulation"
@@ -318,7 +319,7 @@ const Pyramid = () => {
                 />
               </div>
 
-              <div className="mt-4 flex justify-center">
+              <div className="mt-8 flex justify-center">
                 <button
                   type="button"
                   onClick={onClose}

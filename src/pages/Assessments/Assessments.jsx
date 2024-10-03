@@ -16,6 +16,7 @@ const Assessments = () => {
     const urn = child.urn.toLowerCase();
     const query = searchQuery.toLowerCase();
     return fullName.includes(query) || urn.includes(query);
+    const childName = `${child.firstName} ${child.lastName}`;
   });
 
   return (
@@ -45,8 +46,9 @@ const Assessments = () => {
               {filteredChildren?.length > 0 ? (
                 filteredChildren.map((child) => (
                   <Link
-                    // to={`/intervention/pyramid/${child.urn}`}
-                    to={`/Buttunpage/${child.urn}`}
+                    to={`/Buttunpage/${child.urn}/${
+                      child.firstName + " " + child.lastName
+                    }`}
                     className="border-2 border-gray-100 p-4 flex justify-between rounded-lg shadow-sm hover:border-primary"
                   >
                     <div>

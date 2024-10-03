@@ -24,7 +24,8 @@ const ChildInformationPage = () => {
     try {
       await childUser(data).unwrap();
       toast.success("Child Detail Added");
-      navigate(`/home/options/${data.urn}`);
+      const childName = data.firstName + " " + data.lastName
+      navigate(`/home/options/${data.urn}/${childName}`);
 
       localStorage.setItem("childData", JSON.stringify(data));
     } catch (err) {
@@ -55,12 +56,12 @@ const ChildInformationPage = () => {
               {/* Child's URN */}
               <div>
                 <input
-                  type="text"
+                  type="number"
                   {...register("urn", {
                     required: "URN is required",
                     minLength: {
-                      value: 9,
-                      message: "URN must be at least 9 characters",
+                      value: /^[0-9]{9}$/,
+                        message: "URN must be 9 digits",
                     },
                   })}
                   placeholder="Child's URN (Unit Record Number)"
@@ -216,12 +217,12 @@ const ChildInformationPage = () => {
 
                 <div className="w-full">
                   <input
-                    type="text"
+                    type="number"
                     {...register("finnumber", {
                       required: "FIN number is required",
                       pattern: {
-                        value: /^[A-Za-z0-9]{6}$/,
-                        message: "FIN number must be 6 characters",
+                        value: /^[0-9]{7}$/,
+                        message: "FIN number must be 7 digits",
                       },
                     })}
                     placeholder="Child FIN Number"
