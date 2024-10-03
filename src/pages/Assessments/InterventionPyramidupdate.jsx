@@ -7,7 +7,7 @@ import toast from "react-hot-toast";
 import { baseUrl } from "../../features/config";
 
 const InterventionPyramidupdate = () => {
-  const { urn, session } = useParams();
+  const { urn, session, childName } = useParams();
   const navigate = useNavigate();
   const [selectedImages, setSelectedImages] = useState([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -190,6 +190,7 @@ const InterventionPyramidupdate = () => {
           </div>
 
           <div className="flex justify-center items-center flex-col my-10 ">
+            <h1 className="text-2xl font-bold mb-4">{childName}</h1>
             <h1 className="text-2xl font-semibold">Select The Domain</h1>
             <div
               data-label="Variety & Volume"

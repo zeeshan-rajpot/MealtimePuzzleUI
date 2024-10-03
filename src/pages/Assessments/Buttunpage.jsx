@@ -6,7 +6,7 @@ import { Link, useParams } from "react-router-dom";
 import axios from "axios";
 
 const Buttunpage = () => {
-  const { urn } = useParams();
+  const { urn, childName } = useParams();
   const [totalSessions, setTotalSessions] = useState(0);
 
   useEffect(() => {
@@ -41,6 +41,9 @@ const Buttunpage = () => {
         <div className="pt-10 w-full lg:w-[75%] xl:w-[80%] 2xl:w-[85%] h-auto">
           <div className="flex flex-col justify-center items-center">
             <div className="w-full max-w-3xl mx-auto flex justify-center items-center flex-col">
+              <h2 className="text-2xl font-bold mb-4">
+                {childName}
+              </h2>
               <h2 className="text-xl font-bold mb-4">
                 Total Sessions: {totalSessions}
               </h2>
@@ -49,7 +52,7 @@ const Buttunpage = () => {
                 {Array.from({ length: totalSessions }, (_, index) => (
                   <>
                     <Link
-                      to={`/interventionupdate/pyramid/${urn}/${index + 1}`}
+                      to={`/interventionupdate/pyramid/${urn}/${index + 1}/${childName}`}
                     >
                       <button
                         key={index}
@@ -66,7 +69,7 @@ const Buttunpage = () => {
               <Link to={`/home/options/${urn}`}>
                 <button className=' className="w-full py-3 px-10 bg-custom-gradient text-white rounded-full  shadow-lg my-8'>
                   {" "}
-                  Add New Intervention{" "}
+                  Add New Assessment{" "}
                 </button>
               </Link>
             </div>

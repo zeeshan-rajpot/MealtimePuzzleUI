@@ -38,7 +38,7 @@ function App() {
       element: <FormulationPyrmaid />,
     },
     {
-      path: "/home/options/:urn",
+      path: "/home/options/:urn/:childName",
       element: <Pyramid />,
     },
     {
@@ -62,7 +62,7 @@ function App() {
       element: <Profile />,
     }, 
      {
-      path: "/Buttunpage/:urn",
+      path: "/Buttunpage/:urn/:childName",
       element: <Buttunpage />,
     },
     {
@@ -75,7 +75,7 @@ function App() {
     },
     
     {
-      path: "/interventionupdate/pyramid/:urn/:session",
+      path: "/interventionupdate/pyramid/:urn/:session/:childName",
       element: <InterventionPyramidupdate />,
     },
     
