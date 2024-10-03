@@ -15,7 +15,7 @@ const Home = () => {
             <Link to="/home/childinfo">
               <button className=' className="w-full py-3 px-10 bg-custom-gradient text-white rounded-full  shadow-lg my-8'>
                 {" "}
-                Add New Intervention{" "}
+                Add New Assessment {" "}
               </button>
             </Link>
           </div>

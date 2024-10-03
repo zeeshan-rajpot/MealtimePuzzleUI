@@ -45,6 +45,7 @@ const Pyramid = () => {
       const imageDataForCurrentImage = imageData[imageId] || {};
       setValue("clinicalPrompt", imageDataForCurrentImage.clinicalPrompt || "");
       setValue("priority", imageDataForCurrentImage.priority || "");
+      setValue("formulation", imageDataForCurrentImage.formulation || "");
       setValue("recommendation", imageDataForCurrentImage.recommendation || "");
     }
   }, [imageId, setValue, imageData]);
@@ -58,6 +59,7 @@ const Pyramid = () => {
           domainName: imageData[imageId]?.label || "",
           clinicalPrompt: imageData[imageId]?.clinicalPrompt || "",
           priority: imageData[imageId]?.priority || "",
+          formulation: imageData[imageId]?.formulation || "",
           recommendation: imageData[imageId]?.recommendation || "",
         }));
 
@@ -301,6 +303,16 @@ const Pyramid = () => {
                 <input
                   {...register("recommendation")}
                   placeholder="Enter recommendation"
+                  className="input-field border-2 py-1"
+                  required
+                />
+              </div>
+              
+               <div className="flex flex-col my-2">
+                <label>Formulation</label>
+                <input
+                  {...register("formulation")}
+                  placeholder="Enter Formulation"
                   className="input-field border-2 py-1"
                   required
                 />

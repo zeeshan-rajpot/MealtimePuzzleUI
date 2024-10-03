@@ -123,6 +123,12 @@ const HistoryDetail = () => {
                         <p className="border-b-2 mb-3">
                           {intervention.clinicalPrompt}
                         </p>
+                         <p className="text-sm font-medium mb-1">
+                          Formulation :
+                        </p>
+                        <p className="border-b-2 mb-3">
+                          {intervention.formulation}
+                        </p>
                         <p className="text-sm font-medium mb-1">
                           Recommendation:
                         </p>

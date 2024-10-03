@@ -24,7 +24,7 @@ const ChildInformationPage = () => {
     try {
       await childUser(data).unwrap();
       toast.success("Child Detail Added");
-      navigate(`/home/formulationOptions/${data.urn}`);
+      navigate(`/home/options/${data.urn}`);
 
       localStorage.setItem("childData", JSON.stringify(data));
     } catch (err) {
@@ -59,8 +59,8 @@ const ChildInformationPage = () => {
                   {...register("urn", {
                     required: "URN is required",
                     minLength: {
-                      value: 6,
-                      message: "URN must be at least 6 characters",
+                      value: 9,
+                      message: "URN must be at least 9 characters",
                     },
                   })}
                   placeholder="Child's URN (Unit Record Number)"
@@ -207,7 +207,7 @@ const ChildInformationPage = () => {
                     <option value="">Select Gender</option>
                     <option value="male">Male</option>
                     <option value="female">Female</option>
-                    <option value="intersex">Intersex</option>
+                    <option value="intersex">Other</option>
                   </select>
                   {errors.gender && (
                     <p className="text-red-500 ">{errors.gender.message}</p>
