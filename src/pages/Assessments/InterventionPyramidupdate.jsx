@@ -17,6 +17,7 @@ const InterventionPyramidupdate = () => {
   const [modalData, setModalData] = useState({
     clinicalPrompt: "",
     priority: "",
+    formulation:"",
     recommendation: "",
   });
   const [interventionData, setInterventionData] = useState(null);
@@ -58,12 +59,14 @@ const InterventionPyramidupdate = () => {
       setModalData({
         clinicalPrompt: entry.clinicalPrompt,
         priority: entry.priority,
+        formulation: entry.formulation,
         recommendation: entry.recommendation,
       });
     } else {
       setModalData({
         clinicalPrompt: "",
         priority: "",
+        formulation: "",
         recommendation: "",
       });
     }
@@ -76,6 +79,7 @@ const InterventionPyramidupdate = () => {
     if (
       !modalData.clinicalPrompt ||
       !modalData.priority ||
+      !modalData.formulation ||
       !modalData.recommendation
     ) {
       toast.error("All fields are required");
@@ -125,6 +129,7 @@ const InterventionPyramidupdate = () => {
             domainName: entry?.domainname || label,
             clinicalPrompt: entry?.clinicalPrompt || "",
             priority: entry?.priority || "",
+            formulation: entry?.formulation || "",
             recommendation: entry?.recommendation || "",
           };
         });
@@ -162,7 +167,7 @@ const InterventionPyramidupdate = () => {
 
     // If the entry exists and has valid data, set opacity to 1, otherwise 0.5
     return entry &&
-      (entry.clinicalPrompt || entry.priority || entry.recommendation)
+      (entry.clinicalPrompt || entry.priority || entry.recommendation || entry.formulation)
       ? 1
       : 0.5;
   };
@@ -385,6 +390,22 @@ const InterventionPyramidupdate = () => {
                   }))
                 }
                 placeholder="Enter recommendation"
+                className="input-field border-2 py-1"
+                required
+              />
+            </div> 
+            
+            <div className="flex flex-col my-2">
+              <label>Formulation</label>
+              <input
+                value={modalData.formulation}
+                onChange={(e) =>
+                  setModalData((prev) => ({
+                    ...prev,
+                    formulation: e.target.value,
+                  }))
+                }
+                placeholder="Enter Formulation"
                 className="input-field border-2 py-1"
                 required
               />

@@ -26,7 +26,7 @@ const Assessments = () => {
         <div className="pt-10 w-full lg:w-[75%] xl:w-[80%] 2xl:w-[85%] h-auto">
           <div className="flex flex-col justify-center items-center">
             <div className="flex justify-between mb-6 w-full px-[7rem] relative">
-              <h1 className="text-2xl font-bold text-center ">Intervention </h1>
+              <h1 className="text-2xl font-bold text-center ">Assessment </h1>
               <input
                 type="text"
                 placeholder="Search...."

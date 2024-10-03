@@ -103,6 +103,7 @@ const DetailPage = () => {
     navigate("/home");
   };
 
+  console.log(interventionData)
   return (
     <>
       <Header />
@@ -152,7 +153,9 @@ const DetailPage = () => {
                   <div key={index} className="space-y-6">
                     <h3 className="mt-8 text-lg font-semibold">{step.domainname}</h3>
                     <p className="text-sm font-medium">Clinical Prompt: </p>
-                    <p className="border-b-2 ">{step.clinicalPrompt || "not found"}</p>
+                    <p className="border-b-2 ">{step.clinicalPrompt || "not found"}</p>  
+                      <p className="text-sm font-medium">Formulation : </p>
+                    <p className="border-b-2 ">{step.formulation || "not found"}</p>
                     <p className="text-sm font-medium">Recommendation: </p>
                     <p className="border-b-2 ">{step.recommendation || "not found"}</p>
                   </div>

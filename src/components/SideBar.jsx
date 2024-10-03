@@ -22,17 +22,17 @@ const menuItems = [
     inactiveLogo: " /solar_user-linear (1).svg",
   },
   {
-    name: "Intervention",
+    name: "Assessment",
     route: "/intervention",
     activeLogo: "/Layer_1 (2).svg",
     inactiveLogo: "/Layer_1 (1).svg",
   },
-  {
-    name: "Formulation",
-    route: "/childData",
-    activeLogo: "/fluent_clipboard-math-formula-20-regular.svg",
-    inactiveLogo: "/fluent_clipboard-math-formula-20-regular.svg",
-  },
+  // {
+  //   name: "Formulation",
+  //   route: "/childData",
+  //   activeLogo: "/fluent_clipboard-math-formula-20-regular.svg",
+  //   inactiveLogo: "/fluent_clipboard-math-formula-20-regular.svg",
+  // },
   {
     name: "Settings",
     route: "/settings",
