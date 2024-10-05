@@ -64,7 +64,7 @@ const Pyramid = () => {
         }));
 
         const childUrn = urn;
-
+console.log(domains)
         const response = await addIntervention({ childUrn, domains }).unwrap();
         console.log("Intervention added successfully:", response);
         localStorage.setItem("session", response.session);
