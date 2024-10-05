@@ -243,7 +243,7 @@ const Pyramid = () => {
               </div>
               <div
                 data-label="Medical / Nutrition"
-                onClick={() => handleImageClick(16, "Medical or Nutrition")}
+                onClick={() => handleImageClick(16, "Medical / Nutrition")}
                 style={{ opacity: getImageOpacity(16) }}
               >
                 <img src="/Frame 1261153632.svg" alt="food" />
