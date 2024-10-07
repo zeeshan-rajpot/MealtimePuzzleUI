@@ -14,8 +14,8 @@ const Pyramid = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [currentImageLabel, setCurrentImageLabel] = useState("");
   const [imageId, setImageId] = useState(null);
-  const [imageData, setImageData] = useState({}); // Store data for each image
-  const [imageDataCounter, setImageDataCounter] = useState(0); // Counter for images with data
+  const [imageData, setImageData] = useState({});
+  const [imageDataCounter, setImageDataCounter] = useState(0);
 
   const [addIntervention, { isLoading, isError, error }] =
     useAddInterventionMutation();
@@ -50,33 +50,45 @@ const Pyramid = () => {
     }
   }, [imageId, setValue, imageData]);
 
-  const handleNextClick = async () => {
+  const handleNextClick = () => {
     if (selectedImages.length === 0) {
       alert("Select at least one category");
     } else {
-      try {
-        const domains = selectedImages.map((imageId) => ({
-          domainName: imageData[imageId]?.label || "",
-          clinicalPrompt: imageData[imageId]?.clinicalPrompt || "",
-          priority: imageData[imageId]?.priority || "",
-          formulation: imageData[imageId]?.formulation || "",
-          recommendation: imageData[imageId]?.recommendation || "",
-        }));
-
-        const childUrn = urn;
-
-        const response = await addIntervention({ childUrn, domains }).unwrap();
-        console.log("Intervention added successfully:", response);
-        localStorage.setItem("session", response.session);
-        toast.success("Intervention added successfully!");
-
-        navigate(`/home/detailpage/${urn}/${response.session}`);
-      } catch (err) {
-        console.error("Failed to add intervention:", err);
-        toast.error("Failed to add intervention");
-      }
+      setIsHistoryModalOpen(true); // Open the modal to enter child history
     }
   };
+
+  const handleHistorySubmit = async () => {
+    try {
+      const domains = selectedImages.map((imageId) => ({
+        domainName: imageData[imageId]?.label || "",
+        clinicalPrompt: imageData[imageId]?.clinicalPrompt || "",
+        priority: imageData[imageId]?.priority || "",
+        formulation: imageData[imageId]?.formulation || "",
+        recommendation: imageData[imageId]?.recommendation || "",
+      }));
+  
+      const childUrn = urn;
+  
+      const response = await addIntervention({
+        childUrn,
+        childHistory, // Add child history to the payload
+        domains,
+      }).unwrap();
+  
+      console.log("Intervention added successfully:", response);
+      localStorage.setItem("session", response.session);
+      toast.success("Intervention added successfully!");
+  
+      navigate(`/home/detailpage/${urn}/${response.session}`);
+    } catch (err) {
+      console.error("Failed to add intervention:", err);
+      toast.error("Failed to add intervention");
+    } finally {
+      setIsHistoryModalOpen(false); // Close the modal after submission
+    }
+  };
+  
 
   const onClose = () => {
     setIsModalOpen(false);
@@ -91,9 +103,7 @@ const Pyramid = () => {
       },
     };
     setImageData(updatedImageData);
-    setImageDataCounter(
-      Object.keys(updatedImageData).length // Update counter based on image data
-    );
+    setImageDataCounter(Object.keys(updatedImageData).length);
     setIsModalOpen(false);
   };
 
@@ -269,10 +279,10 @@ const Pyramid = () => {
 
       {isModalOpen && (
         <div className="fixed inset-0 bg-gray-600 bg-opacity-75 flex justify-center items-center">
-          <div className="bg-white p-8 rounded-lg w-[60%] ">
+          <div className="bg-white p-8 rounded-lg w-[70%] ">
             <form onSubmit={handleSubmit(onSubmit)}>
               <div className="text-center mb-6 text-2xl font-semibold ">
-                Add Domain
+                {currentImageLabel ? `Add ${currentImageLabel}` : "Add Domain"}{" "}
               </div>
               <div className="flex flex-col my-4 ">
                 <label className="pb-1">Clinical Prompt</label>
@@ -308,8 +318,8 @@ const Pyramid = () => {
                   required
                 />
               </div>
-              
-               <div className="flex flex-col my-4">
+
+              <div className="flex flex-col my-4">
                 <label className="pb-1">Formulation</label>
                 <input
                   {...register("formulation")}
@@ -338,6 +348,44 @@ const Pyramid = () => {
           </div>
         </div>
       )}
+
+
+{isHistoryModalOpen && (
+  <div className="fixed inset-0 bg-gray-600 bg-opacity-75 flex justify-center items-center">
+    <div className="bg-white p-8 rounded-lg w-[60%]">
+      <div className="text-center mb-6 text-2xl font-semibold">
+        Enter Child History
+      </div>
+      <div className="flex flex-col my-4">
+        <label className="pb-1">Child History</label>
+        <textarea
+          className="border-2 py-2 px-3 w-full"
+          rows="4"
+          placeholder="Enter child history here..."
+          value={childHistory}
+          onChange={(e) => setChildHistory(e.target.value)}
+          required
+        ></textarea>
+      </div>
+      <div className="mt-8 flex justify-center">
+        <button
+          type="button"
+          onClick={() => setIsHistoryModalOpen(false)}
+          className="bg-red-500 text-white px-8 py-2 rounded-full mr-2"
+        >
+          Cancel
+        </button>
+        <button
+          onClick={handleHistorySubmit}
+          className="bg-custom-gradient text-white px-8 py-2 rounded-full"
+        >
+          Submit
+        </button>
+      </div>
+    </div>
+  </div>
+)}
+
     </>
   );
 };
