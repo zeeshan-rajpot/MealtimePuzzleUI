@@ -5,6 +5,8 @@ import SideBar from "../../components/SideBar";
 import { json, useNavigate, useParams } from "react-router-dom";
 import { useAddInterventionMutation } from "../../features/Forms/Intervention";
 import toast from "react-hot-toast";
+import axios from 'axios';
+
 
 const Pyramid = () => {
   const { register, handleSubmit, setValue, reset } = useForm();
@@ -70,20 +72,38 @@ const Pyramid = () => {
   
       const childUrn = urn;
   
-      const response = await addIntervention({
+      const payload = {
         childUrn,
-        childHistory, // Add child history to the payload
+        childHistory: childHistory || "", // Ensure it's not null or undefined
         domains,
-      }).unwrap();
+      };
   
-      console.log("Intervention added successfully:", response);
-      localStorage.setItem("session", response.session);
-      toast.success("Intervention added successfully!");
+      console.log("Payload being sent:", payload);
   
-      navigate(`/home/detailpage/${urn}/${response.session}`);
+      // Fetch token from local storage (or wherever it's stored)
+      const token = localStorage.getItem('token'); // Replace with your token retrieval method
+  
+      // Make API call using axios
+      const response = await axios.post('http://localhost:5001/api/post/Intervention', payload, {
+        headers: {
+          'Content-Type': 'application/json', // Ensure JSON content type
+          Authorization: `Bearer ${token}`, // Add token to Authorization header
+        }
+      });
+  
+      console.log("Assessment added successfully:", response.data);
+  
+      // Store session
+      localStorage.setItem('session', response.data.session);
+  
+      // Show success message
+      toast.success("Assesment added successfully!");
+  
+      // Navigate to detail page
+      navigate(`/home/detailpage/${urn}/${response.data.session}`);
     } catch (err) {
-      console.error("Failed to add intervention:", err);
-      toast.error("Failed to add intervention");
+      console.error("Failed to add Assessment:", err);
+      toast.error("Failed to add Assessment");
     } finally {
       setIsHistoryModalOpen(false); // Close the modal after submission
     }
@@ -109,8 +129,18 @@ const Pyramid = () => {
 
   const getImageOpacity = (imageId) => {
     // If the image has data, opacity should be 1, otherwise 0.5
-    return imageData[imageId] ? 1 : 0.5;
+    return imageData[imageId] ? 1 : 0.3;
   };
+
+
+  
+
+
+  const [isHistoryModalOpen, setIsHistoryModalOpen] = useState(false); // Initialize modal state
+  const [childHistory, setChildHistory] = useState(""); // State for child history text
+
+
+
 
   return (
     <>

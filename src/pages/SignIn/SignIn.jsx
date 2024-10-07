@@ -44,10 +44,11 @@ const SignIn = () => {
       />
       <div className="w-full max-w-md space-y-8 p-6">
         <div className="flex justify-center"></div>
+        <img src="/CDS Logo.PNG" alt="" className="w-[50%] mx-auto" />
 
-        <h2 className="text-center text-2xl font-medium text-gray-900">
+        {/* <h2 className="text-center text-2xl font-medium text-gray-900">
           Sign In
-        </h2>
+        </h2> */}
 
         <form className="mt-8 space-y-6" onSubmit={handleSubmit(onSubmit)}>
           <div className="relative">
