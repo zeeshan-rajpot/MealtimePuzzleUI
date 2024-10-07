@@ -303,6 +303,44 @@ const SignUp = () => {
             )}
           </div>
 
+          <div className="relative">
+            <label htmlFor="role" className="sr-only">
+              Select Role
+            </label>
+            <div className="flex items-center border rounded-full p-2 shadow-md">
+              <span className="pl-3 pr-2">
+                <img
+                  src="/fluent_person-32-light.svg"
+                  alt="password"
+                  className="w-8 h-8"
+                />
+              </span>
+              <select
+                id="role"
+                type="text"
+                {...register("option", {
+                  required: "Confirm Password is required",
+                })}
+                className="flex-1 px-2 py-2 rounded-full bg-transparent outline-none text-gray-700"
+                placeholder="Confirm Password"
+              >
+                <option value="">Select Role </option>
+                <option value="Psychologist">Psychologist</option>
+                <option value="Speech Pathologist">Speech Pathologist</option>
+                <option value="Occupational therapist">
+                  Occupational therapist
+                </option>
+                <option value="Paediatric Dietitian">
+                  Paediatric Dietitian
+                </option>
+                <option value="Paediatrician">Paediatrician</option>
+              </select>
+            </div>
+            {errors.role && (
+              <p className="text-red-500 text-sm">{errors.role.message}</p>
+            )}
+          </div>
+
           <div>
             <button
               type="submit"

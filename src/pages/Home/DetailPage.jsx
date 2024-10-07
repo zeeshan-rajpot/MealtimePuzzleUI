@@ -2,10 +2,11 @@ import React, { useEffect, useState, useRef } from "react";
 import Header from "../../components/Header";
 import SideBar from "../../components/SideBar";
 import { useNavigate, useParams } from "react-router-dom";
+import { useReactToPrint } from "react-to-print";
 
 const DetailPage = () => {
   const { urn, session } = useParams();
-  console.log(urn, session);
+  const reportRef = useRef(null);
 
   const navigate = useNavigate();
   const handleBack = () => {
@@ -25,14 +26,14 @@ const DetailPage = () => {
           {
             method: "GET",
             headers: {
-              Authorization: `Bearer ${token}`, // Add the token to the Authorization header
-              "Content-Type": "application/json", // Specify the content type if necessary
+              Authorization: `Bearer ${token}`,
+              "Content-Type": "application/json",
             },
           }
         );
 
         const data = await response.json();
-        console.log(data);
+        // console.log(data);
         setInterventionData(data);
       } catch (error) {
         console.error("Error fetching intervention data:", error);
@@ -42,140 +43,326 @@ const DetailPage = () => {
     };
 
     fetchInterventionData();
-
-    const intervalId = setInterval(fetchInterventionData, 2000);
-
-    // Cleanup the interval on component unmount
-    return () => clearInterval(intervalId);
   }, [urn, session]);
 
-  const displayDataOrFallback = (field) => {
-    return childInfo && childInfo[field] ? childInfo[field] : "not found";
-  };
+  function calculateAge(birthDate, appointmentDate) {
+    let years = appointmentDate.getFullYear() - birthDate.getFullYear();
+    let months = appointmentDate.getMonth() - birthDate.getMonth();
 
-  const displaySortedData = () => {
-    const stepperInfo = JSON.parse(localStorage.getItem("stepperInfo")) || {};
-
-    const priorityMap = {
-      high: 3,
-      moderate: 2,
-      low: 1,
-    };
-
-    const stepperArray = Object.keys(stepperInfo).map((key) => ({
-      id: key,
-      ...stepperInfo[key],
-      priorityValue: priorityMap[stepperInfo[key].priority] || 0,
-    }));
-
-    // Sort the array by priorityValue in descending order
-    const sortedStepperArray = stepperArray.sort(
-      (a, b) => b.priorityValue - a.priorityValue
-    );
-
-    return sortedStepperArray;
-  };
-
-  const sortedData = displaySortedData();
-
-  const handleSave = () => {
-    const token = localStorage.getItem("token");
-    localStorage.clear();
-    if (token) {
-      localStorage.setItem("token", token);
+    if (months < 0) {
+      years--;
+      months += 12;
     }
-    navigate("/home");
-  };
 
-  // console.log(interventionData);
+    return `${years} year(s), ${months} month(s)`;
+  }
+
+  const handlePrint = useReactToPrint({
+    content: () => reportRef.current,
+    documentTitle: `Clinical_Report_${urn}`,
+    onBeforePrint: () => console.log("Preparing to print..."),
+    onAfterPrint: () => console.log("Print completed!"),
+  });
 
   return (
     <>
       <Header />
       <section className="flex flex-col lg:flex-row justify-between gap-4 h-auto w-full">
         <SideBar />
-        <div className="pt-10 w-full lg:w-[75%] xl:w-[80%] 2xl:w-[85%] h-auto">
-          <div className="flex mt-4" onClick={handleBack}>
-            <img src="/ion_chevron-back.svg" alt="back_arrow" />
-            <button className="text-base">Back</button>
-          </div>
+        <div
+          ref={reportRef}
+          className="pt-10 w-full lg:w-[75%] xl:w-[80%] 2xl:w-[85%] h-auto"
+        >
+          <div className="w-full max-w-3xl mx-auto mb-20 ">
+            <div className="flex space-x-20">
+              <img src="/logo.PNG" alt="logo" className="h-12" />
+              <img src="/CDS Logo.PNG" alt="logo-1" className="h-28" />
+              <div className="flex flex-col">
+                <div>URN: {interventionData?.child?.urn || "urn"}</div>
+                <div>
+                  Family name:{" "}
+                  {interventionData?.child?.firstName || "firstname"}{" "}
+                  {interventionData?.child?.lastName || "lastname"}
+                </div>
+                <div>
+                  Given name(s):{" "}
+                  {interventionData?.child?.firstName || "firstname"}{" "}
+                  {interventionData?.child?.lastName || "lastname"}{" "}
+                </div>
 
-          <div className="w-full max-w-3xl mx-auto pb-12">
-            <div className="flex justify-between mb-6">
-              <h2 className="text-2xl font-semibold ">Child Information</h2>
-              <h2 className="text-2xl font-semibold ">
-                Session {interventionData?.sessionNumber}
-              </h2>
-            </div>
-
-            {loading ? (
-              <p>Loading intervention data...</p>
-            ) : (
-              <div className="mt-4 space-y-6">
-                <p className="text-sm font-medium">
-                  Child's URN(Unit Record Number)
-                </p>
-                <p className="border-b-2">{urn}</p>
-                <p className="text-sm font-medium ">Child First Name:</p>
-                <p className="border-b-2 py-1">
-                  {interventionData?.child?.firstName || "firstname"}
-                </p>
-                <p className="text-sm font-medium">Child Last Name:</p>
-                <p className="border-b-2 ">
-                  {interventionData?.child?.lastName || "not found"}
-                </p>
-                <p className="text-sm font-medium">Parent/Caretaker Name:</p>
-                <p className="border-b-2 ">
-                  {interventionData?.child?.parentName || "not found"}
-                </p>
-                <p className="text-sm font-medium">Date of Birth:</p>
-                <p className="border-b-2 ">
-                  {interventionData?.child?.dateOfBirth || "not found"}
-                </p>
-
-                <p className="text-sm font-medium">Email:</p>
-                <p className="border-b-2 ">
-                  {interventionData?.child?.contactEmail || "not found"}
-                </p>
-                <p className="text-sm font-medium">Contact Number:</p>
-                <p className="border-b-2 ">
-                  {interventionData?.child?.contactPhone || "not found"}
-                </p>
+                <div className="flex space-x-10">
+                  <div>
+                    Date of birth:{" "}
+                    {new Date(
+                      interventionData?.child?.dateOfBirth
+                    ).toLocaleDateString() || "dob"}{" "}
+                  </div>
+                  <div>Sex: {interventionData?.child?.gender || "gender"} </div>
+                </div>
+                <div>
+                  FIN: {interventionData?.child?.finnumber || "finNumber"}
+                </div>
               </div>
-            )}
-
-            <div className="mt-10">
-              <h2 className="text-2xl font-semibold ">Mealtime</h2>
-
-              {loading
-                ? null
-                : interventionData?.sessionEntries?.map((step, index) => (
-                    <div key={index} className="space-y-6">
-                      <h3 className="mt-8 text-lg font-semibold">
-                        {step.domainname}
-                      </h3>
-                      <p className="text-sm font-medium">Clinical Prompt: </p>
-                      <p className="border-b-2 ">
-                        {step.clinicalPrompt || "not found"}
-                      </p>
-                      <p className="text-sm font-medium">Formulation : </p>
-                      <p className="border-b-2 ">
-                        {step.formulation || "not found"}
-                      </p>
-                      <p className="text-sm font-medium">Recommendation: </p>
-                      <p className="border-b-2 ">
-                        {step.recommendation || "not found"}
-                      </p>
-                    </div>
-                  ))}
             </div>
-
-            <div className="mt-10 flex justify-center space-x-4">
-              <button className="border-2 border-primary text-primary px-28 py-2 rounded-full flex">
-                <img src="/lets-icons_print-duotone.svg" alt="print" />
-                Download PDF
-              </button>
+            <div className="flex flex-col ms-32 ">
+              <div className="text-xl font-normal">Gold Coast Health</div>
+              <div className="text-2xl font-bold -ms-2">CDS MEALTIME</div>
+              <div className="text-2xl font-bold -ms-5">CLINICAL REPORT</div>
             </div>
+            <div className="mt-4 text-base font-normal">
+              Facility: Southport Health Precinct
+            </div>
+            <div className="mt-16 text-center">
+              <div className="text-lg font-bold">
+                {" "}
+                Child Development Service (CDS)
+              </div>
+              <div className="text-lg font-bold">Mealtime Clinical Report</div>
+            </div>
+            <div className="mt-8 text-lg font-normal">Parent / Carer</div>
+            <div className="text-lg font-normal">Street Address</div>
+            <div className="flex space-x-8">
+              <div className="text-lg font-normal">Suburb</div>
+              <div className="text-lg  font-normal">QLD</div>
+              <div className="text-lg font-normal">Postcode</div>
+            </div>
+            <div className="mt-16">
+              <table className="w-full max-w-3xl mx-auto">
+                <thead>
+                  <tr className=" border-2">
+                    <th className="border-b-2 text-lg font-normal">
+                      Patient Name:
+                    </th>
+                    <th className="border-l-2 text-lg font-normal">
+                      {" "}
+                      {interventionData?.child?.firstName || "firstname"}{" "}
+                      {interventionData?.child?.lastName || "lastname"}
+                    </th>
+                  </tr>
+                  <tr className=" border-2">
+                    <th className="border-b-2 text-lg font-normal">
+                      Date of Birth:
+                    </th>
+                    <th className="border-l-2 text-lg font-normal">
+                      {new Date(
+                        interventionData?.child?.dateOfBirth
+                      ).toLocaleDateString() || "dob"}{" "}
+                    </th>
+                  </tr>
+                  <tr className=" border-2">
+                    <th className="border-b-2 text-lg font-normal">
+                      Chronological age at time of Initial appointment:
+                    </th>
+                    <th className="border-l-2 text-lg font-normal">
+                      {interventionData?.child?.dateOfBirth
+                        ? calculateAge(
+                            new Date(interventionData.child.dateOfBirth),
+                            new Date()
+                          )
+                        : "age not available"}{" "}
+                    </th>
+                  </tr>
+                  <tr className=" border-2">
+                    <th className="border-b-2 text-lg font-normal">
+                      Date of Report:
+                    </th>
+                    <th className="border-l-2 text-lg font-normal">
+                      {new Date().toLocaleDateString()}
+                    </th>
+                  </tr>
+                </thead>
+              </table>
+            </div>
+            <div className="mt-12">
+              <p className="text-lg font-normal">
+                {interventionData?.child?.firstName}{" "}
+                {interventionData?.child?.lastName} attended for evaluation by
+                the multi-disciplinary team consisting of:
+              </p>
+              <table className="w-full max-w-3xl mx-auto mt-8">
+                <thead>
+                  <tr>
+                    <th className=" text-lg font-normal">[Name]</th>
+                    <th className=" text-lg font-normal">Paediatrician</th>
+                  </tr>
+                  <tr>
+                    <th className=" text-lg font-normal">[Name]</th>
+                    <th className=" text-lg font-normal">
+                      Speech Language Patholog
+                    </th>
+                  </tr>
+                  <tr>
+                    <th className=" text-lg font-normal">[Name]</th>
+                    <th className=" text-lg font-normal">Psychologist</th>
+                  </tr>
+                  <tr>
+                    <th className=" text-lg font-normal">[Name]</th>
+                    <th className=" text-lg font-normal">
+                      Occupational Therapist
+                    </th>
+                  </tr>
+                </thead>
+              </table>
+            </div>
+            <div className="mt-16 relative">
+              <p className="bg-black text-white text-lg font-normal ps-2">
+                BACKGROUND INFORMATION:
+              </p>
+              <p>
+                {interventionData?.child?.firstName}{" "}
+                {interventionData?.child?.lastName} was referred to the Child
+                Development Service by [Referrer] in{" "}
+                {new Date(
+                  interventionData?.child?.dateOfBirth
+                ).toLocaleDateString()}{" "}
+                with concerns regarding [reason for referral] .
+              </p>
+              <p className="mt-8">
+                {interventionData?.child?.firstName}{" "}
+                {interventionData?.child?.lastName} is a{" "}
+                {interventionData?.child?.dateOfBirth
+                  ? calculateAge(
+                      new Date(interventionData.child.dateOfBirth),
+                      new Date()
+                    )
+                  : "age not available"}{" "}
+                old who lives with [describe living arrangements without
+                sensitive info] . They attend [childcare / school name] [Number
+                of days] days per week.
+              </p>
+              <p className="mt-8">
+                At the initial appointment, {interventionData?.child?.firstName}{" "}
+                {interventionData?.child?.lastName}’s parent{" "}
+                {interventionData?.child?.parentName} raised the following
+                questions and concerns:
+                <li>[Add]</li>
+              </p>
+              <p className="mt-8">
+                At the initial appointment, {interventionData?.child?.firstName}{" "}
+                {interventionData?.child?.lastName}’s childcare/ kindy/ school
+                also reported the following concerns:
+                <li>[Add]</li>
+              </p>
+              <p className="mt-8">
+                At the initial appointment, {interventionData?.child?.firstName}{" "}
+                {interventionData?.child?.lastName}’s has previously been or is
+                currently involved with the following services:
+                <li>
+                  [add any previous assessments or support services seen,
+                  including when and where]{" "}
+                </li>
+              </p>
+              <div>
+                <img
+                  src="/qr.PNG"
+                  alt="qrcode"
+                  className="absolute -left-32 top-32"
+                />
+              </div>
+            </div>
+            <div className="flex justify-between items-start mt-6 ">
+              {/* Office Column */}
+              <div>
+                <h3 className="font-bold">Office</h3>
+                <p>Child Development Service</p>
+                <p>Level 3, Southport Health Precinct</p>
+                <p>16 - 30 High Street, Southport, Qld, 4215</p>
+              </div>
+
+              {/* Postal Column */}
+              <div>
+                <h3 className="font-bold">Postal</h3>
+                <p>Community Child Health</p>
+                <p>1 Hospital Blvd,</p>
+                <p>Southport, Qld, 4215</p>
+              </div>
+
+              {/* Phone and Fax Column */}
+              <div>
+                <h3 className="font-bold">Phone</h3>
+                <p>(07) 5687 9183</p>
+              </div>
+              <div>
+                <h3 className="font-bold ">Fax</h3>
+                <p>(07) 5687 9168</p>
+              </div>
+            </div>
+            <div className="p-4 space-y-6 mt-12">
+              {/* Report Header */}
+              <div className="flex justify-between ">
+                <h2 className="font-bold">CDS Mealtime Clinical Report</h2>
+              </div>
+              <div className="flex justify-between pb-32">
+                <div>
+                  Name: {interventionData?.child.firstName}{" "}
+                  {interventionData?.child.lastName}
+                </div>
+                <div>
+                  DOB:{" "}
+                  {new Date(
+                    interventionData?.child?.dateOfBirth
+                  ).toLocaleString()}
+                </div>
+                <div>URN:{interventionData?.child?.urn}</div>
+              </div>
+
+              {/* Main Body */}
+              <p>
+                We will be glad to respond to questions arising out of this
+                assessment by contacting CDS.
+              </p>
+
+              {/* Professional Contacts */}
+              <div className="grid grid-cols-2 gap-6">
+                {/* Left column */}
+                <div>
+                  <div className="font-bold ">[Name]</div>
+                  <p>Paediatrician</p>
+                </div>
+                <div>
+                  <div className="font-bold ">[Name]</div>
+                  <p>Speech Language Pathologist</p>
+                </div>
+                <div>
+                  <div className="font-bold ">[Name]</div>
+                  <p>Psychologist</p>
+                </div>
+                <div>
+                  <div className="font-bold ">[Name]</div>
+                  <p>Occupational Therapist</p>
+                </div>
+              </div>
+
+              {/* cc Section */}
+              <div className="mt-4">
+                <p>cc</p>
+                <ul className="list-none">
+                  <li>Parents: [address]</li>
+                  <li>Referrer: [address]</li>
+                  <li>GP: [address]</li>
+                  <li>
+                    <a
+                      href="mailto:unitingcare.earlychildhood@ndis.gov.au"
+                      className="text-blue-600 underline"
+                    >
+                      unitingcare.earlychildhood@ndis.gov.au
+                    </a>{" "}
+                    (via secure server)
+                  </li>
+                  <li>Private Provider [address]</li>
+                  <li>GCHHS iEMR</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+          <div className="my-10 flex justify-center space-x-4">
+            <button
+              className="border-2 border-primary text-primary px-28 py-2 rounded-full flex"
+              onClick={handlePrint}
+            >
+              <img src="/lets-icons_print-duotone.svg" alt="print" />
+              Download PDF
+            </button>
           </div>
         </div>
       </section>
