@@ -13,11 +13,13 @@ const InterventionPyramidupdate = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [currentImageLabel, setCurrentImageLabel] = useState("");
   const [imageData, setImageData] = useState({});
+  const [isHistoryModalOpen, setIsHistoryModalOpen] = useState(false);
+  const [childHistory, setChildHistory] = useState("");
   const [imageDataCounter, setImageDataCounter] = useState(0);
   const [modalData, setModalData] = useState({
     clinicalPrompt: "",
     priority: "",
-    formulation:"",
+    formulation: "",
     recommendation: "",
   });
   const [interventionData, setInterventionData] = useState(null);
@@ -75,7 +77,6 @@ const InterventionPyramidupdate = () => {
   };
 
   const handleModalSave = () => {
-    
     if (
       !modalData.clinicalPrompt ||
       !modalData.priority ||
@@ -167,7 +168,10 @@ const InterventionPyramidupdate = () => {
 
     // If the entry exists and has valid data, set opacity to 1, otherwise 0.5
     return entry &&
-      (entry.clinicalPrompt || entry.priority || entry.recommendation || entry.formulation)
+      (entry.clinicalPrompt ||
+        entry.priority ||
+        entry.recommendation ||
+        entry.formulation)
       ? 1
       : 0.5;
   };
@@ -339,9 +343,9 @@ const InterventionPyramidupdate = () => {
 
       {isModalOpen && (
         <div className="fixed inset-0 bg-gray-600 bg-opacity-75 flex justify-center items-center">
-          <div className="bg-white p-8 rounded-lg w-1/2">
+          <div className="bg-white p-8 rounded-lg w-[70%]">
             <div className="text-center mb-3 text-lg font-semibold ">
-              Edit Domain
+              {currentImageLabel ? `Edit ${currentImageLabel}` : "Add Domain"}
             </div>
 
             <div className="flex flex-col my-2">
@@ -394,8 +398,8 @@ const InterventionPyramidupdate = () => {
                 className="input-field border-2 py-1"
                 required
               />
-            </div> 
-            
+            </div>
+
             <div className="flex flex-col my-2">
               <label>Formulation</label>
               <input

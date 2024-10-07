@@ -10,6 +10,8 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@fileforge/react-print": "^0.1.150",
+    "@react-pdf/renderer": "^4.0.0",
     "@reduxjs/toolkit": "^2.2.7",
     "axios": "^1.7.7",
     "framer-motion": "^11.5.4",
