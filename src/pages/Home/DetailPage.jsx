@@ -19,6 +19,7 @@ const DetailPage = () => {
   // Fetch intervention data from API
   useEffect(() => {
     const fetchInterventionData = async () => {
+      setLoading(true); // Set loading to true when starting the fetch
       try {
         const token = localStorage.getItem("token"); // Retrieve the token from local storage
         const response = await fetch(
@@ -31,9 +32,16 @@ const DetailPage = () => {
             },
           }
         );
-
+  
         const data = await response.json();
-        // console.log(data);
+        
+        // Check if data is empty and handle accordingly
+        if (!data || Object.keys(data).length === 0) {
+          console.log("Data is empty");
+          setInterventionData([]); // Or set a message to indicate no data
+          return; // Exit the function early
+        }
+  
         setInterventionData(data);
       } catch (error) {
         console.error("Error fetching intervention data:", error);
@@ -41,9 +49,10 @@ const DetailPage = () => {
         setLoading(false);
       }
     };
-
+  
     fetchInterventionData();
   }, [urn, session]);
+  
 
   function calculateAge(birthDate, appointmentDate) {
     let years = appointmentDate.getFullYear() - birthDate.getFullYear();
@@ -81,7 +90,7 @@ const DetailPage = () => {
                 <div>URN: {interventionData?.child?.urn || "urn"}</div>
                 <div>
                   Family name:{" "}
-                  {interventionData?.child?.firstName || "firstname"}{" "}
+                  {interventionData?.child?.firstName || "firstname"}
                   {interventionData?.child?.lastName || "lastname"}
                 </div>
                 <div>

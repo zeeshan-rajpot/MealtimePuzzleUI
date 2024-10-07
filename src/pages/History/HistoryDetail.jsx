@@ -112,7 +112,7 @@ const HistoryDetail = () => {
                 selectedSession &&
                 sessionData[selectedSession] && (
                   <div>
-                    {sessionData[selectedSession].map((intervention, index) => (
+                    {sessionData[selectedSession].interventions.map((intervention, index) => (
                       <div key={index} className="mb-4">
                         <h3 className="text-lg font-semibold mb-2">
                           {intervention.domainname}
