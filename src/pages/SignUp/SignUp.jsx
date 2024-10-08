@@ -18,6 +18,7 @@ const SignUp = () => {
   const [signupUser, { isLoading, isError, error }] = useSignupUserMutation();
 
   const onSubmit = async (userData) => {
+    console.log(userData)
     try {
       const { confirmPassword, ...rest } = userData;
 
@@ -52,12 +53,12 @@ const SignUp = () => {
       />
       <div className="w-full max-w-md space-y-8 p-6">
         <div className="flex justify-center">
-          <h1 className="text-4xl font-bold text-primary">Logo</h1>
+          <img src="/CDS Logo.PNG" alt="" className="w-[50%] mx-auto" />
         </div>
 
-        <h2 className="text-center text-2xl font-medium text-gray-900">
+        {/* <h2 className="text-center text-2xl font-medium text-gray-900">
           Sign Up
-        </h2>
+        </h2> */}
 
         <form className="mt-8 space-y-6" onSubmit={handleSubmit(onSubmit)}>
           <div className="flex space-x-2">
@@ -203,7 +204,7 @@ const SignUp = () => {
             )}
           </div>
 
-          <div className="relative">
+          {/* <div className="relative">
             <label htmlFor="phone_number" className="sr-only">
               Phone Number
             </label>
@@ -227,7 +228,7 @@ const SignUp = () => {
             {errors.phone && (
               <p className="text-red-500 text-sm">{errors.phone.message}</p>
             )}
-          </div>
+          </div> */}
 
           <div className="relative">
             <label htmlFor="password" className="sr-only">
@@ -245,13 +246,8 @@ const SignUp = () => {
                   minLength: {
                     value: 8,
                     message: "Password must be at least 8 characters",
-                  },
-                  pattern: {
-                    value:
-                      /^(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&#])[A-Za-z\d@$!%*?&#]{8,}$/,
-                    message:
-                      "Password must contain at least one uppercase letter, one number, and one special character",
-                  },
+                  }
+               
                 })}
                 className="flex-1 px-2 py-2 rounded-full bg-transparent outline-none text-gray-700"
                 placeholder="Password"
@@ -318,7 +314,7 @@ const SignUp = () => {
               <select
                 id="role"
                 type="text"
-                {...register("option", {
+                {...register("role", {
                   required: "Confirm Password is required",
                 })}
                 className="flex-1 px-2 py-2 rounded-full bg-transparent outline-none text-gray-700"
@@ -327,7 +323,7 @@ const SignUp = () => {
                 <option value="">Select Role </option>
                 <option value="Psychologist">Psychologist</option>
                 <option value="Speech Pathologist">Speech Pathologist</option>
-                <option value="Occupational therapist">
+                <option value="Occupational Therapist">
                   Occupational therapist
                 </option>
                 <option value="Paediatric Dietitian">
@@ -336,6 +332,10 @@ const SignUp = () => {
                 <option value="Paediatrician">Paediatrician</option>
               </select>
             </div>
+
+
+
+          
             {errors.role && (
               <p className="text-red-500 text-sm">{errors.role.message}</p>
             )}

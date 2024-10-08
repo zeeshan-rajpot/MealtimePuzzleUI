@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import Header from "../../components/Header";
 import SideBar from "../../components/SideBar";
-import { json, useNavigate, useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { useAddInterventionMutation } from "../../features/Forms/Intervention";
 import toast from "react-hot-toast";
 
@@ -85,7 +85,7 @@ const Pyramid = () => {
         domains,
       }).unwrap();
 
-      console.log("Intervention added successfully:", response);
+      // console.log("Intervention added successfully:", response);
       localStorage.setItem("session", response.session);
       toast.success("Intervention added successfully!");
 
@@ -117,7 +117,7 @@ const Pyramid = () => {
 
   const getImageOpacity = (imageId) => {
     // If the image has data, opacity should be 1, otherwise 0.5
-    return imageData[imageId] ? 1 : 0.5;
+    return imageData[imageId] ? 1 : 0.3;
   };
 
   return (
