@@ -62,7 +62,6 @@ const Pyramid = () => {
   };
 
   const handleHistorySubmit = async () => {
-
     if (!childHistory.trim()) {
       setChildHistoryError(true);
       return; // Stop the submission if child history is empty
