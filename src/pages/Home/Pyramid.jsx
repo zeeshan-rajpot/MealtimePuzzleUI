@@ -5,6 +5,8 @@ import SideBar from "../../components/SideBar";
 import { json, useNavigate, useParams } from "react-router-dom";
 import { useAddInterventionMutation } from "../../features/Forms/Intervention";
 import toast from "react-hot-toast";
+import axios from 'axios';
+
 
 const Pyramid = () => {
   const { register, handleSubmit, setValue, reset } = useForm();
@@ -61,8 +63,7 @@ const Pyramid = () => {
     }
   };
 
-  const handleHistorySubmit = async () => {
-
+ const handleHistorySubmit = async () => {
     if (!childHistory.trim()) {
       setChildHistoryError(true);
       return; // Stop the submission if child history is empty
@@ -118,8 +119,18 @@ const Pyramid = () => {
 
   const getImageOpacity = (imageId) => {
     // If the image has data, opacity should be 1, otherwise 0.5
-    return imageData[imageId] ? 1 : 0.5;
+    return imageData[imageId] ? 1 : 0.3;
   };
+
+
+  
+
+
+  const [isHistoryModalOpen, setIsHistoryModalOpen] = useState(false); // Initialize modal state
+  const [childHistory, setChildHistory] = useState(""); // State for child history text
+
+
+
 
   return (
     <>

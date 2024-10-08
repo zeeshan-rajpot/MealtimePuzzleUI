@@ -114,47 +114,122 @@ const InterventionPyramidupdate = () => {
     setIsModalOpen(false);
   };
 
-  const handleNextClick = async () => {
+//   const handleNextClick = async () => {
+//     if (selectedImages.length === 0) {
+//       alert("Select at least one category");
+//     } else {
+//       try {
+//         const token = localStorage.getItem("token");
+//         const domains = selectedImages.map((label) => {
+//           console.log("label", label);
+
+//           const entry = interventionData.sessionEntries.find(
+//             (entry) => entry.domainname === label
+//           );
+//           return {
+//             domainName: entry?.domainname || label,
+//             clinicalPrompt: entry?.clinicalPrompt || "",
+//             priority: entry?.priority || "",
+//             formulation: entry?.formulation || "",
+//             recommendation: entry?.recommendation || "",
+//           };
+//         });
+
+//         await axios.put(
+//           `${baseUrl}/update/intervention/${urn}/${session}`,
+//           {
+//             domains,
+//           },
+//           {
+//             headers: {
+//               Authorization: `Bearer ${token}`,
+//             },
+//           }
+//         );
+
+//         toast.success("Intervention updated successfully!");
+//         navigate(`/home/detailpage/${urn}/${session}`);
+//       } catch (err) {
+//         console.error("Failed to update intervention:", err);
+//         toast.error("Failed to update intervention");
+//       }
+//     }
+//   };
+
+
+
+
+
+const handleNextClick = () => {
     if (selectedImages.length === 0) {
       alert("Select at least one category");
     } else {
-      try {
-        const token = localStorage.getItem("token");
-        const domains = selectedImages.map((label) => {
-          console.log("label", label);
-
-          const entry = interventionData.sessionEntries.find(
-            (entry) => entry.domainname === label
-          );
-          return {
-            domainName: entry?.domainname || label,
-            clinicalPrompt: entry?.clinicalPrompt || "",
-            priority: entry?.priority || "",
-            formulation: entry?.formulation || "",
-            recommendation: entry?.recommendation || "",
-          };
-        });
-
-        await axios.put(
-          `${baseUrl}/update/intervention/${urn}/${session}`,
-          {
-            domains,
-          },
-          {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          }
-        );
-
-        toast.success("Intervention updated successfully!");
-        navigate(`/home/detailpage/${urn}/${session}`);
-      } catch (err) {
-        console.error("Failed to update intervention:", err);
-        toast.error("Failed to update intervention");
-      }
+      setIsHistoryModalOpen(true); // Open the modal to enter child history
     }
   };
+
+
+
+
+
+
+  const handleHistorySubmit = async () => {
+    try {
+        const domains = selectedImages.map((label) => {
+                      console.log("label", label);
+            
+                      const entry = interventionData.sessionEntries.find(
+                        (entry) => entry.domainname === label
+                      );
+                      return {
+                        domainName: entry?.domainname || label,
+                        clinicalPrompt: entry?.clinicalPrompt || "",
+                        priority: entry?.priority || "",
+                        formulation: entry?.formulation || "",
+                        recommendation: entry?.recommendation || "",
+                      };
+                    });
+  
+
+  
+      const payload = {
+        childHistory: childHistory || "", // Ensure it's not null or undefined
+        domains,
+      };
+  
+      console.log("Payload being sent:", payload);
+  
+      // Fetch token from local storage (or wherever it's stored)
+      const token = localStorage.getItem('token'); // Replace with your token retrieval method
+  
+      // Make API call using axios
+      const response = await axios.put(`http://localhost:5001/api/update/Intervention/${urn}/${session}`, payload, {
+        headers: {
+          'Content-Type': 'application/json', // Ensure JSON content type
+          Authorization: `Bearer ${token}`, // Add token to Authorization header
+        }
+      });
+  
+      console.log("Intervention added successfully:", response.data);
+  
+      // Store session
+      localStorage.setItem('session', response.data.session);
+  
+      // Show success message
+      toast.success("Assesment update successfully!");
+  
+      // Navigate to detail page
+      navigate(`/home/detailpage/${urn}/${session}`);
+    } catch (err) {
+      console.error("Failed to add intervention:", err);
+      toast.error("Failed to add intervention");
+    } finally {
+      setIsHistoryModalOpen(false); // Close the modal after submission
+    }
+  };
+
+
+
 
   const handleBack = () => {
     navigate(-1);
@@ -435,6 +510,48 @@ const InterventionPyramidupdate = () => {
           </div>
         </div>
       )}
+
+
+
+
+{isHistoryModalOpen && (
+  <div className="fixed inset-0 bg-gray-600 bg-opacity-75 flex justify-center items-center">
+    <div className="bg-white p-8 rounded-lg w-[60%]">
+      <div className="text-center mb-6 text-2xl font-semibold">
+        Enter Child History
+      </div>
+      <div className="flex flex-col my-4">
+        <label className="pb-1">Child History</label>
+        <textarea
+          className="border-2 py-2 px-3 w-full"
+          rows="4"
+          placeholder="Enter child history here..."
+          value={childHistory}
+          onChange={(e) => setChildHistory(e.target.value)}
+          required
+        ></textarea>
+      </div>
+      <div className="mt-8 flex justify-center">
+        <button
+          type="button"
+          onClick={() => setIsHistoryModalOpen(false)}
+          className="bg-red-500 text-white px-8 py-2 rounded-full mr-2"
+        >
+          Cancel
+        </button>
+        <button
+          onClick={handleHistorySubmit}
+          className="bg-custom-gradient text-white px-8 py-2 rounded-full"
+        >
+          Submit
+        </button>
+      </div>
+    </div>
+  </div>
+)}
+
+
+
     </>
   );
 };
