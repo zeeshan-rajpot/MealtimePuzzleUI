@@ -66,7 +66,7 @@ const Buttunpage = () => {
                 ))}
               </div>
 
-              <Link to={`/home/options/${urn}/${childName}`}>
+              <Link to={`/home/addnew/${urn}/${childName}/${totalSessions}`}>
                 <button className=' className="w-full py-3 px-10 bg-custom-gradient text-white rounded-full  shadow-lg my-8'>
                   {" "}
                   Add New Assessment{" "}
