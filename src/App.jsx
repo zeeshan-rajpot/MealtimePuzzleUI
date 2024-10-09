@@ -18,6 +18,7 @@ import FormulationPyrmaid from "./pages/Home/FormulationPyrmaid";
 import HistoryDetail from "./pages/History/HistoryDetail";
 import Buttunpage from "./pages/Assessments/Buttunpage";
 import InterventionPyramidupdate from "./pages/Assessments/InterventionPyramidupdate";
+import Addnewassestent from "./pages/Assessments/Addnewassestent";
 
 function App() {
   const router = createBrowserRouter([
@@ -40,6 +41,11 @@ function App() {
     {
       path: "/home/options/:urn/:childName",
       element: <Pyramid />,
+    }, 
+    
+    {
+      path: "/home/addnew/:urn/:childName/:totalSessions",
+      element: <Addnewassestent />,
     },
     {
       path: "/home/childinfo",
