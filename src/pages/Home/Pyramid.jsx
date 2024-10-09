@@ -2,11 +2,9 @@ import React, { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import Header from "../../components/Header";
 import SideBar from "../../components/SideBar";
-import { json, useNavigate, useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { useAddInterventionMutation } from "../../features/Forms/Intervention";
 import toast from "react-hot-toast";
-import axios from 'axios';
-
 
 const Pyramid = () => {
   const { register, handleSubmit, setValue, reset } = useForm();
@@ -18,6 +16,9 @@ const Pyramid = () => {
   const [imageId, setImageId] = useState(null);
   const [imageData, setImageData] = useState({});
   const [imageDataCounter, setImageDataCounter] = useState(0);
+  const [isHistoryModalOpen, setIsHistoryModalOpen] = useState(false);
+  const [childHistory, setChildHistory] = useState("");
+  const [childHistoryError, setChildHistoryError] = useState(false);
 
   const [addIntervention, { isLoading, isError, error }] =
     useAddInterventionMutation();
@@ -56,11 +57,17 @@ const Pyramid = () => {
     if (selectedImages.length === 0) {
       alert("Select at least one category");
     } else {
-      setIsHistoryModalOpen(true); // Open the modal to enter child history
+      setIsHistoryModalOpen(true);
     }
   };
 
   const handleHistorySubmit = async () => {
+    if (!childHistory.trim()) {
+      setChildHistoryError(true);
+      return; // Stop the submission if child history is empty
+    } else {
+      setChildHistoryError(false);
+    }
     try {
       const domains = selectedImages.map((imageId) => ({
         domainName: imageData[imageId]?.label || "",
@@ -69,46 +76,27 @@ const Pyramid = () => {
         formulation: imageData[imageId]?.formulation || "",
         recommendation: imageData[imageId]?.recommendation || "",
       }));
-  
+
       const childUrn = urn;
-  
-      const payload = {
+
+      const response = await addIntervention({
         childUrn,
-        childHistory: childHistory || "", // Ensure it's not null or undefined
+        childHistory, // Add child history to the payload
         domains,
-      };
-  
-      console.log("Payload being sent:", payload);
-  
-      // Fetch token from local storage (or wherever it's stored)
-      const token = localStorage.getItem('token'); // Replace with your token retrieval method
-  
-      // Make API call using axios
-      const response = await axios.post('http://localhost:5001/api/post/Intervention', payload, {
-        headers: {
-          'Content-Type': 'application/json', // Ensure JSON content type
-          Authorization: `Bearer ${token}`, // Add token to Authorization header
-        }
-      });
-  
-      console.log("Assessment added successfully:", response.data);
-  
-      // Store session
-      localStorage.setItem('session', response.data.session);
-  
-      // Show success message
-      toast.success("Assesment added successfully!");
-  
-      // Navigate to detail page
-      navigate(`/home/detailpage/${urn}/${response.data.session}`);
+      }).unwrap();
+
+      // console.log("Intervention added successfully:", response);
+      localStorage.setItem("session", response.session);
+      toast.success("Intervention added successfully!");
+
+      navigate(`/home/detailpage/${urn}/${response.session}`);
     } catch (err) {
-      console.error("Failed to add Assessment:", err);
-      toast.error("Failed to add Assessment");
+      console.error("Failed to add intervention:", err);
+      toast.error("Failed to add intervention");
     } finally {
-      setIsHistoryModalOpen(false); // Close the modal after submission
+      setIsHistoryModalOpen(false);
     }
   };
-  
 
   const onClose = () => {
     setIsModalOpen(false);
@@ -131,16 +119,6 @@ const Pyramid = () => {
     // If the image has data, opacity should be 1, otherwise 0.5
     return imageData[imageId] ? 1 : 0.3;
   };
-
-
-  
-
-
-  const [isHistoryModalOpen, setIsHistoryModalOpen] = useState(false); // Initialize modal state
-  const [childHistory, setChildHistory] = useState(""); // State for child history text
-
-
-
 
   return (
     <>
@@ -379,43 +357,46 @@ const Pyramid = () => {
         </div>
       )}
 
-
-{isHistoryModalOpen && (
-  <div className="fixed inset-0 bg-gray-600 bg-opacity-75 flex justify-center items-center">
-    <div className="bg-white p-8 rounded-lg w-[60%]">
-      <div className="text-center mb-6 text-2xl font-semibold">
-        Enter Child History
-      </div>
-      <div className="flex flex-col my-4">
-        <label className="pb-1">Child History</label>
-        <textarea
-          className="border-2 py-2 px-3 w-full"
-          rows="4"
-          placeholder="Enter child history here..."
-          value={childHistory}
-          onChange={(e) => setChildHistory(e.target.value)}
-          required
-        ></textarea>
-      </div>
-      <div className="mt-8 flex justify-center">
-        <button
-          type="button"
-          onClick={() => setIsHistoryModalOpen(false)}
-          className="bg-red-500 text-white px-8 py-2 rounded-full mr-2"
-        >
-          Cancel
-        </button>
-        <button
-          onClick={handleHistorySubmit}
-          className="bg-custom-gradient text-white px-8 py-2 rounded-full"
-        >
-          Submit
-        </button>
-      </div>
-    </div>
-  </div>
-)}
-
+      {isHistoryModalOpen && (
+        <div className="fixed inset-0 bg-gray-600 bg-opacity-75 flex justify-center items-center">
+          <div className="bg-white p-8 rounded-lg w-[60%]">
+            <div className="text-center mb-6 text-2xl font-semibold">
+              Enter Child History
+            </div>
+            <div className="flex flex-col my-4">
+              <label className="pb-1">Child History</label>
+              <textarea
+                className="border-2 py-2 px-3 w-full"
+                rows="4"
+                placeholder="Enter child history here..."
+                value={childHistory}
+                onChange={(e) => setChildHistory(e.target.value)}
+                required
+              ></textarea>
+              {childHistoryError && (
+                <span className="text-red-500 text-sm mt-1">
+                  Child history is required.
+                </span>
+              )}
+            </div>
+            <div className="mt-8 flex justify-center">
+              <button
+                type="button"
+                onClick={() => setIsHistoryModalOpen(false)}
+                className="bg-red-500 text-white px-8 py-2 rounded-full mr-2"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={handleHistorySubmit}
+                className="bg-custom-gradient text-white px-8 py-2 rounded-full"
+              >
+                Submit
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </>
   );
 };
