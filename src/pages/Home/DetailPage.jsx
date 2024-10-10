@@ -154,7 +154,7 @@ const DetailPage = () => {
           <div className="w-full max-w-3xl mx-auto mb-20  bg-white" ref={reportRef}>
             <div className="flex space-x-20">
               <img src="/logo.PNG" alt="logo" className="h-12" />
-              <img src="/CDS Logo.PNG" alt="logo-1" className="h-28" />
+              <img src="/CDS Logo.png" alt="logo-1" className="h-28" />
               <div className="flex flex-col">
                 <div>URN: {interventionData?.child?.urn || "urn"}</div>
                 <div>

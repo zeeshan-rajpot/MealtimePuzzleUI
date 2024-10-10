@@ -4,11 +4,12 @@ const Header = () => {
   return (
     <>
       <div className="flex justify-between items-center border-b py-4 px-12 ">
-        <img src="/CDS Logo.PNG" alt="logo" className="w-28" />
+        <img src="/CDS Logo.png" alt="logo" className="w-32" />
         <h1 className="text-4xl font-bold text-black hidden sm:block">
           The Mealtime Puzzle
         </h1>
-        <img src="/Rectangle 149534.svg" alt="profile" />
+        <div></div>
+        {/* <img src="/Rectangle 149534.svg" alt="profile" /> */}
       </div>
     </>
   );
