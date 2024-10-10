@@ -7,6 +7,7 @@ import { useReactToPrint } from "react-to-print";
 const DetailPage = () => {
   const { urn, session } = useParams();
   const reportRef = useRef(null);
+  const [accessorsData, setAccessorsData] = useState(null);
 
   const navigate = useNavigate();
   const handleBack = () => {
@@ -43,6 +44,7 @@ const DetailPage = () => {
         }
   
         setInterventionData(data);
+        console.log("Intervention", data);
       } catch (error) {
         console.error("Error fetching intervention data:", error);
       } finally {

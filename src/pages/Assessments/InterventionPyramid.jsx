@@ -88,7 +88,7 @@ const InterventionPyramid = () => {
       label: currentImageLabel, // Store label for API
     };
     localStorage.setItem("stepperInfo", JSON.stringify(storedData));
-    setImageDataCounter((prevCount) => prevCount + 1); // Increment counter for images with data
+    setImageDataCounter((prevCount) => prevCount + 1); 
     setIsModalOpen(false);
   };
 

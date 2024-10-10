@@ -2,11 +2,10 @@ import React, { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import Header from "../../components/Header";
 import SideBar from "../../components/SideBar";
-import { json, useNavigate, useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { useAddInterventionMutation } from "../../features/Forms/Intervention";
-import toast from "react-hot-toast";
-import axios from 'axios';
-
+import axios from "axios";
+import { toast } from "react-hot-toast";
 
 const Pyramid = () => {
   const { register, handleSubmit, setValue, reset } = useForm();
@@ -15,9 +14,14 @@ const Pyramid = () => {
   const [selectedImages, setSelectedImages] = useState([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [currentImageLabel, setCurrentImageLabel] = useState("");
+  const [session, setSession] = useState("");
   const [imageId, setImageId] = useState(null);
   const [imageData, setImageData] = useState({});
   const [imageDataCounter, setImageDataCounter] = useState(0);
+  const [isHistoryModalOpen, setIsHistoryModalOpen] = useState(false);
+  const [childHistory, setChildHistory] = useState("");
+  const [childHistoryError, setChildHistoryError] = useState(false);
+  const [isAssessmentModalOpen, setIsAssessmentModalOpen] = useState(false);
 
   const [addIntervention, { isLoading, isError, error }] =
     useAddInterventionMutation();
@@ -56,12 +60,20 @@ const Pyramid = () => {
     if (selectedImages.length === 0) {
       alert("Select at least one category");
     } else {
-      setIsHistoryModalOpen(true); // Open the modal to enter child history
+      setIsHistoryModalOpen(true);
     }
   };
 
   const handleHistorySubmit = async () => {
+    if (!childHistory.trim()) {
+      setChildHistoryError(true); // Set error if child history is empty
+      return; // Stop submission
+    } else {
+      setChildHistoryError(false); // Clear any existing error
+    }
+
     try {
+      // Create the domains array from selected images
       const domains = selectedImages.map((imageId) => ({
         domainName: imageData[imageId]?.label || "",
         clinicalPrompt: imageData[imageId]?.clinicalPrompt || "",
@@ -69,53 +81,39 @@ const Pyramid = () => {
         formulation: imageData[imageId]?.formulation || "",
         recommendation: imageData[imageId]?.recommendation || "",
       }));
-  
-      const childUrn = urn;
-      const payload = {
-        childUrn,
-        childHistory: String(childHistory).trim(), // Convert childHistory to a string and trim extra spaces
-        domains, // Ensure domains is an array with the right structure
-      };
-  
-      // Log payload to ensure it matches what the backend expects
-      console.log("Payload being sent:", payload);
-  
-      // Fetch token from local storage (ensure token is valid and not null)
+
+      const childUrn = urn; // Assign urn to childUrn
+
       const token = localStorage.getItem("token");
-      if (!token) {
-        throw new Error("Authorization token is missing");
-      }
-  
-      // Make the API call using Axios
+
+      // Axios POST request for adding an intervention, with Authorization header
       const response = await axios.post(
         "http://localhost:5001/api/post/Intervention",
-        payload,
+        {
+          childUrn,
+          childHistory, // Include child history in the payload
+          domains, // Pass the domains array
+        },
         {
           headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`, // Include the token in the header
+            Authorization: `Bearer ${token}`, // Add token in the Authorization header
           },
         }
       );
-  
-      console.log("Assessment added successfully:", response.data);
-  
-      // Store session in local storage
+
+      // Store session data and navigate if the request is successful
       localStorage.setItem("session", response.data.session);
-  
-      // Show success message
-      toast.success("Assessment added successfully!");
-  
-      // Navigate to the detail page
-      navigate(`/home/detailpage/${urn}/${response.data.session}`);
+      setSession( response.data.session);
+      toast.success("Intervention added successfully!");
+
+      // Navigate to detail page with the session info
     } catch (err) {
-      console.error("Failed to add Assessment:", err.response?.data || err.message);
+      console.error("Failed to add Assessment:", err);
       toast.error("Failed to add Assessment");
     } finally {
-      setIsHistoryModalOpen(false); // Close modal after submission
+      setIsHistoryModalOpen(false); // Close the modal after submission
     }
   };
-  
   
 
   const onClose = () => {
@@ -140,15 +138,30 @@ const Pyramid = () => {
     return imageData[imageId] ? 1 : 0.3;
   };
 
+  const [members, setMembers] = useState([{ name: "", role: "" }]);
+  const [showInputs, setShowInputs] = useState(false);
 
-  
+  const handleAddMember = () => {
+    setShowInputs(true);
+  };
 
+  const handleAddDropdown = () => {
+    setMembers([...members, { name: "", role: "" }]);
+  };
 
-  const [isHistoryModalOpen, setIsHistoryModalOpen] = useState(false); // Initialize modal state
-  const [childHistory, setChildHistory] = useState(""); // State for child history text
+  const handleInputChange = (index, field, value) => {
+    const updatedMembers = [...members];
+    updatedMembers[index][field] = value;
+    setMembers(updatedMembers);
+    localStorage.setItem("accessors", JSON.stringify(updatedMembers));
+  };
 
+  const handleAssessmentNext = () => {
+    setIsAssessmentModalOpen(false);
+    navigate(`/home/detailpage/${urn}/${session}`);
 
-
+    // navigate(`/home/detailpage/${urn}/${localStorage.getItem("session")}`);
+  };
 
   return (
     <>
@@ -390,41 +403,43 @@ const Pyramid = () => {
         </div>
       )}
 
-      {isHistoryModalOpen && (
-        <div className="fixed inset-0 bg-gray-600 bg-opacity-75 flex justify-center items-center">
-          <div className="bg-white p-8 rounded-lg w-[60%]">
-            <div className="text-center mb-6 text-2xl font-semibold">
-              Enter Child History
-            </div>
-            <div className="flex flex-col my-4">
-              <label className="pb-1">Child History</label>
-              <textarea
-                className="border-2 py-2 px-3 w-full"
-                rows="4"
-                placeholder="Enter child history here..."
-                value={childHistory}
-                onChange={(e) => setChildHistory(e.target.value)}
-                required
-              ></textarea>
-            </div>
-            <div className="mt-8 flex justify-center">
-              <button
-                type="button"
-                onClick={() => setIsHistoryModalOpen(false)}
-                className="bg-red-500 text-white px-8 py-2 rounded-full mr-2 hover:bg-red-600 transition"
-              >
-                Cancel
-              </button>
-              <button
-                onClick={handleHistorySubmit}
-                className="bg-ceruleanBlue text-white px-8 py-2 rounded-full hover:bg-blushPink transition"
-              >
-                Submit
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
+
+{isHistoryModalOpen && (
+  <div className="fixed inset-0 bg-gray-600 bg-opacity-75 flex justify-center items-center">
+    <div className="bg-white p-8 rounded-lg w-[60%]">
+      <div className="text-center mb-6 text-2xl font-semibold">
+        Enter Child History
+      </div>
+      <div className="flex flex-col my-4">
+        <label className="pb-1">Child History</label>
+        <textarea
+          className="border-2 py-2 px-3 w-full"
+          rows="4"
+          placeholder="Enter child history here..."
+          value={childHistory}
+          onChange={(e) => setChildHistory(e.target.value)}
+          required
+        ></textarea>
+      </div>
+      <div className="mt-8 flex justify-center">
+        <button
+          type="button"
+          onClick={() => setIsHistoryModalOpen(false)}
+          className="bg-red-500 text-white px-8 py-2 rounded-full mr-2"
+        >
+          Cancel
+        </button>
+        <button
+          onClick={handleHistorySubmit}
+          className="bg-custom-gradient text-white px-8 py-2 rounded-full"
+        >
+          Submit
+        </button>
+      </div>
+    </div>
+  </div>
+)}
+
     </>
   );
 };
