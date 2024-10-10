@@ -18,10 +18,15 @@ const Pyramid = () => {
   const [imageId, setImageId] = useState(null);
   const [imageData, setImageData] = useState({});
   const [imageDataCounter, setImageDataCounter] = useState(0);
+<<<<<<< Updated upstream
   const [isHistoryModalOpen, setIsHistoryModalOpen] = useState(false);
   const [childHistory, setChildHistory] = useState("");
   const [childHistoryError, setChildHistoryError] = useState(false);
   const [isAssessmentModalOpen, setIsAssessmentModalOpen] = useState(false);
+=======
+  const [isHistoryModalOpen, setIsHistoryModalOpen] = useState(false); 
+  const [childHistory, setChildHistory] = useState(""); 
+>>>>>>> Stashed changes
 
   const [addIntervention, { isLoading, isError, error }] =
     useAddInterventionMutation();
