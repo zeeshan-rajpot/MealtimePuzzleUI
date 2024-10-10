@@ -4,8 +4,8 @@ import Header from "../../components/Header";
 import SideBar from "../../components/SideBar";
 import { useNavigate, useParams } from "react-router-dom";
 import { useAddInterventionMutation } from "../../features/Forms/Intervention";
-import axios from 'axios';
-import { toast } from 'react-hot-toast';
+import axios from "axios";
+import { toast } from "react-hot-toast";
 
 const Pyramid = () => {
   const { register, handleSubmit, setValue, reset } = useForm();
@@ -63,7 +63,6 @@ const Pyramid = () => {
     }
   };
 
-  
   const handleHistorySubmit = async () => {
     if (!childHistory.trim()) {
       setChildHistoryError(true); // Set error if child history is empty
@@ -71,7 +70,6 @@ const Pyramid = () => {
     } else {
       setChildHistoryError(false); // Clear any existing error
     }
-  
 
     try {
       // Create the domains array from selected images
@@ -82,27 +80,30 @@ const Pyramid = () => {
         formulation: imageData[imageId]?.formulation || "",
         recommendation: imageData[imageId]?.recommendation || "",
       }));
-  
+
       const childUrn = urn; // Assign urn to childUrn
-  
-      const token = localStorage.getItem('token'); 
+
+      const token = localStorage.getItem("token");
 
       // Axios POST request for adding an intervention, with Authorization header
-      const response = await axios.post('http://localhost:5001/api/post/Intervention', {
-        childUrn,
-        childHistory, // Include child history in the payload
-        domains, // Pass the domains array
-      }, {
-        headers: {
-          Authorization: `Bearer ${token}`, // Add token in the Authorization header
+      const response = await axios.post(
+        "http://localhost:5001/api/post/Intervention",
+        {
+          childUrn,
+          childHistory, // Include child history in the payload
+          domains, // Pass the domains array
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`, // Add token in the Authorization header
+          },
         }
-      });
-  
-  
+      );
+
       // Store session data and navigate if the request is successful
       localStorage.setItem("session", response.data.session);
       toast.success("Intervention added successfully!");
-  
+
       // Navigate to detail page with the session info
       navigate(`/home/detailpage/${urn}/${response.data.session}`);
     } catch (err) {
@@ -113,7 +114,6 @@ const Pyramid = () => {
       setIsHistoryModalOpen(false); // Close modal regardless of success or error
     }
   };
-  
 
   const onClose = () => {
     setIsModalOpen(false);
