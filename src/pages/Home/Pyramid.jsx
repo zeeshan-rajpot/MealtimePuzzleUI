@@ -22,6 +22,8 @@ const Pyramid = () => {
   const [childHistory, setChildHistory] = useState("");
   const [childHistoryError, setChildHistoryError] = useState(false);
   const [isAssessmentModalOpen, setIsAssessmentModalOpen] = useState(false);
+  const [isAdditionalInfoModalOpen, setIsAdditionalInfoModalOpen] =
+    useState(false);
 
   const [addIntervention, { isLoading, isError, error }] =
     useAddInterventionMutation();
@@ -103,7 +105,7 @@ const Pyramid = () => {
 
       // Store session data and navigate if the request is successful
       localStorage.setItem("session", response.data.session);
-      setSession( response.data.session);
+      setSession(response.data.session);
       toast.success("Intervention added successfully!");
 
       // Navigate to detail page with the session info
@@ -112,9 +114,9 @@ const Pyramid = () => {
       toast.error("Failed to add Assessment");
     } finally {
       setIsHistoryModalOpen(false); // Close the modal after submission
+      setIsAssessmentModalOpen(true);
     }
   };
-  
 
   const onClose = () => {
     setIsModalOpen(false);
@@ -138,7 +140,25 @@ const Pyramid = () => {
     return imageData[imageId] ? 1 : 0.3;
   };
 
-  const [members, setMembers] = useState([{ name: "", role: "" }]);
+  const [users, setUsers] = useState([]);
+  const [members, setMembers] = useState([
+    { name: "", role: "" }, // Initialize with one empty member
+  ]);
+
+  useEffect(() => {
+    // Fetch users from the API when the component mounts
+    const fetchUsers = async () => {
+      try {
+        const response = await axios.get("http://localhost:5001/api/users");
+        setUsers(response.data); // Assuming response.data is the array of users
+      } catch (error) {
+        console.error("Error fetching users:", error);
+      }
+    };
+
+    fetchUsers();
+  }, []);
+
   const [showInputs, setShowInputs] = useState(false);
 
   const handleAddMember = () => {
@@ -158,12 +178,29 @@ const Pyramid = () => {
 
   const handleAssessmentNext = () => {
     setIsAssessmentModalOpen(false);
-    navigate(`/home/detailpage/${urn}/${session}`);
-
-    // navigate(`/home/detailpage/${urn}/${localStorage.getItem("session")}`);
+    setIsAdditionalInfoModalOpen(true);
   };
 
-  
+  const [additionalInfo, setAdditionalInfo] = useState({
+    parents: "",
+    referrer: "",
+    gp: "",
+    privateProvider: "",
+  });
+
+  const handleAdditionalInfoChange = (field, value) => {
+    setAdditionalInfo((prev) => ({
+      ...prev,
+      [field]: value,
+    }));
+  };
+
+  const handleSaveAdditionalInfo = () => {
+    // Save additional info to local storage or handle it as per your logic
+    localStorage.setItem("additionalInfo", JSON.stringify(additionalInfo));
+    setIsAdditionalInfoModalOpen(false); // Close modal after saving
+    navigate(`/home/detailpage/${urn}/${session}`);
+  };
 
   return (
     <>
@@ -321,12 +358,11 @@ const Pyramid = () => {
             </div>
 
             <button
-  className="mt-8 w-[30%] rounded-full px-4 py-2 bg-ceruleanBlue text-white hover:bg-blushPink transition focus:outline-none shadow-lg"
-  onClick={handleNextClick}
->
-  {isLoading ? "Submitting..." : "Next"}
-</button>
-
+              className="mt-8 w-[30%] rounded-full px-4 py-2 bg-ceruleanBlue text-white hover:bg-blushPink transition focus:outline-none shadow-lg"
+              onClick={handleNextClick}
+            >
+              {isLoading ? "Submitting..." : "Next"}
+            </button>
           </div>
         </div>
       </section>
@@ -384,64 +420,253 @@ const Pyramid = () => {
               </div>
 
               <div className="mt-8 flex justify-center">
-              <button
-  type="button"
-  onClick={onClose}
-  className="bg-blushPink text-white px-8 py-2 rounded-full mr-2 hover:bg-white hover:text-blushPink border-2 border-blushPink transition"
->
-  Cancel
-</button>
-<button
-  type="submit"
-  className="bg-ceruleanBlue text-white px-8 py-2 rounded-full hover:bg-white hover:text-ceruleanBlue border-2 border-ceruleanBlue transition"
->
-  Save
-</button>
-
-
+                <button
+                  type="button"
+                  onClick={onClose}
+                  className="bg-blushPink text-white px-8 py-2 rounded-full mr-2 hover:bg-white hover:text-blushPink border-2 border-blushPink transition"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  className="bg-ceruleanBlue text-white px-8 py-2 rounded-full hover:bg-white hover:text-ceruleanBlue border-2 border-ceruleanBlue transition"
+                >
+                  Save
+                </button>
               </div>
             </form>
           </div>
         </div>
       )}
 
+      {isHistoryModalOpen && (
+        <div className="fixed inset-0 bg-gray-600 bg-opacity-75 flex justify-center items-center">
+          <div className="bg-white p-8 rounded-lg w-[60%]">
+            <div className="text-center mb-6 text-2xl font-semibold">
+              Enter Child History
+            </div>
+            <div className="flex flex-col my-4">
+              <label className="pb-1">Child History</label>
+              <textarea
+                className="border-2 py-2 px-3 w-full"
+                rows="4"
+                placeholder="Enter child history here..."
+                value={childHistory}
+                onChange={(e) => setChildHistory(e.target.value)}
+                required
+              ></textarea>
+            </div>
+            <div className="mt-8 flex justify-center">
+              <button
+                type="button"
+                onClick={() => setIsHistoryModalOpen(false)}
+                className="bg-red-500 text-white px-8 py-2 rounded-full mr-2"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={handleHistorySubmit}
+                className="bg-custom-gradient text-white px-8 py-2 rounded-full"
+              >
+                Next
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
-{isHistoryModalOpen && (
-  <div className="fixed inset-0 bg-gray-600 bg-opacity-75 flex justify-center items-center">
-    <div className="bg-white p-8 rounded-lg w-[60%]">
-      <div className="text-center mb-6 text-2xl font-semibold">
-        Enter Child History
-      </div>
-      <div className="flex flex-col my-4">
-        <label className="pb-1">Child History</label>
-        <textarea
-          className="border-2 py-2 px-3 w-full"
-          rows="4"
-          placeholder="Enter child history here..."
-          value={childHistory}
-          onChange={(e) => setChildHistory(e.target.value)}
-          required
-        ></textarea>
-      </div>
-      <div className="mt-8 flex justify-center">
-        <button
-          type="button"
-          onClick={() => setIsHistoryModalOpen(false)}
-          className="bg-red-500 text-white px-8 py-2 rounded-full mr-2"
-        >
-          Cancel
-        </button>
-        <button
-          onClick={handleHistorySubmit}
-          className="bg-custom-gradient text-white px-8 py-2 rounded-full"
-        >
-          Submit
-        </button>
-      </div>
-    </div>
-  </div>
-)}
+      {isAssessmentModalOpen && (
+        <div className="fixed inset-0 bg-gray-600 bg-opacity-75 flex justify-center items-center z-50">
+          <div className="bg-white p-8 rounded-lg w-[90%] md:w-[60%]">
+            <div className="flex justify-between items-center mb-6">
+              <h2 className="text-2xl font-semibold">
+                Who has done this assessment?
+              </h2>
+              <button
+                onClick={handleAddMember}
+                className="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 transition"
+              >
+                Add Member
+              </button>
+            </div>
+            {showInputs && (
+              <>
+                <div className="flex flex-col my-4">
+                  <label className="pb-1 font-medium">Name</label>
+                  <input
+                    className="border-2 border-gray-300 py-2 px-3 rounded-md w-full focus:outline-none focus:border-blue-500"
+                    type="text"
+                    placeholder="Enter name"
+                    onChange={(e) =>
+                      handleInputChange(0, "name", e.target.value)
+                    }
+                    required
+                  />
+                </div>
+                <div className="flex flex-col my-4">
+                  <label className="pb-1 font-medium">Role</label>
+                  <input
+                    className="border-2 border-gray-300 py-2 px-3 rounded-md w-full focus:outline-none focus:border-blue-500"
+                    type="text"
+                    placeholder="Enter role"
+                    onChange={(e) =>
+                      handleInputChange(0, "role", e.target.value)
+                    }
+                    required
+                  />
+                </div>
+                <div className="flex justify-center">
+                  <button className="bg-gradient-to-r from-blue-500 to-green-500 text-white px-8 py-2 rounded-full hover:from-blue-600 hover:to-green-600 transition">
+                    save
+                  </button>
+                </div>
+              </>
+            )}
+            {members.map((member, index) => (
+              <div key={index} className="flex space-x-4 items-center my-4">
+                <div className="flex flex-col w-1/2">
+                  <label className="pb-1 font-medium">Select Name</label>
+                  <select
+                    className="border-2 border-gray-300 py-2 px-3 rounded-md w-full focus:outline-none focus:border-blue-500"
+                    onChange={(e) =>
+                      handleInputChange(index, "name", e.target.value)
+                    }
+                    value={member.name}
+                  >
+                    <option value="">Select Name</option>
+                    {users.map((user, idx) => (
+                      <option key={idx} value={user.username}>
+                        {user.username}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+                <div className="flex flex-col w-1/2">
+                  <label className="pb-1 font-medium">Select Role</label>
+                  <select
+                    className="border-2 border-gray-300 py-2 px-3 rounded-md w-full focus:outline-none focus:border-blue-500"
+                    onChange={(e) =>
+                      handleInputChange(index, "role", e.target.value)
+                    }
+                    value={member.role}
+                  >
+                    <option value="">Select Role</option>
+                    {users.map((user, idx) => (
+                      <option key={idx} value={user.role}>
+                        {user.role}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+              </div>
+            ))}
+            {/* Add more dropdowns */}
+            <div className="flex justify-center mt-4">
+              <button
+                onClick={handleAddDropdown}
+                className="bg-green-500 text-white px-4 py-2 rounded-lg hover:bg-green-600 transition"
+              >
+                + Add Another Dropdown
+              </button>
+            </div>
+            <div className="mt-8 flex justify-center space-x-4">
+              <button
+                type="button"
+                onClick={() => setIsAssessmentModalOpen(false)}
+                className="bg-red-500 text-white px-8 py-2 rounded-full hover:bg-red-600 transition"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={handleAssessmentNext}
+                className="bg-gradient-to-r from-blue-500 to-green-500 text-white px-8 py-2 rounded-full hover:from-blue-600 hover:to-green-600 transition"
+              >
+                Next
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
+      {/* Additional Information Modal */}
+      {isAdditionalInfoModalOpen && (
+        <div className="fixed inset-0 bg-gray-600 bg-opacity-75 flex justify-center items-center">
+          <div className="bg-white p-8 rounded-lg w-[60%]">
+            <h2 className="text-center mb-6 text-2xl font-semibold">
+              Additional Information
+            </h2>
+
+            <div className="flex flex-col my-4">
+              <label className="pb-1 font-medium">Parents [Address]</label>
+              <input
+                className="border-2 border-gray-300 py-2 px-3 rounded-md w-full"
+                type="text"
+                placeholder="Parents' Address"
+                value={additionalInfo.parents}
+                onChange={(e) =>
+                  handleAdditionalInfoChange("parents", e.target.value)
+                }
+              />
+            </div>
+
+            <div className="flex flex-col my-4">
+              <label className="pb-1 font-medium">Referrer [Address]</label>
+              <input
+                className="border-2 border-gray-300 py-2 px-3 rounded-md w-full"
+                type="text"
+                placeholder="Referrer's Address"
+                value={additionalInfo.referrer}
+                onChange={(e) =>
+                  handleAdditionalInfoChange("referrer", e.target.value)
+                }
+              />
+            </div>
+
+            <div className="flex flex-col my-4">
+              <label className="pb-1 font-medium">GP [Address]</label>
+              <input
+                className="border-2 border-gray-300 py-2 px-3 rounded-md w-full"
+                type="text"
+                placeholder="GP's Address"
+                value={additionalInfo.gp}
+                onChange={(e) =>
+                  handleAdditionalInfoChange("gp", e.target.value)
+                }
+              />
+            </div>
+
+            <div className="flex flex-col my-4">
+              <label className="pb-1 font-medium">
+                Private Provider [Address]
+              </label>
+              <input
+                className="border-2 border-gray-300 py-2 px-3 rounded-md w-full"
+                type="text"
+                placeholder="Private Provider's Address"
+                value={additionalInfo.privateProvider}
+                onChange={(e) =>
+                  handleAdditionalInfoChange("privateProvider", e.target.value)
+                }
+              />
+            </div>
+
+            <div className="mt-8 flex justify-center">
+              <button
+                onClick={() => setIsAdditionalInfoModalOpen(false)}
+                className="bg-red-500 text-white px-8 py-2 rounded-full mr-2"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={handleSaveAdditionalInfo}
+                className="bg-green-500 text-white px-8 py-2 rounded-full"
+              >
+                Save
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </>
   );
 };
