@@ -27,12 +27,6 @@ const menuItems = [
     activeLogo: "/Layer_1 (2).svg",
     inactiveLogo: "/Layer_1 (1).svg",
   },
-  // {
-  //   name: "Formulation",
-  //   route: "/childData",
-  //   activeLogo: "/fluent_clipboard-math-formula-20-regular.svg",
-  //   inactiveLogo: "/fluent_clipboard-math-formula-20-regular.svg",
-  // },
   {
     name: "Settings",
     route: "/settings",
@@ -101,12 +95,12 @@ const SideBar = () => {
       {/* Sidebar */}
       <aside
         id="default-sidebar"
-        className={`bg-custom-gradient left-0 z-40 w-60 h-full transition-transform  rounded-tr-[5rem] ${
+        className={`bg-deepSkyBlue left-0 z-40 w-60 h-full transition-transform  rounded-tr-[5rem] ${
           active ? "translate-x-0" : "-translate-x-full"
         } lg:translate-x-0`}
         aria-label="Sidebar"
       >
-        <div className="pl-4  py-4 overflow-y-auto bg-transparent h-screen">
+        <div className="pl-4 py-4 overflow-y-auto bg-transparent h-screen">
           <ul className="space-y-2 font-medium mt-16">
             {menuItems.map((item) => (
               <li key={item.route}>
@@ -114,15 +108,23 @@ const SideBar = () => {
                   to={item.route}
                   className={({ isActive }) =>
                     isActive
-                      ? "flex items-center my-4 p-2  text-primary bg-white rounded-l-full"
-                      : "flex items-center my-4 p-2  text-white"
+                      ? "flex items-center my-4 p-2 text-ceruleanBlue bg-white rounded-l-full"
+                      : "group flex items-center my-4 p-2 text-white hover:bg-white hover:text-blushPink transition duration-300 rounded-l-full"
                   }
                 >
                   {({ isActive }) => (
                     <>
+                      {/* Icon with dynamic color on hover */}
                       <img
                         src={isActive ? item.activeLogo : item.inactiveLogo}
                         alt={`${item.name} logo`}
+                        className="group-hover:fill-blushPink"
+                        style={{
+                          filter: isActive
+                            ? 'none'
+                            : 'invert(100%) brightness(100%)', // Make inactive icons white
+                          stroke: isActive ? 'none' : '#ffffff', // Use stroke if applicable
+                        }}
                       />
                       <span className="ms-3">{item.name}</span>
                     </>

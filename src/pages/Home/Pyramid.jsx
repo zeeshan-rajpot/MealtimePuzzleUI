@@ -71,43 +71,51 @@ const Pyramid = () => {
       }));
   
       const childUrn = urn;
-  
       const payload = {
         childUrn,
-        childHistory: childHistory || "", // Ensure it's not null or undefined
-        domains,
+        childHistory: String(childHistory).trim(), // Convert childHistory to a string and trim extra spaces
+        domains, // Ensure domains is an array with the right structure
       };
   
+      // Log payload to ensure it matches what the backend expects
       console.log("Payload being sent:", payload);
   
-      // Fetch token from local storage (or wherever it's stored)
-      const token = localStorage.getItem('token'); // Replace with your token retrieval method
+      // Fetch token from local storage (ensure token is valid and not null)
+      const token = localStorage.getItem("token");
+      if (!token) {
+        throw new Error("Authorization token is missing");
+      }
   
-      // Make API call using axios
-      const response = await axios.post('http://localhost:5001/api/post/Intervention', payload, {
-        headers: {
-          'Content-Type': 'application/json', // Ensure JSON content type
-          Authorization: `Bearer ${token}`, // Add token to Authorization header
+      // Make the API call using Axios
+      const response = await axios.post(
+        "http://localhost:5001/api/post/Intervention",
+        payload,
+        {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`, // Include the token in the header
+          },
         }
-      });
+      );
   
       console.log("Assessment added successfully:", response.data);
   
-      // Store session
-      localStorage.setItem('session', response.data.session);
+      // Store session in local storage
+      localStorage.setItem("session", response.data.session);
   
       // Show success message
-      toast.success("Assesment added successfully!");
+      toast.success("Assessment added successfully!");
   
-      // Navigate to detail page
+      // Navigate to the detail page
       navigate(`/home/detailpage/${urn}/${response.data.session}`);
     } catch (err) {
-      console.error("Failed to add Assessment:", err);
+      console.error("Failed to add Assessment:", err.response?.data || err.message);
       toast.error("Failed to add Assessment");
     } finally {
-      setIsHistoryModalOpen(false); // Close the modal after submission
+      setIsHistoryModalOpen(false); // Close modal after submission
     }
   };
+  
   
 
   const onClose = () => {
@@ -298,11 +306,12 @@ const Pyramid = () => {
             </div>
 
             <button
-              className="mt-8 w-[30%] rounded-full px-4 py-2 bg-custom-gradient text-white"
-              onClick={handleNextClick}
-            >
-              {isLoading ? "Submitting" : "Next"}
-            </button>
+  className="mt-8 w-[30%] rounded-full px-4 py-2 bg-ceruleanBlue text-white hover:bg-blushPink transition focus:outline-none shadow-lg"
+  onClick={handleNextClick}
+>
+  {isLoading ? "Submitting..." : "Next"}
+</button>
+
           </div>
         </div>
       </section>
@@ -360,62 +369,62 @@ const Pyramid = () => {
               </div>
 
               <div className="mt-8 flex justify-center">
-                <button
-                  type="button"
-                  onClick={onClose}
-                  className="bg-red-500 text-white px-8 py-2 rounded-full mr-2"
-                >
-                  Cancel
-                </button>
-                <button
-                  type="submit"
-                  className="bg-custom-gradient text-white px-8 py-2 rounded-full"
-                >
-                  Save
-                </button>
+              <button
+  type="button"
+  onClick={onClose}
+  className="bg-blushPink text-white px-8 py-2 rounded-full mr-2 hover:bg-white hover:text-blushPink border-2 border-blushPink transition"
+>
+  Cancel
+</button>
+<button
+  type="submit"
+  className="bg-ceruleanBlue text-white px-8 py-2 rounded-full hover:bg-white hover:text-ceruleanBlue border-2 border-ceruleanBlue transition"
+>
+  Save
+</button>
+
+
               </div>
             </form>
           </div>
         </div>
       )}
 
-
-{isHistoryModalOpen && (
-  <div className="fixed inset-0 bg-gray-600 bg-opacity-75 flex justify-center items-center">
-    <div className="bg-white p-8 rounded-lg w-[60%]">
-      <div className="text-center mb-6 text-2xl font-semibold">
-        Enter Child History
-      </div>
-      <div className="flex flex-col my-4">
-        <label className="pb-1">Child History</label>
-        <textarea
-          className="border-2 py-2 px-3 w-full"
-          rows="4"
-          placeholder="Enter child history here..."
-          value={childHistory}
-          onChange={(e) => setChildHistory(e.target.value)}
-          required
-        ></textarea>
-      </div>
-      <div className="mt-8 flex justify-center">
-        <button
-          type="button"
-          onClick={() => setIsHistoryModalOpen(false)}
-          className="bg-red-500 text-white px-8 py-2 rounded-full mr-2"
-        >
-          Cancel
-        </button>
-        <button
-          onClick={handleHistorySubmit}
-          className="bg-custom-gradient text-white px-8 py-2 rounded-full"
-        >
-          Submit
-        </button>
-      </div>
-    </div>
-  </div>
-)}
-
+      {isHistoryModalOpen && (
+        <div className="fixed inset-0 bg-gray-600 bg-opacity-75 flex justify-center items-center">
+          <div className="bg-white p-8 rounded-lg w-[60%]">
+            <div className="text-center mb-6 text-2xl font-semibold">
+              Enter Child History
+            </div>
+            <div className="flex flex-col my-4">
+              <label className="pb-1">Child History</label>
+              <textarea
+                className="border-2 py-2 px-3 w-full"
+                rows="4"
+                placeholder="Enter child history here..."
+                value={childHistory}
+                onChange={(e) => setChildHistory(e.target.value)}
+                required
+              ></textarea>
+            </div>
+            <div className="mt-8 flex justify-center">
+              <button
+                type="button"
+                onClick={() => setIsHistoryModalOpen(false)}
+                className="bg-red-500 text-white px-8 py-2 rounded-full mr-2 hover:bg-red-600 transition"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={handleHistorySubmit}
+                className="bg-ceruleanBlue text-white px-8 py-2 rounded-full hover:bg-blushPink transition"
+              >
+                Submit
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </>
   );
 };

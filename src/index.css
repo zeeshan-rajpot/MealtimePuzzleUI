@@ -1,3 +1,81 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+/* Font-face for Meta Normal */
+@font-face {
+  font-family: 'Meta Normal';
+  src: url('/dist/meta-normal.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+}
+
+/* Styling the input-container */
+.input-container {
+  position: relative;
+  margin-top: 20px;
+}
+
+.input-container input,
+.input-container select {
+  width: 100%;
+  padding: 12px 18px;
+  border: 1px solid #ccc;
+  outline: none;
+  border-radius: 9999px;
+  font-size: 16px;
+  background-color: #fff;  /* Ensure background is not transparent */
+  box-shadow: var(--tw-shadow); /* Use Tailwind box-shadow */
+}
+
+/* Floating label behavior */
+.input-container label {
+  position: absolute;
+  left: 18px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 16px;
+  color: #aaa;
+  transition: all 0.3s ease;
+  pointer-events: none;
+}
+
+.input-container input:focus + label,
+.input-container input:not(:placeholder-shown) + label,
+.input-container select:focus + label,
+.input-container select:not(:placeholder-shown) + label {
+  top: -12px;
+  left: 18px;
+  font-size: 12px;
+  color: #006699; /* Change to Cerulean Blue */
+}
+
+.input-container input {
+  padding-top: 22px;
+  padding-bottom: 10px;
+}
+
+.input-container input:focus::placeholder {
+  color: transparent;
+}
+
+/* Autofill handling for smoother UX */
+input:-webkit-autofill {
+  -webkit-box-shadow: inset 0 0 0px 9999px white;
+}
+
+/* Ensure default background is blue, with pink on hover */
+button {
+    background-color: #006699; /* Cerulean Blue */
+    color: white;
+    border-radius: 9999px; /* Make the button fully rounded */
+    padding: 12px 18px;
+    box-shadow: var(--tw-shadow); /* Box-shadow for button */
+    transition: background-color 0.3s ease, box-shadow 0.3s ease; /* Smooth transition */
+  }
+  
+  button:hover {
+    background-color: #BB6F7A; /* Blush Pink on hover */
+    box-shadow: var(--tw-shadow-lg); /* Add a larger shadow on hover */
+  }
+  

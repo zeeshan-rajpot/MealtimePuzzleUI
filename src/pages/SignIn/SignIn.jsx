@@ -1,8 +1,9 @@
-import {React, useState} from "react";
+import { React, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import { useLoginUserMutation } from "../../features/auth/authApi";
 import toast from "react-hot-toast";
+
 const SignIn = () => {
   const navigate = useNavigate();
   const {
@@ -23,17 +24,16 @@ const SignIn = () => {
 
   const onSubmit = async (data) => {
     try {
-     const response =  await loginUser(data).unwrap();
-      localStorage.setItem('token', response.token);
+      const response = await loginUser(data).unwrap();
+      localStorage.setItem("token", response.token);
 
       navigate("/home");
       reset();
-      toast.success("Login Successful")
+      toast.success("Login Successful");
     } catch (err) {
       console.error("Failed to login:", err);
     }
   };
-
 
   return (
     <div className="flex items-center justify-center min-h-screen relative">
@@ -46,74 +46,60 @@ const SignIn = () => {
         <div className="flex justify-center"></div>
         <img src="/CDS Logo.PNG" alt="" className="w-[50%] mx-auto" />
 
-        {/* <h2 className="text-center text-2xl font-medium text-gray-900">
-          Sign In
-        </h2> */}
-
         <form className="mt-8 space-y-6" onSubmit={handleSubmit(onSubmit)}>
-          <div className="relative">
-            <label htmlFor="username" className="sr-only">
+          {/* Username Field */}
+          <div className="relative input-container">
+            <input
+              id="username"
+              name="username"
+              type="text"
+              {...register("username", { required: true })}
+              className="flex-1 px-2 py-2 rounded-full bg-transparent outline-none border-ceruleanBlue focus:border-blushPink"
+              placeholder=" "  // Floating label placeholder
+            />
+            <label
+              htmlFor="username"
+              className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-500 transition-all duration-200 peer-placeholder-shown:top-1/2 peer-placeholder-shown:-translate-y-1/2 peer-focus:top-[-10px] peer-focus:text-sm peer-focus:text-ceruleanBlue"
+            >
               Username
             </label>
-            <div className="flex items-center border rounded-full p-2 shadow-md">
-              <span className="pl-3 pr-2">
-                <img src="/Frame 33.svg" alt="email" className="w-8 h-8" />
-              </span>
-              <span>
-                <img src="/Line 1.svg" alt="line" />
-              </span>
-              <input
-                id="username"
-                name="username"
-                type="username"
-                {...register("username", { required: true })}
-                className="flex-1 px-2 py-2 rounded-full bg-transparent outline-none text-gray-700"
-                placeholder="Username"
-              />
-            </div>
-            {errors.email && (
-              <span className="text-red-500">Email is required</span>
+            {errors.username && (
+              <span className="text-red-500">Username is required</span>
             )}
           </div>
 
-          <div className="relative">
-            <label htmlFor="password" className="sr-only">
+          {/* Password Field */}
+          <div className="relative input-container">
+            <input
+              id="password"
+              name="password"
+              type={isPasswordVisible ? "text" : "password"}
+              {...register("password", { required: true })}
+              className="flex-1 px-2 py-2 rounded-full bg-transparent outline-none border-ceruleanBlue focus:border-blushPink"
+              placeholder=" "
+            />
+            <label
+              htmlFor="password"
+              className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-500 transition-all duration-200 peer-placeholder-shown:top-1/2 peer-placeholder-shown:-translate-y-1/2 peer-focus:top-[-10px] peer-focus:text-sm peer-focus:text-ceruleanBlue"
+            >
               Password
             </label>
-            <div className="flex items-center border rounded-full p-2 shadow-md">
-              <span className="pl-3 pr-2">
-                <img src="/Frame 34.svg" alt="pass" className="w-8 h-8" />
-              </span>
-              <span>
-                <img src="/Line 1.svg" alt="line" />
-              </span>
-              <input
-                id="password"
-                name="password"
-                type={isPasswordVisible ? "text" : "password"}
-                {...register("password", { required: true })}
-                className="flex-1 px-2 py-2 rounded-full bg-transparent outline-none text-gray-700"
-                placeholder="Password"
-              />
-              <button type="button" className="text-gray-400 pr-3" onClick={togglePasswordVisibility}>
-                <img src="/ion_eye-off.svg" alt="eye_icon" />
-              </button>
-            </div>
+            <button
+              type="button"
+              className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400"
+              onClick={togglePasswordVisibility}
+            >
+              <img src="/ion_eye-off.svg" alt="eye_icon" />
+            </button>
             {errors.password && (
               <span className="text-red-500">Password is required</span>
             )}
           </div>
 
-          {/* <div className="text-right">
-            <a href="#" className="text-sm text-primary hover:underline">
-              Forgot password?
-            </a>
-          </div> */}
-
           <div>
             <button
               type="submit"
-              className="w-full py-3 px-4 bg-custom-gradient text-white rounded-full shadow-lg"
+              className="w-full py-3 px-4 bg-ceruleanBlue text-white rounded-full shadow-lg hover:bg-blushPink"
             >
               {isLoading ? " Signing in..." : " Sign In"}
             </button>
@@ -129,7 +115,7 @@ const SignIn = () => {
             I Didn’t have an account?{" "}
             <Link
               to="/signup"
-              className="font-medium text-primary hover:underline"
+              className="font-medium text-ceruleanBlue hover:underline"
             >
               Sign up
             </Link>
