@@ -8,27 +8,29 @@ const HistoryDetail = () => {
   const { urn } = useParams();
   const navigate = useNavigate();
   const [childData, setChildData] = useState(null);
-  const [sessionData, setSessionData] = useState(null);
-  const [selectedSession, setSelectedSession] = useState("");
+  // const [sessionData, setSessionData] = useState(null);
+  // const [selectedSession, setSelectedSession] = useState("");
 
   useEffect(() => {
     const fetchData = async () => {
       const token = localStorage.getItem("token");
       try {
         const response = await axios.get(
-          `http://localhost:5001/api/get/Intervention/${urn}`,
+          `http://localhost:5001/child/${urn}/history`,
           {
             headers: {
               Authorization: `Bearer ${token}`,
             },
           }
         );
-        setChildData(response.data.childData);
-        setSessionData(response.data.data);
+        setChildData(response.data);
+        console.log(response.data);
 
-        if (response.data.data) {
-          setSelectedSession(Object.keys(response.data.data)[0]);
-        }
+        // setSessionData(response.data.data);
+
+        // if (response.data.data) {
+        //   setSelectedSession(Object.keys(response.data.data)[0]);
+        // }
       } catch (error) {
         console.error("Error fetching data:", error);
       }
@@ -45,7 +47,7 @@ const HistoryDetail = () => {
 
 
 
-  
+
   return (
     <>
       <Header />
@@ -57,12 +59,20 @@ const HistoryDetail = () => {
             <button className="text-base">Back</button>
           </div>
 
-          <div id="printableContent" className="w-full max-w-3xl mx-auto pb-12">
-            <div className="flex justify-between mb-6">
-              <h2 className="text-2xl font-semibold">Child Information</h2>
-            </div>
+          <div className="w-full max-w-3xl mx-auto pb-12">
 
-            {childData && (
+            {childData?.childHistory ? (
+              <img src={childData.childHistory} alt={childData.urn} />
+            ) : (
+              <p className="flex justify-center items-center font-semibold text-2xl">No Child History</p>
+            )}
+
+
+
+            {/* <div className="flex justify-between mb-6">
+              <h2 className="text-2xl font-semibold">Child Information</h2>
+            </div> */}
+            {/* {childData && (
               <div className="mt-4 space-y-6">
                 <p className="text-sm font-medium">
                   Child's URN (Unit Record Number):
@@ -85,11 +95,10 @@ const HistoryDetail = () => {
                 <p className="text-sm font-medium">FIN Number:</p>
                 <p className="border-b-2 ">{childData.finnumber}</p>
               </div>
-            )}
-
-            <div className="mt-10">
+            )} */}
+            {/* <div className="mt-10">
               <h2 className="text-2xl font-semibold">Mealtime</h2>
-              {/* Dropdown to select session */}
+            
               {sessionData && (
                 <div className="flex items-center mb-4 justify-between">
                   <h3 className="text-xl font-semibold my-3 mr-4">
@@ -139,7 +148,8 @@ const HistoryDetail = () => {
                     ))}
                   </div>
                 )}
-            </div>
+            </div> */}
+
           </div>
         </div>
       </section>
