@@ -477,7 +477,7 @@ const Addnewassestent = () => {
         </div>
       )}
 
-{isAssessmentModalOpen && (
+      {isAssessmentModalOpen && (
         <div className="fixed inset-0 bg-gray-600 bg-opacity-75 flex justify-center items-center z-50">
           <div className="bg-white p-8 rounded-lg w-[90%] md:w-[60%]">
             <div className="flex justify-between items-center mb-6">
