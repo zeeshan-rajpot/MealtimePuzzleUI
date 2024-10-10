@@ -3,6 +3,9 @@ import Header from "../../components/Header";
 import SideBar from "../../components/SideBar";
 import { useNavigate, useParams } from "react-router-dom";
 import { useReactToPrint } from "react-to-print";
+import html2pdf from 'html2pdf.js';
+
+
 
 const DetailPage = () => {
   const { urn, session } = useParams();
@@ -68,12 +71,32 @@ const DetailPage = () => {
     return `${years} year(s), ${months} month(s)`;
   }
 
-  const handlePrint = useReactToPrint({
-    content: () => reportRef.current,
-    documentTitle: `Clinical_Report_${urn}`,
-    onBeforePrint: () => console.log("Preparing to print..."),
-    onAfterPrint: () => console.log("Print completed!"),
-  });
+  // const handlePrint = useReactToPrint({
+  //   content: () => reportRef.current,
+  //   documentTitle: `Clinical_Report_${urn}`,
+  //   onBeforePrint: () => console.log("Preparing to print..."),
+  //   onAfterPrint: () => console.log("Print completed!"),
+  // });
+
+
+
+  const handlePrint = () => {
+    const element = reportRef.current;
+
+    // Options for html2pdf
+    const opt = {
+      margin: 0.2,
+      filename: 'clinical_report.pdf',
+      image: { type: 'jpeg', quality: 2 },
+      html2canvas: { scale: 1 },
+      jsPDF: { unit: 'in', format: 'letter', orientation: 'portrait' }
+    };
+
+    // Generate and download the PDF
+    html2pdf().from(element).set(opt).save();
+  };
+
+
 
   return (
     <>
@@ -81,10 +104,10 @@ const DetailPage = () => {
       <section className="flex flex-col lg:flex-row justify-between gap-4 h-auto w-full">
         <SideBar />
         <div
-          ref={reportRef}
+         
           className="pt-10 w-full lg:w-[75%] xl:w-[80%] 2xl:w-[85%] h-auto"
         >
-          <div className="w-full max-w-3xl mx-auto mb-20 ">
+          <div className="w-full max-w-3xl mx-auto mb-20 "  ref={reportRef}>
             <div className="flex space-x-20">
               <img src="/logo.PNG" alt="logo" className="h-12" />
               <img src="/CDS Logo.PNG" alt="logo-1" className="h-28" />
