@@ -41,12 +41,8 @@ const Buttunpage = () => {
         <div className="pt-10 w-full lg:w-[75%] xl:w-[80%] 2xl:w-[85%] h-auto">
           <div className="flex flex-col justify-center items-center">
             <div className="w-full max-w-3xl mx-auto flex justify-center items-center flex-col">
-              <h2 className="text-2xl font-bold mb-4">
-                {childName}
-              </h2>
-              <h2 className="text-xl font-bold mb-4">
-                Total Sessions: {totalSessions}
-              </h2>
+              <h2 className="text-2xl font-bold mb-4">{childName}</h2>
+              <h2 className="text-xl font-bold mb-4">Total Sessions: {totalSessions}</h2>
               <div className="flex flex-wrap gap-2">
                 {/* Render a button for each session */}
                 {Array.from({ length: totalSessions }, (_, index) => (
@@ -56,7 +52,7 @@ const Buttunpage = () => {
                     >
                       <button
                         key={index}
-                        className=' className="w-full py-3 px-10 bg-custom-gradient text-white rounded-full  shadow-lg my-8'
+                        className="w-full py-3 px-10 bg-ceruleanBlue text-white rounded-full shadow-lg my-8 hover:bg-blushPink transition duration-300"
                       >
                         {" "}
                         Update Session {index + 1}
@@ -67,7 +63,7 @@ const Buttunpage = () => {
               </div>
 
               <Link to={`/home/addnew/${urn}/${childName}/${totalSessions}`}>
-                <button className=' className="w-full py-3 px-10 bg-custom-gradient text-white rounded-full  shadow-lg my-8'>
+                <button className="w-full py-3 px-10 bg-ceruleanBlue text-white rounded-full shadow-lg my-8 hover:bg-blushPink transition duration-300">
                   {" "}
                   Add New Assessment{" "}
                 </button>

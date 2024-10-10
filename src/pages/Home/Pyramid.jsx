@@ -108,16 +108,13 @@ const Pyramid = () => {
 
       // Navigate to detail page with the session info
     } catch (err) {
-      // Log the error and show a toast notification
-      console.error("Failed to add intervention:", err);
-      toast.error("Failed to add intervention");
+      console.error("Failed to add Assessment:", err);
+      toast.error("Failed to add Assessment");
     } finally {
-      setIsHistoryModalOpen(false); 
-    setIsAssessmentModalOpen(true);
-    
-    // Close modal regardless of success or error
+      setIsHistoryModalOpen(false); // Close the modal after submission
     }
   };
+  
 
   const onClose = () => {
     setIsModalOpen(false);
@@ -324,11 +321,12 @@ const Pyramid = () => {
             </div>
 
             <button
-              className="mt-8 w-[30%] rounded-full px-4 py-2 bg-custom-gradient text-white"
-              onClick={handleNextClick}
-            >
-              {isLoading ? "Submitting" : "Next"}
-            </button>
+  className="mt-8 w-[30%] rounded-full px-4 py-2 bg-ceruleanBlue text-white hover:bg-blushPink transition focus:outline-none shadow-lg"
+  onClick={handleNextClick}
+>
+  {isLoading ? "Submitting..." : "Next"}
+</button>
+
           </div>
         </div>
       </section>
@@ -386,179 +384,64 @@ const Pyramid = () => {
               </div>
 
               <div className="mt-8 flex justify-center">
-                <button
-                  type="button"
-                  onClick={onClose}
-                  className="bg-red-500 text-white px-8 py-2 rounded-full mr-2"
-                >
-                  Cancel
-                </button>
-                <button
-                  type="submit"
-                  className="bg-custom-gradient text-white px-8 py-2 rounded-full"
-                >
-                  Save
-                </button>
+              <button
+  type="button"
+  onClick={onClose}
+  className="bg-blushPink text-white px-8 py-2 rounded-full mr-2 hover:bg-white hover:text-blushPink border-2 border-blushPink transition"
+>
+  Cancel
+</button>
+<button
+  type="submit"
+  className="bg-ceruleanBlue text-white px-8 py-2 rounded-full hover:bg-white hover:text-ceruleanBlue border-2 border-ceruleanBlue transition"
+>
+  Save
+</button>
+
+
               </div>
             </form>
           </div>
         </div>
       )}
 
-      {isHistoryModalOpen && (
-        <div className="fixed inset-0 bg-gray-600 bg-opacity-75 flex justify-center items-center">
-          <div className="bg-white p-8 rounded-lg w-[60%]">
-            <div className="text-center mb-6 text-2xl font-semibold">
-              Enter Child History
-            </div>
-            <div className="flex flex-col my-4">
-              <label className="pb-1">Child History</label>
-              <textarea
-                className="border-2 py-2 px-3 w-full"
-                rows="4"
-                placeholder="Enter child history here..."
-                value={childHistory}
-                onChange={(e) => setChildHistory(e.target.value)}
-                required
-              ></textarea>
-              {childHistoryError && (
-                <span className="text-red-500 text-sm mt-1">
-                  Child history is required.
-                </span>
-              )}
-            </div>
-            <div className="mt-8 flex justify-center">
-              <button
-                type="button"
-                onClick={() => setIsHistoryModalOpen(false)}
-                className="bg-red-500 text-white px-8 py-2 rounded-full mr-2"
-              >
-                Cancel
-              </button>
-              <button
-                onClick={handleHistorySubmit}
-                className="bg-custom-gradient text-white px-8 py-2 rounded-full"
-              >
-                Next
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
 
-      {isAssessmentModalOpen && (
-        <div className="fixed inset-0 bg-gray-600 bg-opacity-75 flex justify-center items-center z-50">
-          <div className="bg-white p-8 rounded-lg w-[90%] md:w-[60%]">
-            <div className="flex justify-between items-center mb-6">
-              <h2 className="text-2xl font-semibold">
-                Who has done this assessment?
-              </h2>
-              <button
-                onClick={handleAddMember}
-                className="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 transition"
-              >
-                Add Member
-              </button>
-            </div>
+{isHistoryModalOpen && (
+  <div className="fixed inset-0 bg-gray-600 bg-opacity-75 flex justify-center items-center">
+    <div className="bg-white p-8 rounded-lg w-[60%]">
+      <div className="text-center mb-6 text-2xl font-semibold">
+        Enter Child History
+      </div>
+      <div className="flex flex-col my-4">
+        <label className="pb-1">Child History</label>
+        <textarea
+          className="border-2 py-2 px-3 w-full"
+          rows="4"
+          placeholder="Enter child history here..."
+          value={childHistory}
+          onChange={(e) => setChildHistory(e.target.value)}
+          required
+        ></textarea>
+      </div>
+      <div className="mt-8 flex justify-center">
+        <button
+          type="button"
+          onClick={() => setIsHistoryModalOpen(false)}
+          className="bg-red-500 text-white px-8 py-2 rounded-full mr-2"
+        >
+          Cancel
+        </button>
+        <button
+          onClick={handleHistorySubmit}
+          className="bg-custom-gradient text-white px-8 py-2 rounded-full"
+        >
+          Submit
+        </button>
+      </div>
+    </div>
+  </div>
+)}
 
-            {showInputs && (
-              <>
-                <div className="flex flex-col my-4">
-                  <label className="pb-1 font-medium">Name</label>
-                  <input
-                    className="border-2 border-gray-300 py-2 px-3 rounded-md w-full focus:outline-none focus:border-blue-500"
-                    type="text"
-                    placeholder="Enter name"
-                    onChange={(e) =>
-                      handleInputChange(0, "name", e.target.value)
-                    }
-                    required
-                  />
-                </div>
-                <div className="flex flex-col my-4">
-                  <label className="pb-1 font-medium">Role</label>
-                  <input
-                    className="border-2 border-gray-300 py-2 px-3 rounded-md w-full focus:outline-none focus:border-blue-500"
-                    type="text"
-                    placeholder="Enter role"
-                    onChange={(e) =>
-                      handleInputChange(0, "role", e.target.value)
-                    }
-                    required
-                  />
-                </div>
-                <div className="flex justify-center">
-                  <button className="bg-gradient-to-r from-blue-500 to-green-500 text-white px-8 py-2 rounded-full hover:from-blue-600 hover:to-green-600 transition">
-                    save
-                  </button>
-                </div>
-              </>
-            )}
-
-            {members.map((member, index) => (
-              <div key={index} className="flex space-x-4 items-center my-4">
-                <div className="flex flex-col w-1/2">
-                  <label className="pb-1 font-medium">Select Name</label>
-                  <select
-                    className="border-2 border-gray-300 py-2 px-3 rounded-md w-full focus:outline-none focus:border-blue-500"
-                    onChange={(e) =>
-                      handleInputChange(index, "name", e.target.value)
-                    }
-                    value={member.name}
-                  >
-                    <option value="">Select Name</option>
-                    <option value="User1">Asad</option>
-                    <option value="User2">Gul</option>
-                  </select>
-                </div>
-
-                <div className="flex flex-col w-1/2">
-                  <label className="pb-1 font-medium">Select Role</label>
-                  <select
-                    className="border-2 border-gray-300 py-2 px-3 rounded-md w-full focus:outline-none focus:border-blue-500"
-                    onChange={(e) =>
-                      handleInputChange(index, "role", e.target.value)
-                    }
-                    value={member.role}
-                  >
-                    <option value="">Select Role</option>
-                    <option value="Admin">Paediatrician</option>
-                    <option value="Admin">Speech Language Patholog</option>
-                    <option value="Editor">Psychologist</option>
-                    <option value="Editor">Occupational Therapist</option>
-                  </select>
-                </div>
-              </div>
-            ))}
-
-            {/* Add more dropdowns */}
-            <div className="flex justify-center mt-4">
-              <button
-                onClick={handleAddDropdown}
-                className="bg-green-500 text-white px-4 py-2 rounded-lg hover:bg-green-600 transition"
-              >
-                + Add Another Dropdown
-              </button>
-            </div>
-
-            <div className="mt-8 flex justify-center space-x-4">
-              <button
-                type="button"
-                onClick={() => setIsAssessmentModalOpen(false)}
-                className="bg-red-500 text-white px-8 py-2 rounded-full hover:bg-red-600 transition"
-              >
-                Cancel
-              </button>
-              <button
-                onClick={handleAssessmentNext}
-                className="bg-gradient-to-r from-blue-500 to-green-500 text-white px-8 py-2 rounded-full hover:from-blue-600 hover:to-green-600 transition"
-              >
-                Next
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
     </>
   );
 };
