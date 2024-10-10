@@ -105,7 +105,7 @@ const Pyramid = () => {
       toast.success("Intervention added successfully!");
 
       // Navigate to detail page with the session info
-      navigate(`/home/detailpage/${urn}/${response.data.session}`);
+      // navigate(`/home/detailpage/${urn}/${response.data.session}`);
     } catch (err) {
       // Log the error and show a toast notification
       console.error("Failed to add intervention:", err);
