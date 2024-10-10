@@ -18,19 +18,19 @@ const ChildInformationPage = () => {
     formState: { errors },
   } = useForm();
 
-  const [childUser, { isLoading, isError, error }] = useChildUserMutation();
+  const [childUser, { isLoading, error }] = useChildUserMutation();
 
   const onSubmit = async (data) => {
     try {
       await childUser(data).unwrap();
       toast.success("Child Detail Added");
-      const childName = data.firstName + " " + data.lastName
+      const childName = data.firstName + " " + data.lastName;
       navigate(`/home/options/${data.urn}/${childName}`);
 
-      localStorage.setItem("childData", JSON.stringify(data));
+      // localStorage.setItem("childData", JSON.stringify(data));
     } catch (err) {
-      toast.error("Error submitting child information");
-      console.error(err);
+      toast.error([err.data.error]);
+      console.error([err]);
     }
   };
 
@@ -61,7 +61,7 @@ const ChildInformationPage = () => {
                     required: "URN is required",
                     minLength: {
                       value: /^[0-9]{9}$/,
-                        message: "URN must be 9 digits",
+                      message: "URN must be 9 digits",
                     },
                   })}
                   placeholder="Child's URN (Unit Record Number)"
