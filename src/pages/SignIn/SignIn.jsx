@@ -44,7 +44,7 @@ const SignIn = () => {
       />
       <div className="w-full max-w-md space-y-8 p-6">
         <div className="flex justify-center"></div>
-        <img src="/CDS Logo.PNG" alt="" className="w-[50%] mx-auto" />
+        <img src="/CDS Logo.png" alt="" className="w-[50%] mx-auto" />
 
         <form className="mt-8 space-y-6" onSubmit={handleSubmit(onSubmit)}>
           {/* Username Field */}
