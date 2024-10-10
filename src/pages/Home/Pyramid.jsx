@@ -14,6 +14,7 @@ const Pyramid = () => {
   const [selectedImages, setSelectedImages] = useState([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [currentImageLabel, setCurrentImageLabel] = useState("");
+  const [session, setSession] = useState("");
   const [imageId, setImageId] = useState(null);
   const [imageData, setImageData] = useState({});
   const [imageDataCounter, setImageDataCounter] = useState(0);
@@ -102,16 +103,19 @@ const Pyramid = () => {
 
       // Store session data and navigate if the request is successful
       localStorage.setItem("session", response.data.session);
+      setSession( response.data.session);
       toast.success("Intervention added successfully!");
 
       // Navigate to detail page with the session info
-      navigate(`/home/detailpage/${urn}/${response.data.session}`);
     } catch (err) {
       // Log the error and show a toast notification
       console.error("Failed to add intervention:", err);
       toast.error("Failed to add intervention");
     } finally {
-      setIsHistoryModalOpen(false); // Close modal regardless of success or error
+      setIsHistoryModalOpen(false); 
+    setIsAssessmentModalOpen(true);
+    
+    // Close modal regardless of success or error
     }
   };
 
@@ -157,7 +161,9 @@ const Pyramid = () => {
 
   const handleAssessmentNext = () => {
     setIsAssessmentModalOpen(false);
-    navigate(`/home/detailpage/${urn}/${localStorage.getItem("session")}`);
+    navigate(`/home/detailpage/${urn}/${session}`);
+
+    // navigate(`/home/detailpage/${urn}/${localStorage.getItem("session")}`);
   };
 
   return (
