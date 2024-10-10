@@ -36,16 +36,16 @@ const DetailPage = () => {
             },
           }
         );
-  
+
         const data = await response.json();
-        
+
         // Check if data is empty and handle accordingly
         if (!data || Object.keys(data).length === 0) {
           console.log("Data is empty");
           setInterventionData([]); // Or set a message to indicate no data
           return; // Exit the function early
         }
-  
+
         setInterventionData(data);
         console.log("Intervention", data);
       } catch (error) {
@@ -54,10 +54,10 @@ const DetailPage = () => {
         setLoading(false);
       }
     };
-  
+
     fetchInterventionData();
   }, [urn, session]);
-  
+
 
   function calculateAge(birthDate, appointmentDate) {
     let years = appointmentDate.getFullYear() - birthDate.getFullYear();
@@ -80,7 +80,7 @@ const DetailPage = () => {
 
 
 
-  const handlePrint = async() => {
+  const handlePrint = async () => {
     const element = reportRef.current;
 
     // Options for html2pdf
@@ -95,45 +95,16 @@ const DetailPage = () => {
     // Generate and download the PDF
     html2pdf().from(element).set(opt).save();
 
-
-
-
-
-    // if (reportRef.current === null) {
-    //   return;
-    // }
-
-    // toPng(reportRef.current)
-    //   .then((dataUrl) => {
-    //     const link = document.createElement('a');
-    //     link.download = 'report.png';
-    //     link.href = dataUrl;
-    //     link.click();
-    //   })
-    //   .catch((err) => {
-    //     console.error('Screenshot failed', err);
-    //   });
-
-
-
-
-
-
-
-
-
-
-
-
-   
   };
-  
-  
-  
-  const handleUpload = async() => {
+
+
+
+  const handleUpload = async () => {
     const canvas = await html2canvas(reportRef.current);
     const imgData = canvas.toDataURL('image/png');
-    const urn = interventionData?.child?.urn; // Ensure URN is defined
+    // const urn = interventionData?.child?.urn; // Ensure URN is defined
+    // console.log(urn);
+
 
     const blob = await (await fetch(imgData)).blob();
 
@@ -155,21 +126,21 @@ const DetailPage = () => {
       console.error('Error uploading image:', error);
     }
 
-   
+
   };
-
-
-
-
 
   useEffect(() => {
     const timer = setTimeout(() => {
       handleUpload();
     }, 3000); // 3000 milliseconds = 3 seconds
-  
+
     // Cleanup function to clear the timeout if the component unmounts before the delay completes
     return () => clearTimeout(timer);
   }, []);
+
+  const accessors = JSON.parse(localStorage.getItem('accessors')) || [];
+
+  const additionalInfo = JSON.parse(localStorage.getItem('additionalInfo')) || {};
 
   return (
     <>
@@ -177,10 +148,10 @@ const DetailPage = () => {
       <section className="flex flex-col lg:flex-row justify-between gap-4 h-auto w-full">
         <SideBar />
         <div
-         
+
           className="pt-10 w-full lg:w-[75%] xl:w-[80%] 2xl:w-[85%] h-auto"
         >
-          <div className="w-full max-w-3xl mx-auto mb-20  bg-white"  ref={reportRef}>
+          <div className="w-full max-w-3xl mx-auto mb-20  bg-white" ref={reportRef}>
             <div className="flex space-x-20">
               <img src="/logo.PNG" alt="logo" className="h-12" />
               <img src="/CDS Logo.PNG" alt="logo-1" className="h-28" />
@@ -263,9 +234,9 @@ const DetailPage = () => {
                     <th className="border-l-2 text-lg font-normal">
                       {interventionData?.child?.dateOfBirth
                         ? calculateAge(
-                            new Date(interventionData.child.dateOfBirth),
-                            new Date()
-                          )
+                          new Date(interventionData.child.dateOfBirth),
+                          new Date()
+                        )
                         : "age not available"}{" "}
                     </th>
                   </tr>
@@ -287,28 +258,24 @@ const DetailPage = () => {
                 the multi-disciplinary team consisting of:
               </p>
               <table className="w-full max-w-3xl mx-auto mt-8">
-                <thead>
+                {accessors.length > 0 ? (
+                  accessors.map((item, index) => (
+                    <thead key={index}>
+                      <tr>
+                        <th className=" text-lg font-normal">{item.name || '[Name]'}</th>
+                        <th className=" text-lg font-normal">{item.role || '[Role]'}</th>
+                      </tr>
+
+                    </thead>
+                  ))
+                ) : (
                   <tr>
-                    <th className=" text-lg font-normal">[Name]</th>
-                    <th className=" text-lg font-normal">Paediatrician</th>
+                    <td colSpan="2" className="text-lg font-normal text-center">
+                      No data found
+                    </td>
                   </tr>
-                  <tr>
-                    <th className=" text-lg font-normal">[Name]</th>
-                    <th className=" text-lg font-normal">
-                      Speech Language Patholog
-                    </th>
-                  </tr>
-                  <tr>
-                    <th className=" text-lg font-normal">[Name]</th>
-                    <th className=" text-lg font-normal">Psychologist</th>
-                  </tr>
-                  <tr>
-                    <th className=" text-lg font-normal">[Name]</th>
-                    <th className=" text-lg font-normal">
-                      Occupational Therapist
-                    </th>
-                  </tr>
-                </thead>
+                )}
+
               </table>
             </div>
             <div className="mt-16 relative">
@@ -318,26 +285,27 @@ const DetailPage = () => {
               <p>
                 {interventionData?.child?.firstName}{" "}
                 {interventionData?.child?.lastName} was referred to the Child
-                Development Service by [Referrer] in{" "}
+                Development Service by {additionalInfo.referrer} at{" "}
                 {new Date(
                   interventionData?.child?.dateOfBirth
                 ).toLocaleDateString()}{" "}
-                with concerns regarding [reason for referral] .
+                {/* with concerns regarding [reason for referral] . */}
               </p>
               <p className="mt-8">
                 {interventionData?.child?.firstName}{" "}
                 {interventionData?.child?.lastName} is a{" "}
                 {interventionData?.child?.dateOfBirth
                   ? calculateAge(
-                      new Date(interventionData.child.dateOfBirth),
-                      new Date()
-                    )
+                    new Date(interventionData.child.dateOfBirth),
+                    new Date()
+                  )
                   : "age not available"}{" "}
-                old who lives with [describe living arrangements without
+                {interventionData?.childHistory}
+                {/* old who lives with [describe living arrangements without
                 sensitive info] . They attend [childcare / school name] [Number
-                of days] days per week.
+                of days] days per week. */}
               </p>
-              <p className="mt-8">
+              {/* <p className="mt-8">
                 At the initial appointment, {interventionData?.child?.firstName}{" "}
                 {interventionData?.child?.lastName}’s parent{" "}
                 {interventionData?.child?.parentName} raised the following
@@ -358,7 +326,7 @@ const DetailPage = () => {
                   [add any previous assessments or support services seen,
                   including when and where]{" "}
                 </li>
-              </p>
+              </p> */}
               <div>
                 <img
                   src="/qr.PNG"
@@ -399,19 +367,7 @@ const DetailPage = () => {
               <div className="flex justify-between ">
                 <h2 className="font-bold">CDS Mealtime Clinical Report</h2>
               </div>
-              <div className="flex justify-between pb-32">
-                <div>
-                  Name: {interventionData?.child.firstName}{" "}
-                  {interventionData?.child.lastName}
-                </div>
-                <div>
-                  DOB:{" "}
-                  {new Date(
-                    interventionData?.child?.dateOfBirth
-                  ).toLocaleString()}
-                </div>
-                <div>URN:{interventionData?.child?.urn}</div>
-              </div>
+
 
               {/* Main Body */}
               <p>
@@ -420,33 +376,43 @@ const DetailPage = () => {
               </p>
 
               {/* Professional Contacts */}
-              <div className="grid grid-cols-2 gap-6">
-                {/* Left column */}
-                <div>
-                  <div className="font-bold ">[Name]</div>
-                  <p>Paediatrician</p>
+              {accessors.length > 0 ? (
+                accessors.map((item, index) => (
+                  <div className="grid grid-cols-2 gap-6">
+                    {/* Left column */}
+                    <div>
+                      <div className="font-bold ">{item.name || '[Name]'}</div>
+                      <p>{item.role || '[Role]'}</p>
+                    </div>
+                    {/* <div>
+                      <div className="font-bold ">[Name]</div>
+                      <p>Speech Language Pathologist</p>
+                    </div>
+                    <div>
+                      <div className="font-bold ">[Name]</div>
+                      <p>Psychologist</p>
+                    </div>
+                    <div>
+                      <div className="font-bold ">[Name]</div>
+                      <p>Occupational Therapist</p>
+                    </div> */}
+                  </div>
+                ))
+              ) : (
+
+                <div colSpan="2" className="text-lg font-normal text-center">
+                  No data found
                 </div>
-                <div>
-                  <div className="font-bold ">[Name]</div>
-                  <p>Speech Language Pathologist</p>
-                </div>
-                <div>
-                  <div className="font-bold ">[Name]</div>
-                  <p>Psychologist</p>
-                </div>
-                <div>
-                  <div className="font-bold ">[Name]</div>
-                  <p>Occupational Therapist</p>
-                </div>
-              </div>
+
+              )}
 
               {/* cc Section */}
               <div className="mt-4">
                 <p>cc</p>
                 <ul className="list-none">
-                  <li>Parents: [address]</li>
-                  <li>Referrer: [address]</li>
-                  <li>GP: [address]</li>
+                  <li>Parents: {additionalInfo.parents || 'not foud'}</li>
+                  <li>Referrer: {additionalInfo.referrer || 'not found'}</li>
+                  <li>GP: {additionalInfo.gp || '[address]'}</li>
                   <li>
                     <a
                       href="mailto:unitingcare.earlychildhood@ndis.gov.au"
@@ -456,7 +422,7 @@ const DetailPage = () => {
                     </a>{" "}
                     (via secure server)
                   </li>
-                  <li>Private Provider [address]</li>
+                  <li>Private Provider: {additionalInfo.privateProvider || '[address]'}</li>
                   <li>GCHHS iEMR</li>
                 </ul>
               </div>

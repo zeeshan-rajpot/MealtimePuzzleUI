@@ -107,6 +107,7 @@ const Pyramid = () => {
       localStorage.setItem("session", response.data.session);
       setSession(response.data.session);
       toast.success("Intervention added successfully!");
+      console.log(response.data)
 
       // Navigate to detail page with the session info
     } catch (err) {
