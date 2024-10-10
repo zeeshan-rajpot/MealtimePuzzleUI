@@ -166,6 +166,8 @@ const Pyramid = () => {
     // navigate(`/home/detailpage/${urn}/${localStorage.getItem("session")}`);
   };
 
+  
+
   return (
     <>
       <Header />
