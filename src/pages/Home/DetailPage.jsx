@@ -4,9 +4,9 @@ import SideBar from "../../components/SideBar";
 import { useNavigate, useParams } from "react-router-dom";
 import { useReactToPrint } from "react-to-print";
 import html2pdf from 'html2pdf.js';
-
-
-
+import html2canvas from 'html2canvas';
+import { toPng } from 'html-to-image';
+import axios from 'axios';
 const DetailPage = () => {
   const { urn, session } = useParams();
   const reportRef = useRef(null);
@@ -80,7 +80,7 @@ const DetailPage = () => {
 
 
 
-  const handlePrint = () => {
+  const handlePrint = async() => {
     const element = reportRef.current;
 
     // Options for html2pdf
@@ -94,9 +94,82 @@ const DetailPage = () => {
 
     // Generate and download the PDF
     html2pdf().from(element).set(opt).save();
+
+
+
+
+
+    // if (reportRef.current === null) {
+    //   return;
+    // }
+
+    // toPng(reportRef.current)
+    //   .then((dataUrl) => {
+    //     const link = document.createElement('a');
+    //     link.download = 'report.png';
+    //     link.href = dataUrl;
+    //     link.click();
+    //   })
+    //   .catch((err) => {
+    //     console.error('Screenshot failed', err);
+    //   });
+
+
+
+
+
+
+
+
+
+
+
+
+   
+  };
+  
+  
+  
+  const handleUpload = async() => {
+    const canvas = await html2canvas(reportRef.current);
+    const imgData = canvas.toDataURL('image/png');
+    const urn = interventionData?.child?.urn; // Ensure URN is defined
+
+    const blob = await (await fetch(imgData)).blob();
+
+    const formData = new FormData();
+    formData.append('image', blob, `${urn}-report.png`); // Naming the file with child's URN
+
+    // Get the token from localStorage
+    const token = localStorage.getItem('token'); // Change 'token' to your actual token key
+
+    try {
+      const response = await axios.post(`http://localhost:5001/child/${urn}/upload`, formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+          Authorization: `Bearer ${token}`, // Include the token in the request
+        },
+      });
+      console.log(response.data); // Handle the response as needed
+    } catch (error) {
+      console.error('Error uploading image:', error);
+    }
+
+   
   };
 
 
+
+
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      handleUpload();
+    }, 3000); // 3000 milliseconds = 3 seconds
+  
+    // Cleanup function to clear the timeout if the component unmounts before the delay completes
+    return () => clearTimeout(timer);
+  }, []);
 
   return (
     <>
@@ -107,7 +180,7 @@ const DetailPage = () => {
          
           className="pt-10 w-full lg:w-[75%] xl:w-[80%] 2xl:w-[85%] h-auto"
         >
-          <div className="w-full max-w-3xl mx-auto mb-20 "  ref={reportRef}>
+          <div className="w-full max-w-3xl mx-auto mb-20  bg-white"  ref={reportRef}>
             <div className="flex space-x-20">
               <img src="/logo.PNG" alt="logo" className="h-12" />
               <img src="/CDS Logo.PNG" alt="logo-1" className="h-28" />
