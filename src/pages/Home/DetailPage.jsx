@@ -80,22 +80,42 @@ const DetailPage = () => {
 
 
 
-  const handlePrint = async () => {
-    const element = reportRef.current;
-
-    // Options for html2pdf
-    const opt = {
-      margin: 0.2,
-      filename: 'clinical_report.pdf',
-      image: { type: 'jpeg', quality: 2 },
-      html2canvas: { scale: 1 },
-      jsPDF: { unit: 'in', format: 'letter', orientation: 'portrait' }
+  const handlePrint = () => {
+    const element = reportRef.current; // The specific section you want to print
+  
+    // Create a new window
+    const printWindow = window.open('', '', 'width=800,height=600');
+  
+    // Create a copy of the HTML you want to print
+    printWindow.document.write(`
+      <html>
+        <head>
+          <title>Print Report</title>
+          <style>
+            /* Add any styles you want for the printed document */
+            body {
+              font-family: Arial, sans-serif;
+            }
+           
+          </style>
+        </head>
+        <body>
+          <div class="print-section">${element.innerHTML}</div>
+        </body>
+      </html>
+    `);
+  
+    // Close the document stream
+    printWindow.document.close();
+  
+    // Wait for the content to load, then trigger print
+    printWindow.onload = () => {
+      printWindow.focus();
+      printWindow.print();
+      printWindow.close();
     };
-
-    // Generate and download the PDF
-    html2pdf().from(element).set(opt).save();
-
   };
+  
 
 
 

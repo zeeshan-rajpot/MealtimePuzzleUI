@@ -184,7 +184,6 @@ const InterventionPyramidupdate = () => {
     } finally {
       setIsHistoryModalOpen(false); // Close the modal after submission
       setIsAssessmentModalOpen(true);
-
     }
   };
 
