@@ -82,10 +82,10 @@ const DetailPage = () => {
 
   const handlePrint = () => {
     const element = reportRef.current; // The specific section you want to print
-  
+
     // Create a new window
     const printWindow = window.open('', '', 'width=800,height=600');
-  
+
     // Create a copy of the HTML you want to print
     printWindow.document.write(`
       <html>
@@ -96,7 +96,6 @@ const DetailPage = () => {
             body {
               font-family: Arial, sans-serif;
             }
-           
           </style>
         </head>
         <body>
@@ -104,10 +103,10 @@ const DetailPage = () => {
         </body>
       </html>
     `);
-  
+
     // Close the document stream
     printWindow.document.close();
-  
+
     // Wait for the content to load, then trigger print
     printWindow.onload = () => {
       printWindow.focus();
@@ -115,7 +114,7 @@ const DetailPage = () => {
       printWindow.close();
     };
   };
-  
+
 
 
 
@@ -174,7 +173,7 @@ const DetailPage = () => {
           <div className="w-full max-w-3xl mx-auto mb-20  bg-white" ref={reportRef}>
             <div className="flex space-x-20">
               <img src="/logo.PNG" alt="logo" className="h-12" />
-              <img src="/CDS Logo.png" alt="logo-1" className="h-28" />
+              <img src="/CDS Logo.png" alt="logo-1" className="h-20 w-48" />
               <div className="flex flex-col">
                 <div>URN: {interventionData?.child?.urn || "urn"}</div>
                 <div>
@@ -430,9 +429,9 @@ const DetailPage = () => {
               <div className="mt-4">
                 <p>cc</p>
                 <ul className="list-none">
-                  <li>Parents: {additionalInfo.parents || 'not foud'}</li>
+                  <li>Parents: {additionalInfo.parents || 'not found'}</li>
                   <li>Referrer: {additionalInfo.referrer || 'not found'}</li>
-                  <li>GP: {additionalInfo.gp || '[address]'}</li>
+                  <li>GP: {additionalInfo.gp || 'not found'}</li>
                   <li>
                     <a
                       href="mailto:unitingcare.earlychildhood@ndis.gov.au"
@@ -442,7 +441,7 @@ const DetailPage = () => {
                     </a>{" "}
                     (via secure server)
                   </li>
-                  <li>Private Provider: {additionalInfo.privateProvider || '[address]'}</li>
+                  <li>Private Provider: {additionalInfo.privateProvider || 'not found'}</li>
                   <li>GCHHS iEMR</li>
                 </ul>
               </div>
