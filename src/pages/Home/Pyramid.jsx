@@ -142,16 +142,14 @@ const Pyramid = () => {
   };
 
   const [users, setUsers] = useState([]);
-  const [members, setMembers] = useState([
-    { name: "", role: "" }, // Initialize with one empty member
-  ]);
+  const [members, setMembers] = useState([{ username: "", role: "" }]);
+  const [newMember, setNewMember] = useState({ username: "", role: "" });
 
   useEffect(() => {
-    // Fetch users from the API when the component mounts
     const fetchUsers = async () => {
       try {
         const response = await axios.get("http://localhost:5001/api/users");
-        setUsers(response.data); // Assuming response.data is the array of users
+        setUsers((prevUsers) => [...response.data, ...prevUsers.filter(user => user.isNew)]);
       } catch (error) {
         console.error("Error fetching users:", error);
       }
@@ -164,10 +162,23 @@ const Pyramid = () => {
 
   const handleAddMember = () => {
     setShowInputs(true);
+    if (newMember.username && newMember.role) {
+      // Add a flag `isNew` to differentiate between API users and locally added members
+      const memberWithFlag = { ...newMember, isNew: true };
+
+      setMembers([...members, memberWithFlag]);  // Add new member to members state
+      setUsers([...users, memberWithFlag]);      // Add new member to users state
+
+      setNewMember({ username: "", role: "" });  // Reset the input fields
+      //  
+    } else {
+      console.error("Please fill both fields");
+      // Show input fields for the new member
+    }
   };
 
   const handleAddDropdown = () => {
-    setMembers([...members, { name: "", role: "" }]);
+    setMembers([...members, { username: "", role: "", isNew: true }]);
   };
 
   const handleInputChange = (index, field, value) => {
@@ -175,6 +186,10 @@ const Pyramid = () => {
     updatedMembers[index][field] = value;
     setMembers(updatedMembers);
     localStorage.setItem("accessors", JSON.stringify(updatedMembers));
+  };
+
+  const handleNewMemberChange = (field, value) => {
+    setNewMember((prev) => ({ ...prev, [field]: value }));
   };
 
   const handleAssessmentNext = () => {
@@ -480,9 +495,7 @@ const Pyramid = () => {
         <div className="fixed inset-0 bg-gray-600 bg-opacity-75 flex justify-center items-center z-50">
           <div className="bg-white p-8 rounded-lg w-[90%] md:w-[60%]">
             <div className="flex justify-between items-center mb-6">
-              <h2 className="text-2xl font-semibold">
-                Who has done this assessment?
-              </h2>
+              <h2 className="text-2xl font-semibold">Who has done this assessment?</h2>
               <button
                 onClick={handleAddMember}
                 className="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 transition"
@@ -498,9 +511,8 @@ const Pyramid = () => {
                     className="border-2 border-gray-300 py-2 px-3 rounded-md w-full focus:outline-none focus:border-blue-500"
                     type="text"
                     placeholder="Enter name"
-                    onChange={(e) =>
-                      handleInputChange(0, "name", e.target.value)
-                    }
+                    value={newMember.username}
+                    onChange={(e) => handleNewMemberChange("username", e.target.value)}
                     required
                   />
                 </div>
@@ -510,15 +522,17 @@ const Pyramid = () => {
                     className="border-2 border-gray-300 py-2 px-3 rounded-md w-full focus:outline-none focus:border-blue-500"
                     type="text"
                     placeholder="Enter role"
-                    onChange={(e) =>
-                      handleInputChange(0, "role", e.target.value)
-                    }
+                    value={newMember.role}
+                    onChange={(e) => handleNewMemberChange("role", e.target.value)}
                     required
                   />
                 </div>
                 <div className="flex justify-center">
-                  <button className="bg-gradient-to-r from-blue-500 to-green-500 text-white px-8 py-2 rounded-full hover:from-blue-600 hover:to-green-600 transition">
-                    save
+                  <button
+                    className="bg-gradient-to-r from-blue-500 to-green-500 text-white px-8 py-2 rounded-full hover:from-blue-600 hover:to-green-600 transition"
+                    onClick={handleAddMember}
+                  >
+                    Save
                   </button>
                 </div>
               </>
@@ -529,10 +543,8 @@ const Pyramid = () => {
                   <label className="pb-1 font-medium">Select Name</label>
                   <select
                     className="border-2 border-gray-300 py-2 px-3 rounded-md w-full focus:outline-none focus:border-blue-500"
-                    onChange={(e) =>
-                      handleInputChange(index, "name", e.target.value)
-                    }
-                    value={member.name}
+                    onChange={(e) => handleInputChange(index, "username", e.target.value)}
+                    value={member.username}
                   >
                     <option value="">Select Name</option>
                     {users.map((user, idx) => (
@@ -546,9 +558,7 @@ const Pyramid = () => {
                   <label className="pb-1 font-medium">Select Role</label>
                   <select
                     className="border-2 border-gray-300 py-2 px-3 rounded-md w-full focus:outline-none focus:border-blue-500"
-                    onChange={(e) =>
-                      handleInputChange(index, "role", e.target.value)
-                    }
+                    onChange={(e) => handleInputChange(index, "role", e.target.value)}
                     value={member.role}
                   >
                     <option value="">Select Role</option>
@@ -561,7 +571,6 @@ const Pyramid = () => {
                 </div>
               </div>
             ))}
-            {/* Add more dropdowns */}
             <div className="flex justify-center mt-4">
               <button
                 onClick={handleAddDropdown}
