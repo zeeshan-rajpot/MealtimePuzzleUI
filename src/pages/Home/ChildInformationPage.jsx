@@ -190,7 +190,7 @@ const ChildInformationPage = () => {
 
               {/* Gender Selection */}
               <div className="flex items-center space-x-4">
-                <label className="text-gray-500">Gender:</label>
+                <label className="text-gray-500">Sex:</label>
                 <div className="flex items-center space-x-4">
                   <label className="inline-flex items-center">
                     <input

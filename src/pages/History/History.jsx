@@ -81,7 +81,7 @@ const History = () => {
                         <p>{item.urn}</p>
                       </div>
                       <button
-                        className="text-red-500 font-bold hover:underline hover:text-white"
+                        className="text-white font-bold hover:underline hover:text-white"
                         onClick={(event) => handleDelete(event, item.urn)} // Prevent Link navigation
                         disabled={isDeleting}
                       >
