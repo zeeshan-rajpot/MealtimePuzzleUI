@@ -144,6 +144,7 @@ const Pyramid = () => {
   const [users, setUsers] = useState([]);
   const [members, setMembers] = useState([{ username: "", role: "" }]);
   const [newMember, setNewMember] = useState({ username: "", role: "" });
+  const [showInputs, setShowInputs] = useState(false);
 
   useEffect(() => {
     const fetchUsers = async () => {
@@ -158,22 +159,14 @@ const Pyramid = () => {
     fetchUsers();
   }, []);
 
-  const [showInputs, setShowInputs] = useState(false);
-
   const handleAddMember = () => {
-    setShowInputs(true);
     if (newMember.username && newMember.role) {
-      // Add a flag `isNew` to differentiate between API users and locally added members
       const memberWithFlag = { ...newMember, isNew: true };
-
-      setMembers([...members, memberWithFlag]);  // Add new member to members state
-      setUsers([...users, memberWithFlag]);      // Add new member to users state
-
-      setNewMember({ username: "", role: "" });  // Reset the input fields
-      //  
+      setMembers([...members, memberWithFlag]);
+      setUsers([...users, memberWithFlag]);
+      setNewMember({ username: "", role: "" });
     } else {
       console.error("Please fill both fields");
-      // Show input fields for the new member
     }
   };
 
@@ -183,7 +176,13 @@ const Pyramid = () => {
 
   const handleInputChange = (index, field, value) => {
     const updatedMembers = [...members];
-    updatedMembers[index][field] = value;
+    if (field === "username") {
+      const selectedUser = users.find(user => user.username === value);
+      updatedMembers[index].username = value;
+      updatedMembers[index].role = selectedUser ? selectedUser.role : "";
+    } else {
+      updatedMembers[index][field] = value;
+    }
     setMembers(updatedMembers);
     localStorage.setItem("accessors", JSON.stringify(updatedMembers));
   };
@@ -197,6 +196,7 @@ const Pyramid = () => {
     setIsAdditionalInfoModalOpen(true);
   };
 
+
   const [additionalInfo, setAdditionalInfo] = useState({
     parents: "",
     referrer: "",
@@ -209,6 +209,33 @@ const Pyramid = () => {
       ...prev,
       [field]: value,
     }));
+  };
+
+  const [addressSuggestions, setAddressSuggestions] = useState([]);
+
+  // Function to fetch addresses from RapidAPI
+  const fetchAddressSuggestions = async (query) => {
+    if (!query) return;
+
+    try {
+      const response = await axios.get("https://addressr.p.rapidapi.com/", {
+        params: { query },  // Assuming 'query' is the parameter for the address
+        headers: {
+          "x-rapidapi-host": "addressr.p.rapidapi.com",
+          "x-rapidapi-key": "7df33f1d15msha1c808d44e12e03p1c2b9cjsn3113ce343810", // Your RapidAPI key
+        },
+      });
+
+      // Assuming the API response contains a list of suggested addresses
+      setAddressSuggestions(response.data.addresses || []);
+    } catch (error) {
+      console.error("Error fetching address suggestions:", error);
+    }
+  };
+
+  const handleAddressChange = (type, value) => {
+    handleAdditionalInfoChange(type, value);
+    fetchAddressSuggestions(value);  // Fetch suggestions when input changes
   };
 
   const handleSaveAdditionalInfo = () => {
@@ -396,7 +423,7 @@ const Pyramid = () => {
                   {...register("clinicalPrompt")}
                   placeholder="Enter clinical prompt"
                   className="input-field border-2 py-1"
-                  required
+
                 />
               </div>
 
@@ -421,7 +448,7 @@ const Pyramid = () => {
                   {...register("recommendation")}
                   placeholder="Enter recommendation"
                   className="input-field border-2 py-1"
-                  required
+
                 />
               </div>
 
@@ -431,7 +458,7 @@ const Pyramid = () => {
                   {...register("formulation")}
                   placeholder="Enter Formulation"
                   className="input-field border-2 py-1"
-                  required
+
                 />
               </div>
 
@@ -497,11 +524,12 @@ const Pyramid = () => {
             <div className="flex justify-between items-center mb-6">
               <h2 className="text-2xl font-semibold">Who has done this assessment?</h2>
               <button
-                onClick={handleAddMember}
+                onClick={() => setShowInputs(true)}
                 className="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 transition"
               >
                 Add Member
               </button>
+
             </div>
             {showInputs && (
               <>
@@ -523,11 +551,18 @@ const Pyramid = () => {
                     type="text"
                     placeholder="Enter role"
                     value={newMember.role}
-                    onChange={(e) => handleNewMemberChange("role", e.target.value)}
-                    required
+
                   />
                 </div>
-                <div className="flex justify-center">
+                <div className="flex justify-center space-x-4">
+
+                  <button
+                    onClick={() => setShowInputs(false)}
+                    className="bg-red-500 text-white px-8 py-2 rounded-full hover:bg-red-600 transition"
+                  >
+                    Close
+                  </button>
+
                   <button
                     className="bg-gradient-to-r from-blue-500 to-green-500 text-white px-8 py-2 rounded-full hover:from-blue-600 hover:to-green-600 transition"
                     onClick={handleAddMember}
@@ -555,19 +590,13 @@ const Pyramid = () => {
                   </select>
                 </div>
                 <div className="flex flex-col w-1/2">
-                  <label className="pb-1 font-medium">Select Role</label>
-                  <select
+                  <label className="pb-1 font-medium">Role</label>
+                  <input
                     className="border-2 border-gray-300 py-2 px-3 rounded-md w-full focus:outline-none focus:border-blue-500"
-                    onChange={(e) => handleInputChange(index, "role", e.target.value)}
+                    type="text"
                     value={member.role}
-                  >
-                    <option value="">Select Role</option>
-                    {users.map((user, idx) => (
-                      <option key={idx} value={user.role}>
-                        {user.role}
-                      </option>
-                    ))}
-                  </select>
+                    readOnly
+                  />
                 </div>
               </div>
             ))}
@@ -606,6 +635,7 @@ const Pyramid = () => {
               Additional Information
             </h2>
 
+            {/* Parents Address Input */}
             <div className="flex flex-col my-4">
               <label className="pb-1 font-medium">Parents [Address]</label>
               <input
@@ -613,12 +643,27 @@ const Pyramid = () => {
                 type="text"
                 placeholder="Parents' Address"
                 value={additionalInfo.parents}
-                onChange={(e) =>
-                  handleAdditionalInfoChange("parents", e.target.value)
-                }
+                onChange={(e) => handleAddressChange("parents", e.target.value)}
               />
+              {/* Address Suggestions */}
+              {addressSuggestions.length > 0 && (
+                <ul className="border-2 border-gray-300 rounded-md mt-2">
+                  {addressSuggestions.map((address, index) => (
+                    <li
+                      key={index}
+                      className="p-2 cursor-pointer hover:bg-gray-200"
+                      onClick={() =>
+                        handleAdditionalInfoChange("parents", address)
+                      }
+                    >
+                      {address}
+                    </li>
+                  ))}
+                </ul>
+              )}
             </div>
 
+            {/* Referrer Address Input */}
             <div className="flex flex-col my-4">
               <label className="pb-1 font-medium">Referrer [Address]</label>
               <input
@@ -626,12 +671,26 @@ const Pyramid = () => {
                 type="text"
                 placeholder="Referrer's Address"
                 value={additionalInfo.referrer}
-                onChange={(e) =>
-                  handleAdditionalInfoChange("referrer", e.target.value)
-                }
+                onChange={(e) => handleAddressChange("referrer", e.target.value)}
               />
+              {addressSuggestions.length > 0 && (
+                <ul className="border-2 border-gray-300 rounded-md mt-2">
+                  {addressSuggestions.map((address, index) => (
+                    <li
+                      key={index}
+                      className="p-2 cursor-pointer hover:bg-gray-200"
+                      onClick={() =>
+                        handleAdditionalInfoChange("referrer", address)
+                      }
+                    >
+                      {address}
+                    </li>
+                  ))}
+                </ul>
+              )}
             </div>
 
+            {/* GP Address Input */}
             <div className="flex flex-col my-4">
               <label className="pb-1 font-medium">GP [Address]</label>
               <input
@@ -639,25 +698,50 @@ const Pyramid = () => {
                 type="text"
                 placeholder="GP's Address"
                 value={additionalInfo.gp}
-                onChange={(e) =>
-                  handleAdditionalInfoChange("gp", e.target.value)
-                }
+                onChange={(e) => handleAddressChange("gp", e.target.value)}
               />
+              {addressSuggestions.length > 0 && (
+                <ul className="border-2 border-gray-300 rounded-md mt-2">
+                  {addressSuggestions.map((address, index) => (
+                    <li
+                      key={index}
+                      className="p-2 cursor-pointer hover:bg-gray-200"
+                      onClick={() => handleAdditionalInfoChange("gp", address)}
+                    >
+                      {address}
+                    </li>
+                  ))}
+                </ul>
+              )}
             </div>
 
+            {/* Private Provider Address Input */}
             <div className="flex flex-col my-4">
-              <label className="pb-1 font-medium">
-                Private Provider [Address]
-              </label>
+              <label className="pb-1 font-medium">Private Provider [Address]</label>
               <input
                 className="border-2 border-gray-300 py-2 px-3 rounded-md w-full"
                 type="text"
                 placeholder="Private Provider's Address"
                 value={additionalInfo.privateProvider}
                 onChange={(e) =>
-                  handleAdditionalInfoChange("privateProvider", e.target.value)
+                  handleAddressChange("privateProvider", e.target.value)
                 }
               />
+              {addressSuggestions.length > 0 && (
+                <ul className="border-2 border-gray-300 rounded-md mt-2">
+                  {addressSuggestions.map((address, index) => (
+                    <li
+                      key={index}
+                      className="p-2 cursor-pointer hover:bg-gray-200"
+                      onClick={() =>
+                        handleAdditionalInfoChange("privateProvider", address)
+                      }
+                    >
+                      {address}
+                    </li>
+                  ))}
+                </ul>
+              )}
             </div>
 
             <div className="mt-8 flex justify-center">

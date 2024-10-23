@@ -51,6 +51,8 @@ const Addnewassestent = () => {
         console.log(response.data);
         setInterventionData(response.data);
 
+
+        setChildHistory(response.data.childHistory || "");
         const existingEntries = response.data.sessionEntries || [];
         setImageDataCounter(existingEntries.length);
 
@@ -226,6 +228,7 @@ const Addnewassestent = () => {
   const [users, setUsers] = useState([]);
   const [members, setMembers] = useState([{ username: "", role: "" }]);
   const [newMember, setNewMember] = useState({ username: "", role: "" });
+  const [showInputs, setShowInputs] = useState(false);
 
   useEffect(() => {
     const fetchUsers = async () => {
@@ -240,22 +243,14 @@ const Addnewassestent = () => {
     fetchUsers();
   }, []);
 
-  const [showInputs, setShowInputs] = useState(false);
-
   const handleAddMember = () => {
-    setShowInputs(true);
     if (newMember.username && newMember.role) {
-      // Add a flag `isNew` to differentiate between API users and locally added members
       const memberWithFlag = { ...newMember, isNew: true };
-
-      setMembers([...members, memberWithFlag]);  // Add new member to members state
-      setUsers([...users, memberWithFlag]);      // Add new member to users state
-
-      setNewMember({ username: "", role: "" });  // Reset the input fields
-      //  
+      setMembers([...members, memberWithFlag]);
+      setUsers([...users, memberWithFlag]);
+      setNewMember({ username: "", role: "" });
     } else {
       console.error("Please fill both fields");
-      // Show input fields for the new member
     }
   };
 
@@ -265,7 +260,13 @@ const Addnewassestent = () => {
 
   const handleInputChange = (index, field, value) => {
     const updatedMembers = [...members];
-    updatedMembers[index][field] = value;
+    if (field === "username") {
+      const selectedUser = users.find(user => user.username === value);
+      updatedMembers[index].username = value;
+      updatedMembers[index].role = selectedUser ? selectedUser.role : "";
+    } else {
+      updatedMembers[index][field] = value;
+    }
     setMembers(updatedMembers);
     localStorage.setItem("accessors", JSON.stringify(updatedMembers));
   };
@@ -499,7 +500,7 @@ const Addnewassestent = () => {
                   }))
                 }
                 className="select-field border-2 py-1"
-                required
+
               >
                 <option value="">Select Priority</option>
                 <option value="high">High</option>
@@ -520,7 +521,7 @@ const Addnewassestent = () => {
                 }
                 placeholder="Enter recommendation"
                 className="input-field border-2 py-1"
-                required
+
               />
             </div>
 
@@ -536,7 +537,7 @@ const Addnewassestent = () => {
                 }
                 placeholder="Enter Formulation"
                 className="input-field border-2 py-1"
-                required
+
               />
             </div>
 
@@ -602,11 +603,12 @@ const Addnewassestent = () => {
             <div className="flex justify-between items-center mb-6">
               <h2 className="text-2xl font-semibold">Who has done this assessment?</h2>
               <button
-                onClick={handleAddMember}
+                onClick={() => setShowInputs(true)}
                 className="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 transition"
               >
                 Add Member
               </button>
+
             </div>
             {showInputs && (
               <>
@@ -628,11 +630,18 @@ const Addnewassestent = () => {
                     type="text"
                     placeholder="Enter role"
                     value={newMember.role}
-                    onChange={(e) => handleNewMemberChange("role", e.target.value)}
-                    required
+
                   />
                 </div>
-                <div className="flex justify-center">
+                <div className="flex justify-center space-x-4">
+
+                  <button
+                    onClick={() => setShowInputs(false)}
+                    className="bg-red-500 text-white px-8 py-2 rounded-full hover:bg-red-600 transition"
+                  >
+                    Close
+                  </button>
+
                   <button
                     className="bg-gradient-to-r from-blue-500 to-green-500 text-white px-8 py-2 rounded-full hover:from-blue-600 hover:to-green-600 transition"
                     onClick={handleAddMember}
@@ -660,19 +669,13 @@ const Addnewassestent = () => {
                   </select>
                 </div>
                 <div className="flex flex-col w-1/2">
-                  <label className="pb-1 font-medium">Select Role</label>
-                  <select
+                  <label className="pb-1 font-medium">Role</label>
+                  <input
                     className="border-2 border-gray-300 py-2 px-3 rounded-md w-full focus:outline-none focus:border-blue-500"
-                    onChange={(e) => handleInputChange(index, "role", e.target.value)}
+                    type="text"
                     value={member.role}
-                  >
-                    <option value="">Select Role</option>
-                    {users.map((user, idx) => (
-                      <option key={idx} value={user.role}>
-                        {user.role}
-                      </option>
-                    ))}
-                  </select>
+                    readOnly
+                  />
                 </div>
               </div>
             ))}
