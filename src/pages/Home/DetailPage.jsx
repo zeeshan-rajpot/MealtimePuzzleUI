@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef } from "react";
+import React, { useEffect, useState, useRef, useCallback } from "react";
 import Header from "../../components/Header";
 import SideBar from "../../components/SideBar";
 import { useNavigate, useParams } from "react-router-dom";
@@ -71,13 +71,6 @@ const DetailPage = () => {
     return `${years} year(s), ${months} month(s)`;
   }
 
-  // const handlePrint = useReactToPrint({
-  //   content: () => reportRef.current,
-  //   documentTitle: `Clinical_Report_${urn}`,
-  //   onBeforePrint: () => console.log("Preparing to print..."),
-  //   onAfterPrint: () => console.log("Print completed!"),
-  // });
-
 
 
   const handlePrint = () => {
@@ -118,7 +111,7 @@ const DetailPage = () => {
 
 
 
-  const handleUpload = async () => {
+  const handleUpload = useCallback(async () => {
     const canvas = await html2canvas(reportRef.current);
     const imgData = canvas.toDataURL('image/png');
 
@@ -143,7 +136,7 @@ const DetailPage = () => {
     }
 
 
-  };
+  });
 
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -152,7 +145,7 @@ const DetailPage = () => {
 
     // Cleanup function to clear the timeout if the component unmounts before the delay completes
     return () => clearTimeout(timer);
-  }, []);
+  }, [handleUpload]);
 
   const accessors = JSON.parse(localStorage.getItem('accessors')) || [];
 
@@ -318,17 +311,26 @@ const DetailPage = () => {
                 {interventionData?.sessionEntries?.length > 0 ? (
                   interventionData.sessionEntries.map((entry, index) => (
                     <div key={index} className="p-4 border-b">
-                      <h3 className="font-semibold">Session {index + 1}</h3>
-                      <p><strong>Priority:</strong> {entry.priority}</p>
-                      <p><strong>Clinical Prompt:</strong> {entry.clinicalPrompt}</p>
-                      <p><strong>Formulation:</strong> {entry.formulation}</p>
-                      <p><strong>Recommendation:</strong> {entry.recommendation}</p>
+                      <h3 className="font-semibold text-xl mb-3">{entry.domainname}</h3>
 
+                      {/* Capitalize the first letter of priority */}
+                      <p className="font-normal text-lg mb-2">
+                        {entry.priority ? `${entry.priority.charAt(0).toUpperCase()}${entry.priority.slice(1)}` : 'No priority'} Priority
+                      </p>
+
+                      {/* Conditionally render Formulation and Recommendation if they exist */}
+                      {entry.formulation && (
+                        <p><strong>Formulation:</strong> {entry.formulation}</p>
+                      )}
+                      {entry.recommendation && (
+                        <p><strong>Recommendation:</strong> {entry.recommendation}</p>
+                      )}
                     </div>
                   ))
                 ) : (
                   <p>No session entries available</p>
                 )}
+
               </div>
 
 
