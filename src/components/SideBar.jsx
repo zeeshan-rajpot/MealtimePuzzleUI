@@ -27,12 +27,12 @@ const menuItems = [
     activeLogo: "/Layer_1 (2).svg",
     inactiveLogo: "/Layer_1 (1).svg",
   },
-  {
-    name: "Settings",
-    route: "/settings",
-    activeLogo: "/lets-icons_setting-alt-line (2).svg",
-    inactiveLogo: "/lets-icons_setting-alt-line (1).svg",
-  },
+  // {
+  //   name: "Settings",
+  //   route: "/settings",
+  //   activeLogo: "/lets-icons_setting-alt-line (2).svg",
+  //   inactiveLogo: "/lets-icons_setting-alt-line (1).svg",
+  // },
   {
     name: "Logout",
     route: "/",

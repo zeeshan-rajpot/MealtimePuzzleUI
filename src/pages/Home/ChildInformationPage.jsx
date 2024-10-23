@@ -35,8 +35,8 @@ const ChildInformationPage = () => {
 
       // localStorage.setItem("childData", JSON.stringify(data));
     } catch (err) {
-      toast.error([err.data.error]);
-      console.error([err]);
+      toast.error(err.data.error);
+      console.error(err);
     }
   };
 

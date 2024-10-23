@@ -121,9 +121,6 @@ const DetailPage = () => {
   const handleUpload = async () => {
     const canvas = await html2canvas(reportRef.current);
     const imgData = canvas.toDataURL('image/png');
-    // const urn = interventionData?.child?.urn; // Ensure URN is defined
-    // console.log(urn);
-
 
     const blob = await (await fetch(imgData)).blob();
 
@@ -168,7 +165,7 @@ const DetailPage = () => {
         <SideBar />
         <div
 
-          className="pt-10 w-full lg:w-[75%] xl:w-[80%] 2xl:w-[85%] h-auto"
+          className="pt-10 w-full  h-auto"
         >
           <div className="w-full max-w-3xl mx-auto mb-20  bg-white" ref={reportRef}>
             <div className="flex space-x-20">
@@ -178,23 +175,21 @@ const DetailPage = () => {
                 <div>URN: {interventionData?.child?.urn || "urn"}</div>
                 <div>
                   Family name:{" "}
-                  {interventionData?.child?.firstName || "firstname"}
                   {interventionData?.child?.lastName || "lastname"}
                 </div>
                 <div>
                   Given name(s):{" "}
                   {interventionData?.child?.firstName || "firstname"}{" "}
-                  {interventionData?.child?.lastName || "lastname"}{" "}
                 </div>
 
                 <div className="flex space-x-10">
-                  <div>
+                  <div className="text-nowrap	">
                     Date of birth:{" "}
                     {new Date(
                       interventionData?.child?.dateOfBirth
                     ).toLocaleDateString() || "dob"}{" "}
                   </div>
-                  <div>Sex: {interventionData?.child?.gender || "gender"} </div>
+                  <div className="text-nowrap	">Sex: {interventionData?.child?.gender || "gender"} </div>
                 </div>
                 <div>
                   FIN: {interventionData?.child?.finnumber || "finNumber"}
@@ -281,7 +276,7 @@ const DetailPage = () => {
                   accessors.map((item, index) => (
                     <thead key={index}>
                       <tr>
-                        <th className=" text-lg font-normal">{item.name || '[Name]'}</th>
+                        <th className=" text-lg font-normal">{item.username || '[Name]'}</th>
                         <th className=" text-lg font-normal">{item.role || '[Role]'}</th>
                       </tr>
 
@@ -301,51 +296,9 @@ const DetailPage = () => {
               <p className="bg-black text-white text-lg font-normal ps-2">
                 BACKGROUND INFORMATION:
               </p>
-              <p>
-                {interventionData?.child?.firstName}{" "}
-                {interventionData?.child?.lastName} was referred to the Child
-                Development Service by {additionalInfo.referrer} at{" "}
-                {new Date(
-                  interventionData?.child?.dateOfBirth
-                ).toLocaleDateString()}{" "}
-                {/* with concerns regarding [reason for referral] . */}
-              </p>
               <p className="mt-8">
-                {interventionData?.child?.firstName}{" "}
-                {interventionData?.child?.lastName} is a{" "}
-                {interventionData?.child?.dateOfBirth
-                  ? calculateAge(
-                    new Date(interventionData.child.dateOfBirth),
-                    new Date()
-                  )
-                  : "age not available"}{" "}
                 {interventionData?.childHistory}
-                {/* old who lives with [describe living arrangements without
-                sensitive info] . They attend [childcare / school name] [Number
-                of days] days per week. */}
               </p>
-              {/* <p className="mt-8">
-                At the initial appointment, {interventionData?.child?.firstName}{" "}
-                {interventionData?.child?.lastName}’s parent{" "}
-                {interventionData?.child?.parentName} raised the following
-                questions and concerns:
-                <li>[Add]</li>
-              </p>
-              <p className="mt-8">
-                At the initial appointment, {interventionData?.child?.firstName}{" "}
-                {interventionData?.child?.lastName}’s childcare/ kindy/ school
-                also reported the following concerns:
-                <li>[Add]</li>
-              </p>
-              <p className="mt-8">
-                At the initial appointment, {interventionData?.child?.firstName}{" "}
-                {interventionData?.child?.lastName}’s has previously been or is
-                currently involved with the following services:
-                <li>
-                  [add any previous assessments or support services seen,
-                  including when and where]{" "}
-                </li>
-              </p> */}
               <div>
                 <img
                   src="/qr.PNG"
@@ -354,84 +307,66 @@ const DetailPage = () => {
                 />
               </div>
             </div>
-            <div className="flex justify-between items-start mt-6 ">
-              {/* Office Column */}
-              <div>
-                <h3 className="font-bold">Office</h3>
-                <p>Child Development Service</p>
-                <p>Level 3, Southport Health Precinct</p>
-                <p>16 - 30 High Street, Southport, Qld, 4215</p>
-              </div>
 
-              {/* Postal Column */}
-              <div>
-                <h3 className="font-bold">Postal</h3>
-                <p>Community Child Health</p>
-                <p>1 Hospital Blvd,</p>
-                <p>Southport, Qld, 4215</p>
-              </div>
-
-              {/* Phone and Fax Column */}
-              <div>
-                <h3 className="font-bold">Phone</h3>
-                <p>(07) 5687 9183</p>
-              </div>
-              <div>
-                <h3 className="font-bold ">Fax</h3>
-                <p>(07) 5687 9168</p>
-              </div>
-            </div>
             <div className="p-4 space-y-6 mt-12">
               {/* Report Header */}
               <div className="flex justify-between ">
                 <h2 className="font-bold">CDS Mealtime Clinical Report</h2>
               </div>
 
+              <div>
+                {interventionData?.sessionEntries?.length > 0 ? (
+                  interventionData.sessionEntries.map((entry, index) => (
+                    <div key={index} className="p-4 border-b">
+                      <h3 className="font-semibold">Session {index + 1}</h3>
+                      <p><strong>Priority:</strong> {entry.priority}</p>
+                      <p><strong>Clinical Prompt:</strong> {entry.clinicalPrompt}</p>
+                      <p><strong>Formulation:</strong> {entry.formulation}</p>
+                      <p><strong>Recommendation:</strong> {entry.recommendation}</p>
 
-              {/* Main Body */}
-              <p>
-                We will be glad to respond to questions arising out of this
-                assessment by contacting CDS.
-              </p>
+                    </div>
+                  ))
+                ) : (
+                  <p>No session entries available</p>
+                )}
+              </div>
 
-              {/* Professional Contacts */}
-              {accessors.length > 0 ? (
-                accessors.map((item, index) => (
-                  <div className="grid grid-cols-2 gap-6">
-                    {/* Left column */}
-                    <div>
-                      <div className="font-bold ">{item.name || '[Name]'}</div>
-                      <p>{item.role || '[Role]'}</p>
-                    </div>
-                    {/* <div>
-                      <div className="font-bold ">[Name]</div>
-                      <p>Speech Language Pathologist</p>
-                    </div>
-                    <div>
-                      <div className="font-bold ">[Name]</div>
-                      <p>Psychologist</p>
-                    </div>
-                    <div>
-                      <div className="font-bold ">[Name]</div>
-                      <p>Occupational Therapist</p>
-                    </div> */}
-                  </div>
-                ))
-              ) : (
 
-                <div colSpan="2" className="text-lg font-normal text-center">
-                  No data found
+              <div className="flex justify-between items-start mt-6 ">
+                {/* Office Column */}
+                <div>
+                  <h3 className="font-bold">Office</h3>
+                  <p>Child Development Service</p>
+                  <p>Level 3, Southport Health Precinct</p>
+                  <p>16 - 30 High Street, Southport, Qld, 4215</p>
                 </div>
 
-              )}
+                {/* Postal Column */}
+                <div>
+                  <h3 className="font-bold">Postal</h3>
+                  <p>Community Child Health</p>
+                  <p>1 Hospital Blvd,</p>
+                  <p>Southport, Qld, 4215</p>
+                </div>
+
+                {/* Phone and Fax Column */}
+                <div>
+                  <h3 className="font-bold">Phone</h3>
+                  <p>(07) 5687 9183</p>
+                </div>
+                <div>
+                  <h3 className="font-bold ">Fax</h3>
+                  <p>(07) 5687 9168</p>
+                </div>
+              </div>
 
               {/* cc Section */}
               <div className="mt-4">
                 <p>cc</p>
                 <ul className="list-none">
-                  <li>Parents: {additionalInfo.parents || 'not found'}</li>
-                  <li>Referrer: {additionalInfo.referrer || 'not found'}</li>
-                  <li>GP: {additionalInfo.gp || 'not found'}</li>
+                  <li> {"Parents:" + additionalInfo.parents || ''}</li>
+                  <li> {"Referrer:" + additionalInfo.referrer || 'not found'}</li>
+                  <li> {"GP:" + additionalInfo.gp || 'not found'}</li>
                   <li>
                     <a
                       href="mailto:unitingcare.earlychildhood@ndis.gov.au"
@@ -441,7 +376,7 @@ const DetailPage = () => {
                     </a>{" "}
                     (via secure server)
                   </li>
-                  <li>Private Provider: {additionalInfo.privateProvider || 'not found'}</li>
+                  <li> {"Private Provider:" + additionalInfo.privateProvider || 'not found'}</li>
                   <li>GCHHS iEMR</li>
                 </ul>
               </div>

@@ -35,6 +35,8 @@ const History = () => {
         refetch();
       } catch (err) {
         toast.error("Failed to delete child record");
+        console.log(err);
+        
       }
     },
     [deleteChild, refetch]
