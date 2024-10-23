@@ -15,7 +15,8 @@ const Profile = () => {
   
   const [currentPassword, setCurrentPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
-  const [isUpdating, setIsUpdating] = useState(false);
+  const [isUpdatingProfile, setIsUpdatingProfile] = useState(false);
+  const [isUpdatingPassword, setIsUpdatingPassword] = useState(false);
   const [passwordError, setPasswordError] = useState("");
   const [passwordSuccess, setPasswordSuccess] = useState("");
 
@@ -28,9 +29,12 @@ const Profile = () => {
   const handlePasswordChange = async () => {
     setPasswordError("");
     setPasswordSuccess("");
+    setIsUpdatingPassword(true);
 
     if (!currentPassword || !newPassword) {
-      return; // Don't proceed if passwords are not filled
+      setPasswordError("Please provide both current and new password.");
+      setIsUpdatingPassword(false);
+      return;
     }
 
     try {
@@ -59,35 +63,24 @@ const Profile = () => {
       }
     } catch (error) {
       setPasswordError("An error occurred. Please try again.");
+    } finally {
+      setIsUpdatingPassword(false);
     }
   };
 
   const onSubmit = async (profileData) => {
-    setIsUpdating(true);
-    setPasswordError("");  // Reset password error before submission
-    setPasswordSuccess("");  // Reset password success before submission
-  
-    // Prepare promises for both the profile update and password change
-    const profileUpdatePromise = updateUserProfile(profileData).unwrap();
-    
-    // Only attempt password change if both passwords are provided
-    const passwordChangePromise = currentPassword && newPassword
-      ? handlePasswordChange()  // This function returns a promise
-      : Promise.resolve();  // A resolved promise if no password change is needed
-  
+    setIsUpdatingProfile(true);
+
     try {
-      // Wait for both promises to resolve
-      await Promise.all([profileUpdatePromise, passwordChangePromise]);
-  
+      await updateUserProfile(profileData).unwrap();
       toast.success("Profile updated successfully!");
     } catch (err) {
-      console.error("Error updating ", err);
-      toast.error("Failed to update profile ");
+      console.error("Error updating profile: ", err);
+      toast.error("Failed to update profile.");
     } finally {
-      setIsUpdating(false);
+      setIsUpdatingProfile(false);
     }
   };
-  
 
   if (isLoading) return <div>Loading...</div>;
   if (error) return <div>Error fetching profile data</div>;
@@ -125,13 +118,21 @@ const Profile = () => {
                     placeholder="Email Address"
                     className="w-full p-3 border rounded mb-4"
                   />
-                  <input
-                    type="text"
-                    {...register("phone")}
-                    placeholder="Phone Number"
-                    className="w-full p-3 border rounded mb-4"
-                  />
 
+                  <div className="flex justify-center mt-4">
+                    <button
+                      type="submit"
+                      className="bg-primary text-white rounded-full py-3 px-32"
+                      disabled={isUpdatingProfile}
+                    >
+                      {isUpdatingProfile ? "Updating..." : "Update Profile"}
+                    </button>
+                  </div>
+                </form>
+
+                {/* Password Change Section */}
+                <div className="mt-8 w-full">
+                  <h3 className="text-xl font-semibold text-center">Change Password</h3>
                   <input
                     type="password"
                     name="currentPassword"
@@ -154,14 +155,15 @@ const Profile = () => {
 
                   <div className="flex justify-center mt-4">
                     <button
-                      type="submit"
-                      className="bg-primary text-white rounded-full py-3 px-32"
-                      disabled={isUpdating}
+                      type="button"
+                      onClick={handlePasswordChange}
+                      className="bg-secondary text-white rounded-full py-3 px-32"
+                      disabled={isUpdatingPassword}
                     >
-                      {isUpdating ? "Updating..." : "Update"}
+                      {isUpdatingPassword ? "Changing..." : "Change Password"}
                     </button>
                   </div>
-                </form>
+                </div>
               </div>
             </div>
           </div>
