@@ -51,8 +51,8 @@
 }
 
 .input-container input {
-  padding-top: 22px;
-  padding-bottom: 10px;
+  padding-top: 15px;
+  padding-bottom: 15px;
 }
 
 .input-container input:focus::placeholder {

@@ -27,16 +27,31 @@ const ChildInformationPage = () => {
   const finNumberValue = watch("finnumber");
 
   const onSubmit = async (data) => {
+
+    const token = localStorage.getItem("token");
+
     try {
-      await childUser(data).unwrap();
-      toast.success("Child Detail Added");
+      const response = await fetch('http://localhost:5001/api/child', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify(data),
+      });
+      const responseData = await response.json();
+
+      console.log(responseData.message);
+
+      toast(responseData.message);
       const childName = data.firstName + " " + data.lastName;
       navigate(`/home/options/${data.urn}/${childName}`);
 
-      // localStorage.setItem("childData", JSON.stringify(data));
-    } catch (err) {
-      toast.error(err.data.error);
-      console.error(err);
+
+    } catch (error) {
+      console.log(error.message);
+      toast.error(error.message);
+
     }
   };
 
@@ -68,17 +83,16 @@ const ChildInformationPage = () => {
                     required: "URN is required",
                     minLength: {
                       value: /^[0-9]{9}$/,
-                        message: "URN must be 9 digits",
+                      message: "URN must be 9 digits",
                     },
                   })}
                   placeholder=" "
-                  className={`peer focus:outline-none ${
-                    errors.urn
-                      ? "border-red-500 focus:ring-red-500"
-                      : urnValue?.length === 9
+                  className={`peer focus:outline-none ${errors.urn
+                    ? "border-red-500 focus:ring-red-500"
+                    : urnValue?.length === 9
                       ? "border-green-500 focus:ring-green-500"
                       : "border-gray-300 focus:ring-ceruleanBlue"
-                  }`}
+                    }`}
                 />
                 <label htmlFor="urn">Child's URN (Unit Record Number)</label>
                 {errors.urn && (
@@ -100,11 +114,10 @@ const ChildInformationPage = () => {
                       },
                     })}
                     placeholder=" "
-                    className={`peer focus:outline-none ${
-                      errors.firstName
-                        ? "border-red-500 focus:ring-red-500"
-                        : "border-gray-300 focus:ring-ceruleanBlue"
-                    }`}
+                    className={`peer focus:outline-none ${errors.firstName
+                      ? "border-red-500 focus:ring-red-500"
+                      : "border-gray-300 focus:ring-ceruleanBlue"
+                      }`}
                   />
                   <label htmlFor="firstName">Child First Name</label>
                   {errors.firstName && (
@@ -123,11 +136,10 @@ const ChildInformationPage = () => {
                       },
                     })}
                     placeholder=" "
-                    className={`peer focus:outline-none ${
-                      errors.lastName
-                        ? "border-red-500 focus:ring-red-500"
-                        : "border-gray-300 focus:ring-ceruleanBlue"
-                    }`}
+                    className={`peer focus:outline-none ${errors.lastName
+                      ? "border-red-500 focus:ring-red-500"
+                      : "border-gray-300 focus:ring-ceruleanBlue"
+                      }`}
                   />
                   <label htmlFor="lastName">Child Last Name</label>
                   {errors.lastName && (
@@ -151,11 +163,10 @@ const ChildInformationPage = () => {
                       },
                     })}
                     placeholder=" "
-                    className={`peer focus:outline-none ${
-                      errors.dateOfBirth
-                        ? "border-red-500 focus:ring-red-500"
-                        : "border-gray-300 focus:ring-ceruleanBlue"
-                    }`}
+                    className={`peer focus:outline-none ${errors.dateOfBirth
+                      ? "border-red-500 focus:ring-red-500"
+                      : "border-gray-300 focus:ring-ceruleanBlue"
+                      }`}
                   />
                   <label htmlFor="dateOfBirth">Date of Birth</label>
                   {errors.dateOfBirth && (
@@ -175,11 +186,10 @@ const ChildInformationPage = () => {
                       },
                     })}
                     placeholder=" "
-                    className={`peer focus:outline-none ${
-                      errors.parentName
-                        ? "border-red-500 focus:ring-red-500"
-                        : "border-gray-300 focus:ring-ceruleanBlue"
-                    }`}
+                    className={`peer focus:outline-none ${errors.parentName
+                      ? "border-red-500 focus:ring-red-500"
+                      : "border-gray-300 focus:ring-ceruleanBlue"
+                      }`}
                   />
                   <label htmlFor="parentName">Parent/Caretaker Name</label>
                   {errors.parentName && (
@@ -239,11 +249,10 @@ const ChildInformationPage = () => {
                       },
                     })}
                     placeholder=" "
-                    className={`peer focus:outline-none ${
-                      errors.contactEmail
-                        ? "border-red-500 focus:ring-red-500"
-                        : "border-gray-300 focus:ring-ceruleanBlue"
-                    }`}
+                    className={`peer focus:outline-none ${errors.contactEmail
+                      ? "border-red-500 focus:ring-red-500"
+                      : "border-gray-300 focus:ring-ceruleanBlue"
+                      }`}
                   />
                   <label htmlFor="contactEmail">Parent/Caretaker Email Address</label>
                   {errors.contactEmail && (
@@ -262,13 +271,12 @@ const ChildInformationPage = () => {
                       },
                     })}
                     placeholder=" "
-                    className={`peer focus:outline-none ${
-                      errors.contactPhone
-                        ? "border-red-500 focus:ring-red-500"
-                        : phoneValue?.length === 9
+                    className={`peer focus:outline-none ${errors.contactPhone
+                      ? "border-red-500 focus:ring-red-500"
+                      : phoneValue?.length === 9
                         ? "border-green-500 focus:ring-green-500"
                         : "border-gray-300 focus:ring-ceruleanBlue"
-                    }`}
+                      }`}
                   />
                   <label htmlFor="contactPhone">Parent/Caretaker Contact Number</label>
                   {errors.contactPhone && (
@@ -290,13 +298,12 @@ const ChildInformationPage = () => {
                     },
                   })}
                   placeholder=" "
-                  className={`peer focus:outline-none ${
-                    errors.finnumber
-                      ? "border-red-500 focus:ring-red-500"
-                      : finNumberValue?.length === 7
+                  className={`peer focus:outline-none ${errors.finnumber
+                    ? "border-red-500 focus:ring-red-500"
+                    : finNumberValue?.length === 7
                       ? "border-green-500 focus:ring-green-500"
                       : "border-gray-300 focus:ring-ceruleanBlue"
-                  }`}
+                    }`}
                 />
                 <label htmlFor="finnumber">Child FIN Number</label>
                 {errors.finnumber && (
