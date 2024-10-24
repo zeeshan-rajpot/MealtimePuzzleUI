@@ -215,6 +215,7 @@ const InterventionPyramidupdate = () => {
     const fetchUsers = async () => {
       try {
         const response = await axios.get("http://localhost:5001/api/users");
+        console.log(response.data)
         setUsers((prevUsers) => [...response.data, ...prevUsers.filter(user => user.isNew)]);
       } catch (error) {
         console.error("Error fetching users:", error);
@@ -242,7 +243,7 @@ const InterventionPyramidupdate = () => {
   const handleInputChange = (index, field, value) => {
     const updatedMembers = [...members];
     if (field === "username") {
-      const selectedUser = users.find(user => user.username === value);
+      const selectedUser = users.find(user => `${user.firstName} ${user.lastName}` === value);
       updatedMembers[index].username = value;
       updatedMembers[index].role = selectedUser ? selectedUser.role : "";
     } else {
@@ -578,20 +579,20 @@ const InterventionPyramidupdate = () => {
         </div>
       )}
 
-      {isAssessmentModalOpen && (
+{isAssessmentModalOpen && (
         <div className="fixed inset-0 bg-gray-600 bg-opacity-75 flex justify-center items-center z-50">
           <div className="bg-white p-8 rounded-lg w-[90%] md:w-[60%]">
             <div className="flex justify-between items-center mb-6">
               <h2 className="text-2xl font-semibold">Who has done this assessment?</h2>
-              <button
+              {/* <button
                 onClick={() => setShowInputs(true)}
                 className="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 transition"
               >
                 Add Member
-              </button>
+              </button> */}
 
             </div>
-            {showInputs && (
+            {/* {showInputs && (
               <>
                 <div className="flex flex-col my-4">
                   <label className="pb-1 font-medium">Name</label>
@@ -631,7 +632,7 @@ const InterventionPyramidupdate = () => {
                   </button>
                 </div>
               </>
-            )}
+            )} */}
             {members.map((member, index) => (
               <div key={index} className="flex space-x-4 items-center my-4">
                 <div className="flex flex-col w-1/2">
@@ -643,8 +644,8 @@ const InterventionPyramidupdate = () => {
                   >
                     <option value="">Select Name</option>
                     {users.map((user, idx) => (
-                      <option key={idx} value={user.username}>
-                        {user.username}
+                      <option key={idx} value={`${user.firstName} ${user.lastName}`}>
+                        {user.firstName} {user.lastName}
                       </option>
                     ))}
                   </select>
