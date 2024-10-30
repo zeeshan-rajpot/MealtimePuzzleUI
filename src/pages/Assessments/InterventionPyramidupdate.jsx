@@ -19,6 +19,9 @@ const InterventionPyramidupdate = () => {
   const [isAssessmentModalOpen, setIsAssessmentModalOpen] = useState(false);
   const [isAdditionalInfoModalOpen, setIsAdditionalInfoModalOpen] =
     useState(false);
+    const [isRecommendationModalOpen, setIsRecommendationModalOpen] = useState(false);
+  const [reportRecommendation, setReportRecommendation] = useState("");
+  const [recommendationError, setRecommendationError] = useState(false);
 
   const [modalData, setModalData] = useState({
     clinicalPrompt: "",

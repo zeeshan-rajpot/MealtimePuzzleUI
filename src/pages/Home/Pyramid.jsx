@@ -24,6 +24,10 @@ const Pyramid = () => {
   const [isAssessmentModalOpen, setIsAssessmentModalOpen] = useState(false);
   const [isAdditionalInfoModalOpen, setIsAdditionalInfoModalOpen] =
     useState(false);
+  const [isRecommendationModalOpen, setIsRecommendationModalOpen] = useState(false);
+  const [reportRecommendation, setReportRecommendation] = useState("");
+  const [recommendationError, setRecommendationError] = useState(false);
+
 
   const [addIntervention, { isLoading, isError, error }] =
     useAddInterventionMutation();
@@ -68,14 +72,25 @@ const Pyramid = () => {
 
   const handleHistorySubmit = async () => {
     if (!childHistory.trim()) {
-      setChildHistoryError(true); // Set error if child history is empty
+      setChildHistoryError(true);
+      return;
+    } else {
+      setChildHistoryError(false);
+    }
+    setIsHistoryModalOpen(false); // Close history modal
+    setIsRecommendationModalOpen(true); // Open recommendation modal
+  };
+  
+
+  const handleRecommendationSubmit = async () => {
+    if (!reportRecommendation.trim()) {
+      setRecommendationError(true); // Set error if recommendation is empty
       return; // Stop submission
     } else {
-      setChildHistoryError(false); // Clear any existing error
+      setRecommendationError(false); // Clear any existing error
     }
-
+  
     try {
-      // Create the domains array from selected images
       const domains = selectedImages.map((imageId) => ({
         domainName: imageData[imageId]?.label || "",
         clinicalPrompt: imageData[imageId]?.clinicalPrompt || "",
@@ -83,41 +98,38 @@ const Pyramid = () => {
         formulation: imageData[imageId]?.formulation || "",
         recommendation: imageData[imageId]?.recommendation || "",
       }));
-
-      const childUrn = urn; // Assign urn to childUrn
-
+  
+      const childUrn = urn;
       const token = localStorage.getItem("token");
-
-      // Axios POST request for adding an intervention, with Authorization header
+  
       const response = await axios.post(
         "http://localhost:5001/api/post/Intervention",
         {
           childUrn,
-          childHistory, // Include child history in the payload
-          domains, // Pass the domains array
+          childHistory,
+          reportRecommendation, // Include recommendation in the payload
+          domains,
         },
         {
           headers: {
-            Authorization: `Bearer ${token}`, // Add token in the Authorization header
+            Authorization: `Bearer ${token}`,
           },
         }
       );
-
-      // Store session data and navigate if the request is successful
+  
       localStorage.setItem("session", response.data.session);
       setSession(response.data.session);
-      toast.success("Intervention added successfully!");
-      console.log(response.data)
-
-      // Navigate to detail page with the session info
+      toast.success("Recommendation added successfully!");
+      console.log(response.data);
     } catch (err) {
-      console.error("Failed to add Assessment:", err);
-      toast.error("Failed to add Assessment");
+      console.error("Failed to add Recommendation:", err);
+      toast.error("Failed to add Recommendation");
     } finally {
-      setIsHistoryModalOpen(false); // Close the modal after submission
+      setIsRecommendationModalOpen(false);
       setIsAssessmentModalOpen(true);
     }
   };
+  
 
   const onClose = () => {
     setIsModalOpen(false);
@@ -412,15 +424,15 @@ const Pyramid = () => {
       </section>
 
       {isModalOpen && (
-        <div className="fixed inset-0 bg-gray-600 bg-opacity-75 flex justify-center items-center">
-          <div className="bg-white p-8 rounded-lg w-[70%] ">
+        <div className="fixed inset-0 bg-gray-600 bg-opacity-75 flex justify-center items-center  ">
+          <div className="bg-white p-8 rounded-lg w-[70%] h-[90%] overflow-y-scroll">
             <form onSubmit={handleSubmit(onSubmit)}>
               <div className="text-center mb-6 text-2xl font-semibold ">
                 {currentImageLabel ? `Add ${currentImageLabel}` : "Add Domain"}{" "}
               </div>
               <div className="flex flex-col my-4 ">
                 <label className="pb-1">Clinical Prompt</label>
-                <input
+                <textarea
                   {...register("clinicalPrompt")}
                   placeholder="Enter clinical prompt"
                   className="input-field border-2 py-1"
@@ -445,7 +457,7 @@ const Pyramid = () => {
 
               <div className="flex flex-col my-4">
                 <label className="pb-1">Recommendation</label>
-                <input
+                <textarea
                   {...register("recommendation")}
                   placeholder="Enter recommendation"
                   className="input-field border-2 py-1"
@@ -455,7 +467,7 @@ const Pyramid = () => {
 
               <div className="flex flex-col my-4">
                 <label className="pb-1">Formulation</label>
-                <input
+                <textarea
                   {...register("formulation")}
                   placeholder="Enter Formulation"
                   className="input-field border-2 py-1"
@@ -518,6 +530,43 @@ const Pyramid = () => {
           </div>
         </div>
       )}
+
+{isRecommendationModalOpen && (
+  <div className="fixed inset-0 bg-gray-600 bg-opacity-75 flex justify-center items-center">
+    <div className="bg-white p-8 rounded-lg w-[60%]">
+      <div className="text-center mb-6 text-2xl font-semibold">
+        Enter Report Recommendation
+      </div>
+      <div className="flex flex-col my-4">
+        <label className="pb-1">Recommendation</label>
+        <textarea
+          className="border-2 py-2 px-3 w-full"
+          rows="4"
+          placeholder="Enter report recommendation here..."
+          value={reportRecommendation}
+          onChange={(e) => setReportRecommendation(e.target.value)}
+          required
+        ></textarea>
+      </div>
+      <div className="mt-8 flex justify-center">
+        <button
+          type="button"
+          onClick={() => setIsRecommendationModalOpen(false)}
+          className="bg-red-500 text-white px-8 py-2 rounded-full mr-2"
+        >
+          Cancel
+        </button>
+        <button
+          onClick={handleRecommendationSubmit}
+          className="bg-custom-gradient text-white px-8 py-2 rounded-full"
+        >
+          Submit
+        </button>
+      </div>
+    </div>
+  </div>
+)}
+
 
       {isAssessmentModalOpen && (
         <div className="fixed inset-0 bg-gray-600 bg-opacity-75 flex justify-center items-center z-50">

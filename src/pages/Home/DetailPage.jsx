@@ -11,51 +11,46 @@ const DetailPage = () => {
   const { urn, session } = useParams();
   const reportRef = useRef(null);
   const [accessorsData, setAccessorsData] = useState(null);
+  const [childData, setChildData] = useState(null);
+  const [sessionData, setSessionData] = useState(null);
 
   const navigate = useNavigate();
   const handleBack = () => {
     navigate(-1);
   };
 
-  const [interventionData, setInterventionData] = useState(null);
   const [loading, setLoading] = useState(true); // Loading state for the API call
 
   // Fetch intervention data from API
   useEffect(() => {
-    const fetchInterventionData = async () => {
-      setLoading(true); // Set loading to true when starting the fetch
+    const fetchData = async () => {
+      setLoading(true);
       try {
-        const token = localStorage.getItem("token"); // Retrieve the token from local storage
-        const response = await fetch(
-          `http://localhost:5001/api/get/Intervention/${urn}/${session}`,
-          {
-            method: "GET",
-            headers: {
-              Authorization: `Bearer ${token}`,
-              "Content-Type": "application/json",
-            },
-          }
-        );
+        const token = localStorage.getItem("token");
+        const response = await axios.get(`http://localhost:5001/api/get/Intervention/${urn}`, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
 
-        const data = await response.json();
+        console.log(response.data);
 
-        // Check if data is empty and handle accordingly
-        if (!data || Object.keys(data).length === 0) {
-          console.log("Data is empty");
-          setInterventionData([]); // Or set a message to indicate no data
-          return; // Exit the function early
+        if (response.data) {
+          setChildData(response.data.childData || {});
+          const sessionKey = `session ${session}`;
+          setSessionData(response.data.data[sessionKey] || {});
+        } else {
+          console.log("No data available");
         }
-
-        setInterventionData(data);
-        console.log("Intervention", data);
       } catch (error) {
-        console.error("Error fetching intervention data:", error);
+        console.error("Error fetching data:", error);
       } finally {
         setLoading(false);
       }
     };
 
-    fetchInterventionData();
+    fetchData();
+
   }, [urn, session]);
 
 
@@ -130,7 +125,7 @@ const DetailPage = () => {
           Authorization: `Bearer ${token}`, // Include the token in the request
         },
       });
-      console.log(response.data); // Handle the response as needed
+      // console.log(response.data); // Handle the response as needed
     } catch (error) {
       console.error('Error uploading image:', error);
     }
@@ -165,29 +160,15 @@ const DetailPage = () => {
               <img src="/logo.PNG" alt="logo" className="h-12" />
               <img src="/CDS Logo.png" alt="logo-1" className="h-20 w-48" />
               <div className="flex flex-col">
-                <div>URN: {interventionData?.child?.urn || "urn"}</div>
-                <div>
-                  Family name:{" "}
-                  {interventionData?.child?.lastName || "lastname"}
-                </div>
-                <div>
-                  Given name(s):{" "}
-                  {interventionData?.child?.firstName || "firstname"}{" "}
-                </div>
+                <div>URN: {childData?.urn || "N/A"}</div>
+                <div>Family name: {childData?.lastName || "N/A"}</div>
+                <div>Given name(s): {childData?.firstName || "N/A"}</div>
+                <div>Date of birth: {new Date(childData?.dateOfBirth).toLocaleDateString() || "N/A"}</div>
+                <div>Gender: {childData?.gender || "N/A"}</div>
+                <div>FIN: {childData?.finnumber || "N/A"}</div>
 
-                <div className="flex space-x-10">
-                  <div className="text-nowrap	">
-                    Date of birth:{" "}
-                    {new Date(
-                      interventionData?.child?.dateOfBirth
-                    ).toLocaleDateString() || "dob"}{" "}
-                  </div>
-                  <div className="text-nowrap	">Sex: {interventionData?.child?.gender || "gender"} </div>
-                </div>
-                <div>
-                  FIN: {interventionData?.child?.finnumber || "finNumber"}
-                </div>
               </div>
+
             </div>
             <div className="flex flex-col ms-32 ">
               <div className="text-xl font-normal">Gold Coast Health</div>
@@ -220,8 +201,8 @@ const DetailPage = () => {
                     </th>
                     <th className="border-l-2 text-lg font-normal">
                       {" "}
-                      {interventionData?.child?.firstName || "firstname"}{" "}
-                      {interventionData?.child?.lastName || "lastname"}
+                      {childData?.firstName || "firstname"}{" "}
+                      {childData?.lastName || "lastname"}
                     </th>
                   </tr>
                   <tr className=" border-2">
@@ -230,7 +211,7 @@ const DetailPage = () => {
                     </th>
                     <th className="border-l-2 text-lg font-normal">
                       {new Date(
-                        interventionData?.child?.dateOfBirth
+                        childData?.dateOfBirth
                       ).toLocaleDateString() || "dob"}{" "}
                     </th>
                   </tr>
@@ -239,9 +220,9 @@ const DetailPage = () => {
                       Chronological age at time of Initial appointment:
                     </th>
                     <th className="border-l-2 text-lg font-normal">
-                      {interventionData?.child?.dateOfBirth
+                      {childData?.dateOfBirth
                         ? calculateAge(
-                          new Date(interventionData.child.dateOfBirth),
+                          new Date(childData.dateOfBirth),
                           new Date()
                         )
                         : "age not available"}{" "}
@@ -260,8 +241,8 @@ const DetailPage = () => {
             </div>
             <div className="mt-12">
               <p className="text-lg font-normal">
-                {interventionData?.child?.firstName}{" "}
-                {interventionData?.child?.lastName} attended for evaluation by
+                {childData?.firstName}{" "}
+                {childData?.lastName} attended for evaluation by
                 the multi-disciplinary team consisting of:
               </p>
               <table className="w-full max-w-3xl mx-auto mt-8">
@@ -290,8 +271,22 @@ const DetailPage = () => {
                 BACKGROUND INFORMATION:
               </p>
               <p className="mt-8">
-                {interventionData?.childHistory}
+                <p>{sessionData?.childHistory || "No history available"}</p>
               </p>
+              <div>
+                <img
+                  src="/qr.PNG"
+                  alt="qrcode"
+                  className="absolute -left-32 top-32"
+                />
+              </div>
+            </div>
+            <div className="mt-16 relative">
+              <p className="bg-black text-white text-lg font-normal ps-2">
+                Recomendation:
+              </p>
+              <p className="mt-8">
+                <p>{sessionData?.reportRecommendation || "No recommendations available"}</p>              </p>
               <div>
                 <img
                   src="/qr.PNG"
@@ -304,26 +299,26 @@ const DetailPage = () => {
             <div className="p-4 space-y-6 mt-12">
               {/* Report Header */}
               <div className="flex justify-between ">
-                <h2 className="font-bold">CDS Mealtime Clinical Report</h2>
+                <h2 className="bg-black text-white text-lg font-normal ps-2 w-full">CDS Mealtime Clinical Report</h2>
               </div>
 
               <div>
-                {interventionData?.sessionEntries?.length > 0 ? (
-                  interventionData.sessionEntries.map((entry, index) => (
+                {sessionData?.interventions?.length > 0 ? (
+                  sessionData.interventions.map((intervention, index) => (
                     <div key={index} className="p-4 border-b">
-                      <h3 className="font-semibold text-xl mb-3">{entry.domainname}</h3>
+                      <h3 className="font-semibold text-xl mb-3">{intervention.domainName}</h3>
 
                       {/* Capitalize the first letter of priority */}
                       <p className="font-normal text-lg mb-2">
-                        {entry.priority ? `${entry.priority.charAt(0).toUpperCase()}${entry.priority.slice(1)}` : 'No priority'} Priority
+                        {intervention.priority ? `${intervention.priority.charAt(0).toUpperCase()}${intervention.priority.slice(1)}` : 'No priority'} Priority
                       </p>
 
                       {/* Conditionally render Formulation and Recommendation if they exist */}
-                      {entry.formulation && (
-                        <p><strong>Formulation:</strong> {entry.formulation}</p>
+                      {intervention.formulation && (
+                        <p><strong>Formulation:</strong> {intervention.formulation}</p>
                       )}
-                      {entry.recommendation && (
-                        <p><strong>Recommendation:</strong> {entry.recommendation}</p>
+                      {intervention.recommendation && (
+                        <p><strong>Recommendation:</strong> {intervention.recommendation}</p>
                       )}
                     </div>
                   ))
