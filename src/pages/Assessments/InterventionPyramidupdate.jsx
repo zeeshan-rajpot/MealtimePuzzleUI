@@ -1,9 +1,12 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import Header from "../../components/Header";
 import SideBar from "../../components/SideBar";
 import { useNavigate, useParams } from "react-router-dom";
 import axios from "axios";
 import toast from "react-hot-toast";
+import { debounce } from "lodash";
+
+
 import { baseUrl } from "../../features/config";
 
 const InterventionPyramidupdate = () => {
@@ -22,6 +25,26 @@ const InterventionPyramidupdate = () => {
     const [isRecommendationModalOpen, setIsRecommendationModalOpen] = useState(false);
   const [reportRecommendation, setReportRecommendation] = useState("");
   const [recommendationError, setRecommendationError] = useState(false);
+const [additionalInfo, setAdditionalInfo] = useState({
+  parents: "",
+  referrer: "",
+  gp: "",
+  privateProvider: "",
+});
+
+// Separate states for suggestions and loading for each field
+const [suggestions, setSuggestions] = useState({
+  parents: [],
+  referrer: [],
+  gp: [],
+  privateProvider: []
+});
+const [isLoading, setIsLoading] = useState({
+  parents: false,
+  referrer: false,
+  gp: false,
+  privateProvider: false
+});
 
   const [modalData, setModalData] = useState({
     clinicalPrompt: "",
@@ -63,6 +86,24 @@ const InterventionPyramidupdate = () => {
     fetchInterventionData();
   }, [urn, session]);
 
+  const fetchAddressSuggestions = async (query) => {
+    if (query.length < 3) {
+      setSuggestions([]); // Clear suggestions if less than 3 characters
+      return;
+    }
+    setIsLoading(true);
+    try {
+      const response = await axios.post(`${baseUrl}/address-autocomplete`, { query });
+      console.log("API response:", response.data); // Debugging log
+      setSuggestions(response.data.suggestions || []);
+    } catch (error) {
+      console.error("Error fetching address suggestions:", error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+  
+
   const handleImageClick = (id, label) => {
     setCurrentImageLabel(label); // Set the label instead of ID
     console.log(label); // Console the label text
@@ -91,6 +132,28 @@ const InterventionPyramidupdate = () => {
 
     setIsModalOpen(true);
   };
+  const debouncedFetch = useCallback(
+    debounce(async (query, field) => {
+      if (query.length < 3) {
+        setSuggestions((prev) => ({ ...prev, [field]: [] }));
+        return;
+      }
+
+      setIsLoading((prev) => ({ ...prev, [field]: true }));
+      try {
+        const response = await axios.post(`${baseUrl}/address-autocomplete`, { query });
+        setSuggestions((prev) => ({
+          ...prev,
+          [field]: response.data.suggestions.slice(0, 5) || []
+        }));
+      } catch (error) {
+        console.error(`Error fetching suggestions for ${field}:`, error);
+      } finally {
+        setIsLoading((prev) => ({ ...prev, [field]: false }));
+      }
+    }, 300),
+    []
+  );
 
   const handleModalSave = () => {
     if (
@@ -265,26 +328,33 @@ const InterventionPyramidupdate = () => {
     setIsAdditionalInfoModalOpen(true);
   };
 
-  const [additionalInfo, setAdditionalInfo] = useState({
-    parents: "",
-    referrer: "",
-    gp: "",
-    privateProvider: "",
-  });
 
-  const handleAdditionalInfoChange = (field, value) => {
-    setAdditionalInfo((prev) => ({
-      ...prev,
-      [field]: value,
-    }));
-  };
+ // Handles input change and fetches suggestions
+ const handleAdditionalInfoChange = (field, value) => {
+  setAdditionalInfo((prev) => ({
+    ...prev,
+    [field]: value,
+  }));
+  debouncedFetch(value, field);
+};
 
-  const handleSaveAdditionalInfo = () => {
-    // Save additional info to local storage or handle it as per your logic
-    localStorage.setItem("additionalInfo", JSON.stringify(additionalInfo));
-    setIsAdditionalInfoModalOpen(false); // Close modal after saving
-    navigate(`/home/detailpage/${urn}/${session}`);
-  };
+// Applies the suggestion to the input field
+const applySuggestion = (field, suggestion) => {
+  setAdditionalInfo((prev) => ({
+    ...prev,
+    [field]: suggestion,
+  }));
+  setSuggestions((prev) => ({ ...prev, [field]: [] })); // Clear suggestions after selection
+};
+
+
+const handleSaveAdditionalInfo = () => {
+  // Save additional info to local storage or handle it as per your logic
+  localStorage.setItem("additionalInfo", JSON.stringify(additionalInfo));
+  setIsAdditionalInfoModalOpen(false); // Close modal after saving
+  navigate(`/home/detailpage/${urn}/${session}`);
+};
+
 
   return (
     <>
@@ -691,85 +761,155 @@ const InterventionPyramidupdate = () => {
         </div>
       )}
 
-      {/* Additional Information Modal */}
-      {isAdditionalInfoModalOpen && (
-        <div className="fixed inset-0 bg-gray-600 bg-opacity-75 flex justify-center items-center">
-          <div className="bg-white p-8 rounded-lg w-[60%]">
-            <h2 className="text-center mb-6 text-2xl font-semibold">
-              Additional Information
-            </h2>
+{/* Additional Information Modal */}
+{isAdditionalInfoModalOpen && (
+  <div className="fixed inset-0 bg-gray-600 bg-opacity-75 flex justify-center items-center">
+    <div className="bg-white p-8 rounded-lg w-[60%]">
+      <h2 className="text-center mb-6 text-2xl font-semibold">
+        Additional Information
+      </h2>
 
-            <div className="flex flex-col my-4">
-              <label className="pb-1 font-medium">Parents [Address]</label>
-              <input
-                className="border-2 border-gray-300 py-2 px-3 rounded-md w-full"
-                type="text"
-                placeholder="Parents' Address"
-                value={additionalInfo.parents}
-                onChange={(e) =>
-                  handleAdditionalInfoChange("parents", e.target.value)
-                }
-              />
-            </div>
-
-            <div className="flex flex-col my-4">
-              <label className="pb-1 font-medium">Referrer [Address]</label>
-              <input
-                className="border-2 border-gray-300 py-2 px-3 rounded-md w-full"
-                type="text"
-                placeholder="Referrer's Address"
-                value={additionalInfo.referrer}
-                onChange={(e) =>
-                  handleAdditionalInfoChange("referrer", e.target.value)
-                }
-              />
-            </div>
-
-            <div className="flex flex-col my-4">
-              <label className="pb-1 font-medium">GP [Address]</label>
-              <input
-                className="border-2 border-gray-300 py-2 px-3 rounded-md w-full"
-                type="text"
-                placeholder="GP's Address"
-                value={additionalInfo.gp}
-                onChange={(e) =>
-                  handleAdditionalInfoChange("gp", e.target.value)
-                }
-              />
-            </div>
-
-            <div className="flex flex-col my-4">
-              <label className="pb-1 font-medium">
-                Private Provider [Address]
-              </label>
-              <input
-                className="border-2 border-gray-300 py-2 px-3 rounded-md w-full"
-                type="text"
-                placeholder="Private Provider's Address"
-                value={additionalInfo.privateProvider}
-                onChange={(e) =>
-                  handleAdditionalInfoChange("privateProvider", e.target.value)
-                }
-              />
-            </div>
-
-            <div className="mt-8 flex justify-center">
-              <button
-                onClick={() => setIsAdditionalInfoModalOpen(false)}
-                className="bg-red-500 text-white px-8 py-2 rounded-full mr-2"
+      {/* Parents Address Field with Suggestions */}
+      <div className="flex flex-col my-4">
+        <label className="pb-1 font-medium">Parents [Address]</label>
+        <input
+          className="border-2 border-gray-300 py-2 px-3 rounded-md w-full"
+          type="text"
+          placeholder="Parents' Address"
+          value={additionalInfo.parents}
+          onChange={(e) => handleAdditionalInfoChange("parents", e.target.value)}
+        />
+        {isLoading.parents && <p>Loading suggestions...</p>}
+        {suggestions.parents.length > 0 && (
+          <ul className="border border-gray-300 mt-2 rounded-md">
+            {suggestions.parents.map((suggestion, index) => (
+              <li
+                key={index}
+                className="p-2 cursor-pointer hover:bg-gray-200"
+                onClick={() => applySuggestion("parents", suggestion)}
               >
-                Cancel
-              </button>
-              <button
-                onClick={handleSaveAdditionalInfo}
-                className="bg-green-500 text-white px-8 py-2 rounded-full"
+                {suggestion}
+              </li>
+            ))}
+          </ul>
+        )}
+      </div>
+
+      {/* Referrer Address Field with Suggestions */}
+      <div className="flex flex-col my-4">
+        <label className="pb-1 font-medium">Referrer [Address]</label>
+        <input
+          className="border-2 border-gray-300 py-2 px-3 rounded-md w-full"
+          type="text"
+          placeholder="Referrer's Address"
+          value={additionalInfo.referrer}
+          onChange={(e) => handleAdditionalInfoChange("referrer", e.target.value)}
+        />
+        {isLoading.referrer && <p>Loading suggestions...</p>}
+        {suggestions.referrer.length > 0 && (
+          <ul className="border border-gray-300 mt-2 rounded-md">
+            {suggestions.referrer.map((suggestion, index) => (
+              <li
+                key={index}
+                className="p-2 cursor-pointer hover:bg-gray-200"
+                onClick={() => applySuggestion("referrer", suggestion)}
               >
-                Save
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
+                {suggestion}
+              </li>
+            ))}
+          </ul>
+        )}
+      </div>
+
+      {/* GP Address Field with Suggestions */}
+      <div className="flex flex-col my-4">
+        <label className="pb-1 font-medium">GP [Address]</label>
+        <input
+          className="border-2 border-gray-300 py-2 px-3 rounded-md w-full"
+          type="text"
+          placeholder="GP's Address"
+          value={additionalInfo.gp}
+          onChange={(e) => handleAdditionalInfoChange("gp", e.target.value)}
+        />
+        {isLoading.gp && <p>Loading suggestions...</p>}
+        {suggestions.gp.length > 0 && (
+          <ul className="border border-gray-300 mt-2 rounded-md">
+            {suggestions.gp.map((suggestion, index) => (
+              <li
+                key={index}
+                className="p-2 cursor-pointer hover:bg-gray-200"
+                onClick={() => applySuggestion("gp", suggestion)}
+              >
+                {suggestion}
+              </li>
+            ))}
+          </ul>
+        )}
+      </div>
+
+      {/* Private Provider Address Field with Suggestions */}
+      <div className="flex flex-col my-4">
+        <label className="pb-1 font-medium">Private Provider [Address]</label>
+        <input
+          className="border-2 border-gray-300 py-2 px-3 rounded-md w-full"
+          type="text"
+          placeholder="Private Provider's Address"
+          value={additionalInfo.privateProvider}
+          onChange={(e) => handleAdditionalInfoChange("privateProvider", e.target.value)}
+        />
+        {isLoading.privateProvider && <p>Loading suggestions...</p>}
+        {suggestions.privateProvider.length > 0 && (
+          <ul className="border border-gray-300 mt-2 rounded-md">
+            {suggestions.privateProvider.map((suggestion, index) => (
+              <li
+                key={index}
+                className="p-2 cursor-pointer hover:bg-gray-200"
+                onClick={() => applySuggestion("privateProvider", suggestion)}
+              >
+                {suggestion}
+              </li>
+            ))}
+          </ul>
+        )}
+      </div>
+
+      {/* Uniting Care Checkbox */}
+      <div className="flex items-center my-4">
+        <input
+          type="checkbox"
+          id="unitingCareCheckbox"
+          className="mr-2"
+          checked={additionalInfo.unitingCare || false}
+          onChange={(e) =>
+            setAdditionalInfo((prev) => ({
+              ...prev,
+              unitingCare: e.target.checked,
+            }))
+          }
+        />
+        <label htmlFor="unitingCareCheckbox" className="font-medium">
+          Uniting Care
+        </label>
+      </div>
+
+      <div className="mt-8 flex justify-center">
+        <button
+          onClick={() => setIsAdditionalInfoModalOpen(false)}
+          className="bg-red-500 text-white px-8 py-2 rounded-full mr-2"
+        >
+          Cancel
+        </button>
+        <button
+          onClick={handleSaveAdditionalInfo}
+          className="bg-green-500 text-white px-8 py-2 rounded-full"
+        >
+          Save
+        </button>
+      </div>
+    </div>
+  </div>
+)}
+
     </>
   );
 };

@@ -164,7 +164,9 @@ const DetailPage = () => {
                 <div>Family name: {childData?.lastName || "N/A"}</div>
                 <div>Given name(s): {childData?.firstName || "N/A"}</div>
                 <div>Date of birth: {new Date(childData?.dateOfBirth).toLocaleDateString() || "N/A"}</div>
-                <div>Gender: {childData?.gender || "N/A"}</div>
+                <div>
+          Sex: {childData?.gender === "male" ? "M" : childData?.gender === "female" ? "F" : "O"}
+        </div>
                 <div>FIN: {childData?.finnumber || "N/A"}</div>
 
               </div>
@@ -185,13 +187,13 @@ const DetailPage = () => {
               </div>
               <div className="text-lg font-bold">Mealtime Clinical Report</div>
             </div>
-            <div className="mt-8 text-lg font-normal">Parent / Carer</div>
+            {/* <div className="mt-8 text-lg font-normal">Parent / Carer</div>
             <div className="text-lg font-normal">Street Address</div>
             <div className="flex space-x-8">
               <div className="text-lg font-normal">Suburb</div>
               <div className="text-lg  font-normal">QLD</div>
               <div className="text-lg font-normal">Postcode</div>
-            </div>
+            </div> */}
             <div className="mt-16">
               <table className="w-full max-w-3xl mx-auto">
                 <thead>
@@ -217,7 +219,7 @@ const DetailPage = () => {
                   </tr>
                   <tr className=" border-2">
                     <th className="border-b-2 text-lg font-normal">
-                      Chronological age at time of Initial appointment:
+                      Age
                     </th>
                     <th className="border-l-2 text-lg font-normal">
                       {childData?.dateOfBirth
@@ -267,66 +269,61 @@ const DetailPage = () => {
               </table>
             </div>
             <div className="mt-16 relative">
-              <p className="bg-black text-white text-lg font-normal ps-2">
-                BACKGROUND INFORMATION:
-              </p>
-              <p className="mt-8">
-                <p>{sessionData?.childHistory || "No history available"}</p>
-              </p>
-              <div>
-                <img
-                  src="/qr.PNG"
-                  alt="qrcode"
-                  className="absolute -left-32 top-32"
-                />
-              </div>
-            </div>
-            <div className="mt-16 relative">
-              <p className="bg-black text-white text-lg font-normal ps-2">
-                Recomendation:
-              </p>
-              <p className="mt-8">
-                <p>{sessionData?.reportRecommendation || "No recommendations available"}</p>              </p>
-              <div>
-                <img
-                  src="/qr.PNG"
-                  alt="qrcode"
-                  className="absolute -left-32 top-32"
-                />
-              </div>
-            </div>
+  <p className="bg-black text-white text-lg font-normal ps-2">
+    BACKGROUND INFORMATION:
+  </p>
+  <p className="mt-8">
+    <p>{sessionData?.childHistory || "No history available"}</p>
+  </p>
+</div>
 
-            <div className="p-4 space-y-6 mt-12">
-              {/* Report Header */}
-              <div className="flex justify-between ">
-                <h2 className="bg-black text-white text-lg font-normal ps-2 w-full">CDS Mealtime Clinical Report</h2>
-              </div>
+<div className="p-4 space-y-6 mt-12">
+  {/* Report Header */}
+  <div className="flex justify-between w-full">
+  <h2 className="bg-black text-white text-lg font-normal ps-2 w-full text-left">CDS MEALTIME PUZZLE SUMMARY</h2>
+</div>
 
-              <div>
-                {sessionData?.interventions?.length > 0 ? (
-                  sessionData.interventions.map((intervention, index) => (
-                    <div key={index} className="p-4 border-b">
-                      <h3 className="font-semibold text-xl mb-3">{intervention.domainName}</h3>
 
-                      {/* Capitalize the first letter of priority */}
-                      <p className="font-normal text-lg mb-2">
-                        {intervention.priority ? `${intervention.priority.charAt(0).toUpperCase()}${intervention.priority.slice(1)}` : 'No priority'} Priority
-                      </p>
+  <div>
+    {sessionData?.interventions?.length > 0 ? (
+      sessionData.interventions.map((intervention, index) => (
+        <div key={index} className="p-4 border-b">
+          <h3 className="font-semibold text-xl mb-3">{intervention.domainName}</h3>
 
-                      {/* Conditionally render Formulation and Recommendation if they exist */}
-                      {intervention.formulation && (
-                        <p><strong>Formulation:</strong> {intervention.formulation}</p>
-                      )}
-                      {intervention.recommendation && (
-                        <p><strong>Recommendation:</strong> {intervention.recommendation}</p>
-                      )}
-                    </div>
-                  ))
-                ) : (
-                  <p>No session entries available</p>
-                )}
+          {/* Capitalize the first letter of priority */}
+          <p className="font-normal text-lg mb-2">
+            {intervention.priority ? `${intervention.priority.charAt(0).toUpperCase()}${intervention.priority.slice(1)}` : 'No priority'} Priority
+          </p>
 
-              </div>
+          {/* Conditionally render Formulation and Recommendation if they exist */}
+          {intervention.formulation && (
+            <p><strong>Formulation:</strong> {intervention.formulation}</p>
+          )}
+          {intervention.recommendation && (
+            <p><strong>Recommendation:</strong> {intervention.recommendation}</p>
+          )}
+        </div>
+      ))
+    ) : (
+      <p>No session entries available</p>
+    )}
+  </div>
+</div>
+
+<div className="mt-16 relative">
+  <p className="bg-black text-white text-lg font-normal ps-2">
+    RECOMMENDATION:
+  </p>
+  <p className="mt-8">
+    <p>{sessionData?.reportRecommendation || "No recommendations available"}</p>
+  </p>
+  <div>
+    <img
+      src="/qr.PNG"
+      alt="qrcode"
+      className="absolute -left-32 top-32"
+    />
+  </div>
 
 
               <div className="flex justify-between items-start mt-6 ">
@@ -357,26 +354,28 @@ const DetailPage = () => {
                 </div>
               </div>
 
-              {/* cc Section */}
-              <div className="mt-4">
-                <p>cc</p>
-                <ul className="list-none">
-                  <li> {"Parents:" + additionalInfo.parents || ''}</li>
-                  <li> {"Referrer:" + additionalInfo.referrer || 'not found'}</li>
-                  <li> {"GP:" + additionalInfo.gp || 'not found'}</li>
-                  <li>
-                    <a
-                      href="mailto:unitingcare.earlychildhood@ndis.gov.au"
-                      className="text-blue-600 underline"
-                    >
-                      unitingcare.earlychildhood@ndis.gov.au
-                    </a>{" "}
-                    (via secure server)
-                  </li>
-                  <li> {"Private Provider:" + additionalInfo.privateProvider || 'not found'}</li>
-                  <li>GCHHS iEMR</li>
-                </ul>
-              </div>
+{/* cc Section */}
+<div className="mt-4">
+  <p>cc</p>
+  <ul className="list-none">
+    {additionalInfo.parents && <li>{"Parents: " + additionalInfo.parents}</li>}
+    {additionalInfo.referrer && <li>{"Referrer: " + additionalInfo.referrer}</li>}
+    {additionalInfo.gp && <li>{"GP: " + additionalInfo.gp}</li>}
+    {additionalInfo.unitingCare && ( // Show email link only if "Uniting Care" is checked
+      <li>
+        <a
+          href="mailto:unitingcare.earlychildhood@ndis.gov.au"
+          className="text-blue-600 underline"
+        >
+          unitingcare.earlychildhood@ndis.gov.au
+        </a>{" "}
+        (via secure server)
+      </li>
+    )}
+    {additionalInfo.privateProvider && <li>{"Private Provider: " + additionalInfo.privateProvider}</li>}
+    <li>GCHHS iEMR</li>
+  </ul>
+</div>
             </div>
           </div>
           <div className="my-10 flex justify-center space-x-4">
