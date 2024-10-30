@@ -7,6 +7,7 @@ import { useAddInterventionMutation } from "../../features/Forms/Intervention";
 import toast from "react-hot-toast";
 import axios from "axios";
 import { baseUrl } from "../../features/config";
+import { debounce } from "lodash";
 
 const Addnewassestent = () => {
 
@@ -22,15 +23,14 @@ const Addnewassestent = () => {
   const [isAdditionalInfoModalOpen, setIsAdditionalInfoModalOpen] =
     useState(false);
   const [interventionData, setInterventionData] = useState(null);
+  
   const [modalData, setModalData] = useState({
     clinicalPrompt: "",
     priority: "",
     formulation: "",
     recommendation: "",
   });
-
-  const [addIntervention, { isLoading, isError, error }] =
-    useAddInterventionMutation();
+  
 
   const handleBack = () => {
     navigate(-1);
@@ -68,6 +68,7 @@ const Addnewassestent = () => {
     fetchInterventionData();
   }, [urn, session]);
 
+  
   const handleImageClick = (id, label) => {
     setCurrentImageLabel(label); // Set the label instead of ID
     console.log(label); // Console the label text
@@ -280,18 +281,57 @@ const Addnewassestent = () => {
   };
 
 
-  const [additionalInfo, setAdditionalInfo] = useState({
-    parents: "",
-    referrer: "",
-    gp: "",
-    privateProvider: "",
+  const [suggestions, setSuggestions] = useState({
+    parents: [],
+    referrer: [],
+    gp: [],
+    privateProvider: []
   });
+  
+  const [isLoading, setIsLoading] = useState({
+    parents: false,
+    referrer: false,
+    gp: false,
+    privateProvider: false
+  });
+  
+  const applySuggestion = (field, suggestion) => {
+    setAdditionalInfo((prev) => ({
+      ...prev,
+      [field]: suggestion,
+    }));
+    setSuggestions((prev) => ({ ...prev, [field]: [] })); // Clear suggestions after selection
+  };
 
+  const debouncedFetch = useCallback(
+    debounce(async (query, field) => {
+      if (query.length < 3) {
+        setSuggestions((prev) => ({ ...prev, [field]: [] }));
+        return;
+      }
+  
+      setIsLoading((prev) => ({ ...prev, [field]: true }));
+      try {
+        const response = await axios.post(`${baseUrl}/address-autocomplete`, { query });
+        setSuggestions((prev) => ({
+          ...prev,
+          [field]: response.data.suggestions.slice(0, 5) || []
+        }));
+      } catch (error) {
+        console.error(`Error fetching suggestions for ${field}:`, error);
+      } finally {
+        setIsLoading((prev) => ({ ...prev, [field]: false }));
+      }
+    }, 300),
+    []
+  );
+  
   const handleAdditionalInfoChange = (field, value) => {
     setAdditionalInfo((prev) => ({
       ...prev,
       [field]: value,
     }));
+    debouncedFetch(value, field);
   };
 
   const handleSaveAdditionalInfo = () => {
@@ -714,59 +754,110 @@ const Addnewassestent = () => {
               Additional Information
             </h2>
 
-            <div className="flex flex-col my-4">
-              <label className="pb-1 font-medium">Parents [Address]</label>
-              <input
-                className="border-2 border-gray-300 py-2 px-3 rounded-md w-full"
-                type="text"
-                placeholder="Parents' Address"
-                value={additionalInfo.parents}
-                onChange={(e) =>
-                  handleAdditionalInfoChange("parents", e.target.value)
-                }
-              />
-            </div>
+            {/* Parents Address Field with Suggestions */}
+      <div className="flex flex-col my-4">
+        <label className="pb-1 font-medium">Parents [Address]</label>
+        <input
+          className="border-2 border-gray-300 py-2 px-3 rounded-md w-full"
+          type="text"
+          placeholder="Parents' Address"
+          value={additionalInfo.parents}
+          onChange={(e) => handleAdditionalInfoChange("parents", e.target.value)}
+        />
+        {isLoading.parents && <p>Loading suggestions...</p>}
+        {suggestions.parents.length > 0 && (
+          <ul className="border border-gray-300 mt-2 rounded-md">
+            {suggestions.parents.map((suggestion, index) => (
+              <li
+                key={index}
+                className="p-2 cursor-pointer hover:bg-gray-200"
+                onClick={() => applySuggestion("parents", suggestion)}
+              >
+                {suggestion}
+              </li>
+            ))}
+          </ul>
+        )}
+      </div>
 
-            <div className="flex flex-col my-4">
-              <label className="pb-1 font-medium">Referrer [Address]</label>
-              <input
-                className="border-2 border-gray-300 py-2 px-3 rounded-md w-full"
-                type="text"
-                placeholder="Referrer's Address"
-                value={additionalInfo.referrer}
-                onChange={(e) =>
-                  handleAdditionalInfoChange("referrer", e.target.value)
-                }
-              />
-            </div>
+      {/* Referrer Address Field with Suggestions */}
+      <div className="flex flex-col my-4">
+        <label className="pb-1 font-medium">Referrer [Address]</label>
+        <input
+          className="border-2 border-gray-300 py-2 px-3 rounded-md w-full"
+          type="text"
+          placeholder="Referrer's Address"
+          value={additionalInfo.referrer}
+          onChange={(e) => handleAdditionalInfoChange("referrer", e.target.value)}
+        />
+        {isLoading.referrer && <p>Loading suggestions...</p>}
+        {suggestions.referrer.length > 0 && (
+          <ul className="border border-gray-300 mt-2 rounded-md">
+            {suggestions.referrer.map((suggestion, index) => (
+              <li
+                key={index}
+                className="p-2 cursor-pointer hover:bg-gray-200"
+                onClick={() => applySuggestion("referrer", suggestion)}
+              >
+                {suggestion}
+              </li>
+            ))}
+          </ul>
+        )}
+      </div>
 
-            <div className="flex flex-col my-4">
-              <label className="pb-1 font-medium">GP [Address]</label>
-              <input
-                className="border-2 border-gray-300 py-2 px-3 rounded-md w-full"
-                type="text"
-                placeholder="GP's Address"
-                value={additionalInfo.gp}
-                onChange={(e) =>
-                  handleAdditionalInfoChange("gp", e.target.value)
-                }
-              />
-            </div>
+      {/* GP Address Field with Suggestions */}
+      <div className="flex flex-col my-4">
+        <label className="pb-1 font-medium">GP [Address]</label>
+        <input
+          className="border-2 border-gray-300 py-2 px-3 rounded-md w-full"
+          type="text"
+          placeholder="GP's Address"
+          value={additionalInfo.gp}
+          onChange={(e) => handleAdditionalInfoChange("gp", e.target.value)}
+        />
+        {isLoading.gp && <p>Loading suggestions...</p>}
+        {suggestions.gp.length > 0 && (
+          <ul className="border border-gray-300 mt-2 rounded-md">
+            {suggestions.gp.map((suggestion, index) => (
+              <li
+                key={index}
+                className="p-2 cursor-pointer hover:bg-gray-200"
+                onClick={() => applySuggestion("gp", suggestion)}
+              >
+                {suggestion}
+              </li>
+            ))}
+          </ul>
+        )}
+      </div>
 
-            <div className="flex flex-col my-4">
-              <label className="pb-1 font-medium">
-                Private Provider [Address]
-              </label>
-              <input
-                className="border-2 border-gray-300 py-2 px-3 rounded-md w-full"
-                type="text"
-                placeholder="Private Provider's Address"
-                value={additionalInfo.privateProvider}
-                onChange={(e) =>
-                  handleAdditionalInfoChange("privateProvider", e.target.value)
-                }
-              />
-            </div>
+      {/* Private Provider Address Field with Suggestions */}
+      <div className="flex flex-col my-4">
+        <label className="pb-1 font-medium">Private Provider [Address]</label>
+        <input
+          className="border-2 border-gray-300 py-2 px-3 rounded-md w-full"
+          type="text"
+          placeholder="Private Provider's Address"
+          value={additionalInfo.privateProvider}
+          onChange={(e) => handleAdditionalInfoChange("privateProvider", e.target.value)}
+        />
+        {isLoading.privateProvider && <p>Loading suggestions...</p>}
+        {suggestions.privateProvider.length > 0 && (
+          <ul className="border border-gray-300 mt-2 rounded-md">
+            {suggestions.privateProvider.map((suggestion, index) => (
+              <li
+                key={index}
+                className="p-2 cursor-pointer hover:bg-gray-200"
+                onClick={() => applySuggestion("privateProvider", suggestion)}
+              >
+                {suggestion}
+              </li>
+            ))}
+          </ul>
+        )}
+      </div>
+
 
             <div className="mt-8 flex justify-center">
               <button

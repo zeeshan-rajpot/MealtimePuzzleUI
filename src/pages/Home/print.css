@@ -1,32 +1,81 @@
 @media print {
-  /* Hide elements not needed in the print version */
-  header,
-  aside,
-  button {
-    display: none;
+  /* Hide unwanted elements */
+  .no-print, .sidebar, .header, .download-button, .my-10 {
+    display: none !important;
   }
 
-  /* Make the content fit on one page */
-  #printableContent {
-    page-break-inside: avoid;
-    width: 100%;
+  /* Set layout and padding */
+  body {
     margin: 0;
-    padding: 0;
+    padding: 1cm;
+    color-adjust: exact;
+    -webkit-print-color-adjust: exact;
   }
 
-  /* Adjust font sizes and spacing for print */
-  h2,
-  h3 {
-    font-size: 18px;
-    margin: 10px 0;
+  /* Main printable section styles */
+  .print-section {
+    font-family: Arial, sans-serif;
+    color: #000;
   }
 
-  p {
-    font-size: 14px;
+  /* Background colors for headers */
+  .bg-black {
+    background-color: #000 !important;
+    color: #fff !important;
+    padding: 0.5em;
+    font-weight: bold;
+    text-align: left; /* Ensures header text alignment */
   }
 
-  /* Hide borders on input fields or placeholders */
-  .border-b-2 {
-    border: none;
+  /* Table adjustments for print */
+  table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+
+  th, td {
+    border: 1px solid #ddd;
+    padding: 8px;
+    text-align: left; /* Consistent alignment */
+  }
+
+  /* Adjustments for readability */
+  th {
+    background-color: #f2f2f2 !important; /* Light background for table headers */
+  }
+
+  /* QR Code alignment */
+  .qr-code {
+    position: absolute;
+    left: 1cm;
+    top: 2cm;
+    width: 5cm; /* Set size for consistent print scaling */
+    height: auto;
+  }
+
+  /* Prevent page breaks within specific sections */
+  .report-section, .accessors-list {
+    page-break-inside: avoid;
+  }
+
+  /* Specific layout for different report sections */
+  .report-section {
+    margin-bottom: 1.5cm;
+  }
+
+  .accessors-list {
+    margin-top: 1cm;
+  }
+
+  /* Optional: Small adjustments for header font size */
+  .header-section {
+    font-size: 1.2em;
+    margin-bottom: 0.5em;
+  }
+
+  /* Remove box shadows and rounded corners for cleaner printing */
+  .bg-white, .print-section {
+    box-shadow: none !important;
+    border-radius: 0 !important;
   }
 }

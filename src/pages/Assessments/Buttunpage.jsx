@@ -68,6 +68,11 @@ const Buttunpage = () => {
                   Add New Assessment{" "}
                 </button>
               </Link>
+<Link to={`/home/generatereport/${urn}/${childName}`}>
+  <button className="w-full py-3 px-10 bg-ceruleanBlue text-white rounded-full shadow-lg my-8 hover:bg-blushPink transition duration-300">
+    Generate Report
+  </button>
+</Link>              
             </div>
           </div>
         </div>
