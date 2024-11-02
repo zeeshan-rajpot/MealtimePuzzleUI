@@ -46,9 +46,7 @@ const Assessments = () => {
               {filteredChildren?.length > 0 ? (
                 filteredChildren.map((child) => (
                   <Link
-                    to={`/Buttunpage/${child.urn}/${
-                      child.firstName + " " + child.lastName
-                    }`}
+                    to={`/Buttunpage/${child.urn}/${child.firstName} ${child.lastName}`}
                     className="border-2 border-gray-100 p-4 flex justify-between rounded-lg shadow-sm hover:border-primary"
                   >
                     <div>

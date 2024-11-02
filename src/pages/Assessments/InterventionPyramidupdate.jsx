@@ -240,16 +240,13 @@ const [isLoading, setIsLoading] = useState({
 
       // Show success message
       toast.success("Assesment update successfully!");
-
+      navigate(-1);
       // Navigate to detail page
       // navigate(`/home/detailpage/${urn}/${session}`);
     } catch (err) {
       console.error("Failed to add intervention:", err);
       toast.error("Failed to add intervention");
-    } finally {
-      setIsHistoryModalOpen(false); // Close the modal after submission
-      setIsAssessmentModalOpen(true);
-    }
+    } 
   };
 
   const handleBack = () => {
@@ -513,7 +510,7 @@ const handleSaveAdditionalInfo = () => {
 
             <button
               className="mt-8 w-[30%] rounded-full px-4 py-2 bg-custom-gradient text-white"
-              onClick={handleNextClick}
+              onClick={handleHistorySubmit}
             >
               Update
             </button>
@@ -642,7 +639,7 @@ const handleSaveAdditionalInfo = () => {
                 Cancel
               </button>
               <button
-                onClick={handleHistorySubmit}
+                // onClick={handleHistorySubmit}
                 className="bg-custom-gradient text-white px-8 py-2 rounded-full"
               >
                 Submit

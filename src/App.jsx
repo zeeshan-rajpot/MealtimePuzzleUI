@@ -19,6 +19,7 @@ import HistoryDetail from "./pages/History/HistoryDetail";
 import Buttunpage from "./pages/Assessments/Buttunpage";
 import InterventionPyramidupdate from "./pages/Assessments/InterventionPyramidupdate";
 import Addnewassestent from "./pages/Assessments/Addnewassestent";
+import GenerateReport from "./pages/Assessments/GenerateReport";
 
 function App() {
   
@@ -71,6 +72,10 @@ function App() {
      {
       path: "/Buttunpage/:urn/:childName",
       element: <Buttunpage />,
+    },
+    {
+      path: "/home/generatereport/:urn/:childName",
+      element: <GenerateReport />,
     },
     {
       path: "/intervention",
