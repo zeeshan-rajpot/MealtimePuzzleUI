@@ -40,6 +40,7 @@ const DetailPage = () => {
         } else {
           console.log("No data available");
         }
+        console.log(response.data)
       } catch (error) {
         console.error("Error fetching data:", error);
       } finally {
@@ -203,7 +204,7 @@ const DetailPage = () => {
                 BACKGROUND INFORMATION:
               </p>
               <p className="mt-8">
-                {sessionData?.childHistory || "No history available"}
+                {childData?.childHistory }
               </p>
             </div>
 
@@ -241,7 +242,7 @@ const DetailPage = () => {
                 RECOMMENDATION:
               </p>
               <p className="mt-8">
-                {sessionData?.reportRecommendation || "No recommendations available"}
+                {childData?.RecommendationChild || "No recommendations available"}
               </p>
               <div>
                 <img src="/qr.PNG" alt="qrcode" className="absolute -left-32 top-32" />
