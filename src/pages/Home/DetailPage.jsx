@@ -204,7 +204,9 @@ const DetailPage = () => {
                 BACKGROUND INFORMATION:
               </p>
               <p className="mt-8">
+
                 {childData?.childHistory }
+
               </p>
             </div>
 

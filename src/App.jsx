@@ -90,6 +90,11 @@ function App() {
       path: "/interventionupdate/pyramid/:urn/:session/:childName",
       element: <InterventionPyramidupdate />,
     },
+
+    {
+      path: "/home/generatereport/:urn/:childName",
+      element: <GenerateReport />,
+    },
     
     {
       path: "/childData",
