@@ -1,3 +1,4 @@
+
 import React from 'react'
 
 const GenerateReport = () => {
@@ -9,3 +10,4 @@ const GenerateReport = () => {
 }
 
 export default GenerateReport
+
