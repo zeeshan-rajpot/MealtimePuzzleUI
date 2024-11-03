@@ -189,15 +189,17 @@ const Addnewassestent = () => {
       // Show success message
       toast.success("Assesment added successfully!");
       setSession(response.data.session);
+      navigate(-1);
 
       // Navigate to detail page
     } catch (err) {
       console.error("Failed to add Assessment:", err);
       toast.error("Failed to add Assessment");
-    } finally {
-      setIsHistoryModalOpen(false); // Close the modal after submission
-      setIsAssessmentModalOpen(true);
-    }
+    } 
+    // finally {
+    //   setIsHistoryModalOpen(false); // Close the modal after submission
+    //   setIsAssessmentModalOpen(true);
+    // }
   };
 
   const onClose = () => {
@@ -498,7 +500,7 @@ const Addnewassestent = () => {
 
             <button
               className="mt-8 w-[30%] rounded-full px-4 py-2 bg-custom-gradient text-white"
-              onClick={handleNextClick}
+              onClick={handleHistorySubmit}
             >
               {isLoading ? "Submitting" : "Next"}
             </button>
@@ -627,7 +629,7 @@ const Addnewassestent = () => {
                 Cancel
               </button>
               <button
-                onClick={handleHistorySubmit}
+                // onClick={handleHistorySubmit}
                 className="bg-custom-gradient text-white px-8 py-2 rounded-full"
               >
                 Submit

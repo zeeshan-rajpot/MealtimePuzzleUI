@@ -74,6 +74,10 @@ function App() {
       element: <Buttunpage />,
     },
     {
+      path: "/home/generatereport/:urn/:childName",
+      element: <GenerateReport />,
+    },
+    {
       path: "/intervention",
       element: <Assessments />,
     },

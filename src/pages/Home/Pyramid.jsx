@@ -83,54 +83,41 @@ const Pyramid = () => {
   
 
   const handleRecommendationSubmit = async () => {
-    if (!reportRecommendation.trim()) {
-      setRecommendationError(true); // Set error if recommendation is empty
-      return; // Stop submission
-    } else {
-      setRecommendationError(false); // Clear any existing error
-    }
-  
     try {
-      const domains = selectedImages.map((imageId) => ({
-        domainName: imageData[imageId]?.label || "",
-        clinicalPrompt: imageData[imageId]?.clinicalPrompt || "",
-        priority: imageData[imageId]?.priority || "",
-        formulation: imageData[imageId]?.formulation || "",
-        recommendation: imageData[imageId]?.recommendation || "",
-      }));
+      const domains = selectedImages
+        .map((imageId) => ({
+          domainName: imageData[imageId]?.label || "",
+          clinicalPrompt: imageData[imageId]?.clinicalPrompt || "",
+          priority: imageData[imageId]?.priority || "",
+          formulation: imageData[imageId]?.formulation || "",
+          recommendation: imageData[imageId]?.recommendation || "",
+        }))
+        .filter(domain => domain.domainName); // Filters out any empty domain entries
   
-      const childUrn = urn;
-      const token = localStorage.getItem("token");
+      if (!domains.length) {
+        toast.error("Please select at least one domain.");
+        return;
+      }
   
-      const response = await axios.post(
+      const { data: { session, childData } } = await axios.post(
         "http://localhost:5001/api/post/Intervention",
-        {
-          childUrn,
-          childHistory,
-          reportRecommendation, // Include recommendation in the payload
-          domains,
-        },
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
+        { childUrn: urn, childHistory, reportRecommendation, domains },
+        { headers: { Authorization: `Bearer ${localStorage.getItem("token")}` } }
       );
   
-      localStorage.setItem("session", response.data.session);
-      setSession(response.data.session);
-      toast.success("Recommendation added successfully!");
-      console.log(response.data);
+      localStorage.setItem("session", session);
+      setSession(session);
+      toast.success("Assessment added successfully!");
+      console.log(childData);
+      navigate(`/intervention`);
+      // Navigate only if childData is available
+     
     } catch (err) {
-      console.error("Failed to add Recommendation:", err);
-      toast.error("Failed to add Recommendation");
-    } finally {
-      setIsRecommendationModalOpen(false);
-      setIsAssessmentModalOpen(true);
+      console.error("Failed to add Assessment:", err);
+      toast.error("Failed to add Assessment");
     }
   };
   
-
   const onClose = () => {
     setIsModalOpen(false);
   };
@@ -415,9 +402,9 @@ const Pyramid = () => {
 
             <button
               className="mt-8 w-[30%] rounded-full px-4 py-2 bg-ceruleanBlue text-white hover:bg-blushPink transition focus:outline-none shadow-lg"
-              onClick={handleNextClick}
+              onClick={handleRecommendationSubmit}
             >
-              {isLoading ? "Submitting..." : "Next"}
+              {isLoading ? "Submitting..." : "submit"}
             </button>
           </div>
         </div>
@@ -557,7 +544,7 @@ const Pyramid = () => {
           Cancel
         </button>
         <button
-          onClick={handleRecommendationSubmit}
+          // onClick={handleRecommendationSubmit}
           className="bg-custom-gradient text-white px-8 py-2 rounded-full"
         >
           Submit
