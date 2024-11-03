@@ -24,10 +24,10 @@ const Pyramid = () => {
   const [isAssessmentModalOpen, setIsAssessmentModalOpen] = useState(false);
   const [isAdditionalInfoModalOpen, setIsAdditionalInfoModalOpen] =
     useState(false);
-  const [isRecommendationModalOpen, setIsRecommendationModalOpen] = useState(false);
+  const [isRecommendationModalOpen, setIsRecommendationModalOpen] =
+    useState(false);
   const [reportRecommendation, setReportRecommendation] = useState("");
   const [recommendationError, setRecommendationError] = useState(false);
-
 
   const [addIntervention, { isLoading, isError, error }] =
     useAddInterventionMutation();
@@ -80,7 +80,6 @@ const Pyramid = () => {
     setIsHistoryModalOpen(false); // Close history modal
     setIsRecommendationModalOpen(true); // Open recommendation modal
   };
-  
 
   const handleRecommendationSubmit = async () => {
     try {
@@ -92,32 +91,35 @@ const Pyramid = () => {
           formulation: imageData[imageId]?.formulation || "",
           recommendation: imageData[imageId]?.recommendation || "",
         }))
-        .filter(domain => domain.domainName); // Filters out any empty domain entries
-  
+        .filter((domain) => domain.domainName); // Filters out any empty domain entries
+
       if (!domains.length) {
         toast.error("Please select at least one domain.");
         return;
       }
-  
-      const { data: { session, childData } } = await axios.post(
+
+      const {
+        data: { session, childData },
+      } = await axios.post(
         "http://localhost:5001/api/post/Intervention",
         { childUrn: urn, childHistory, reportRecommendation, domains },
-        { headers: { Authorization: `Bearer ${localStorage.getItem("token")}` } }
+        {
+          headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
+        }
       );
-  
+
       localStorage.setItem("session", session);
       setSession(session);
       toast.success("Assessment added successfully!");
       console.log(childData);
       navigate(`/intervention`);
       // Navigate only if childData is available
-     
     } catch (err) {
       console.error("Failed to add Assessment:", err);
       toast.error("Failed to add Assessment");
     }
   };
-  
+
   const onClose = () => {
     setIsModalOpen(false);
   };
@@ -149,8 +151,11 @@ const Pyramid = () => {
     const fetchUsers = async () => {
       try {
         const response = await axios.get("http://localhost:5001/api/users");
-        console.log(response.data)
-        setUsers((prevUsers) => [...response.data, ...prevUsers.filter(user => user.isNew)]);
+        console.log(response.data);
+        setUsers((prevUsers) => [
+          ...response.data,
+          ...prevUsers.filter((user) => user.isNew),
+        ]);
       } catch (error) {
         console.error("Error fetching users:", error);
       }
@@ -177,7 +182,9 @@ const Pyramid = () => {
   const handleInputChange = (index, field, value) => {
     const updatedMembers = [...members];
     if (field === "username") {
-      const selectedUser = users.find(user => `${user.firstName} ${user.lastName}` === value);
+      const selectedUser = users.find(
+        (user) => `${user.firstName} ${user.lastName}` === value
+      );
       updatedMembers[index].username = value;
       updatedMembers[index].role = selectedUser ? selectedUser.role : "";
     } else {
@@ -195,7 +202,6 @@ const Pyramid = () => {
     setIsAssessmentModalOpen(false);
     setIsAdditionalInfoModalOpen(true);
   };
-
 
   const [additionalInfo, setAdditionalInfo] = useState({
     parents: "",
@@ -219,10 +225,11 @@ const Pyramid = () => {
 
     try {
       const response = await axios.get("https://addressr.p.rapidapi.com/", {
-        params: { query },  // Assuming 'query' is the parameter for the address
+        params: { query }, // Assuming 'query' is the parameter for the address
         headers: {
           "x-rapidapi-host": "addressr.p.rapidapi.com",
-          "x-rapidapi-key": "7df33f1d15msha1c808d44e12e03p1c2b9cjsn3113ce343810", // Your RapidAPI key
+          "x-rapidapi-key":
+            "7df33f1d15msha1c808d44e12e03p1c2b9cjsn3113ce343810", // Your RapidAPI key
         },
       });
 
@@ -235,7 +242,7 @@ const Pyramid = () => {
 
   const handleAddressChange = (type, value) => {
     handleAdditionalInfoChange(type, value);
-    fetchAddressSuggestions(value);  // Fetch suggestions when input changes
+    fetchAddressSuggestions(value); // Fetch suggestions when input changes
   };
 
   const handleSaveAdditionalInfo = () => {
@@ -412,7 +419,7 @@ const Pyramid = () => {
 
       {isModalOpen && (
         <div className="fixed inset-0 bg-gray-600 bg-opacity-75 flex justify-center items-center  ">
-          <div className="bg-white p-8 rounded-lg w-[70%] h-[90%] overflow-y-scroll">
+          <div className="bg-white p-8 rounded-lg w-[70%] h-[70%] overflow-y-scroll">
             <form onSubmit={handleSubmit(onSubmit)}>
               <div className="text-center mb-6 text-2xl font-semibold ">
                 {currentImageLabel ? `Add ${currentImageLabel}` : "Add Domain"}{" "}
@@ -422,8 +429,12 @@ const Pyramid = () => {
                 <textarea
                   {...register("clinicalPrompt")}
                   placeholder="Enter clinical prompt"
-                  className="input-field border-2 py-1"
-
+                  className="input-field border-2 py-1 h-auto"
+                  style={{ overflow: "hidden", resize: "none" }} // Disable manual resizing for a cleaner look
+                  onInput={(e) => {
+                    e.target.style.height = "auto"; // Reset height to recalculate
+                    e.target.style.height = `${e.target.scrollHeight}px`; // Set height based on scroll height
+                  }}
                 />
               </div>
 
@@ -448,7 +459,11 @@ const Pyramid = () => {
                   {...register("recommendation")}
                   placeholder="Enter recommendation"
                   className="input-field border-2 py-1"
-
+                  style={{ overflow: "hidden", resize: "none" }} // Disable manual resizing for a cleaner look
+                  onInput={(e) => {
+                    e.target.style.height = "auto"; // Reset height to recalculate
+                    e.target.style.height = `${e.target.scrollHeight}px`; // Set height based on scroll height
+                  }}
                 />
               </div>
 
@@ -458,7 +473,11 @@ const Pyramid = () => {
                   {...register("formulation")}
                   placeholder="Enter Formulation"
                   className="input-field border-2 py-1"
-
+                  style={{ overflow: "hidden", resize: "none" }} // Disable manual resizing for a cleaner look
+                  onInput={(e) => {
+                    e.target.style.height = "auto"; // Reset height to recalculate
+                    e.target.style.height = `${e.target.scrollHeight}px`; // Set height based on scroll height
+                  }}
                 />
               </div>
 
@@ -518,55 +537,55 @@ const Pyramid = () => {
         </div>
       )}
 
-{isRecommendationModalOpen && (
-  <div className="fixed inset-0 bg-gray-600 bg-opacity-75 flex justify-center items-center">
-    <div className="bg-white p-8 rounded-lg w-[60%]">
-      <div className="text-center mb-6 text-2xl font-semibold">
-        Enter Report Recommendation
-      </div>
-      <div className="flex flex-col my-4">
-        <label className="pb-1">Recommendation</label>
-        <textarea
-          className="border-2 py-2 px-3 w-full"
-          rows="4"
-          placeholder="Enter report recommendation here..."
-          value={reportRecommendation}
-          onChange={(e) => setReportRecommendation(e.target.value)}
-          required
-        ></textarea>
-      </div>
-      <div className="mt-8 flex justify-center">
-        <button
-          type="button"
-          onClick={() => setIsRecommendationModalOpen(false)}
-          className="bg-red-500 text-white px-8 py-2 rounded-full mr-2"
-        >
-          Cancel
-        </button>
-        <button
-          // onClick={handleRecommendationSubmit}
-          className="bg-custom-gradient text-white px-8 py-2 rounded-full"
-        >
-          Submit
-        </button>
-      </div>
-    </div>
-  </div>
-)}
-
+      {isRecommendationModalOpen && (
+        <div className="fixed inset-0 bg-gray-600 bg-opacity-75 flex justify-center items-center">
+          <div className="bg-white p-8 rounded-lg w-[60%]">
+            <div className="text-center mb-6 text-2xl font-semibold">
+              Enter Report Recommendation
+            </div>
+            <div className="flex flex-col my-4">
+              <label className="pb-1">Recommendation</label>
+              <textarea
+                className="border-2 py-2 px-3 w-full"
+                rows="4"
+                placeholder="Enter report recommendation here..."
+                value={reportRecommendation}
+                onChange={(e) => setReportRecommendation(e.target.value)}
+                required
+              ></textarea>
+            </div>
+            <div className="mt-8 flex justify-center">
+              <button
+                type="button"
+                onClick={() => setIsRecommendationModalOpen(false)}
+                className="bg-red-500 text-white px-8 py-2 rounded-full mr-2"
+              >
+                Cancel
+              </button>
+              <button
+                // onClick={handleRecommendationSubmit}
+                className="bg-custom-gradient text-white px-8 py-2 rounded-full"
+              >
+                Submit
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
       {isAssessmentModalOpen && (
         <div className="fixed inset-0 bg-gray-600 bg-opacity-75 flex justify-center items-center z-50">
           <div className="bg-white p-8 rounded-lg w-[90%] md:w-[60%]">
             <div className="flex justify-between items-center mb-6">
-              <h2 className="text-2xl font-semibold">Who has done this assessment?</h2>
+              <h2 className="text-2xl font-semibold">
+                Who has done this assessment?
+              </h2>
               {/* <button
                 onClick={() => setShowInputs(true)}
                 className="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 transition"
               >
                 Add Member
               </button> */}
-
             </div>
             {/* {showInputs && (
               <>
@@ -615,12 +634,17 @@ const Pyramid = () => {
                   <label className="pb-1 font-medium">Select Name</label>
                   <select
                     className="border-2 border-gray-300 py-2 px-3 rounded-md w-full focus:outline-none focus:border-blue-500"
-                    onChange={(e) => handleInputChange(index, "username", e.target.value)}
+                    onChange={(e) =>
+                      handleInputChange(index, "username", e.target.value)
+                    }
                     value={member.username}
                   >
                     <option value="">Select Name</option>
                     {users.map((user, idx) => (
-                      <option key={idx} value={`${user.firstName} ${user.lastName}`}>
+                      <option
+                        key={idx}
+                        value={`${user.firstName} ${user.lastName}`}
+                      >
                         {user.firstName} {user.lastName}
                       </option>
                     ))}
@@ -708,7 +732,9 @@ const Pyramid = () => {
                 type="text"
                 placeholder="Referrer's Address"
                 value={additionalInfo.referrer}
-                onChange={(e) => handleAddressChange("referrer", e.target.value)}
+                onChange={(e) =>
+                  handleAddressChange("referrer", e.target.value)
+                }
               />
               {addressSuggestions.length > 0 && (
                 <ul className="border-2 border-gray-300 rounded-md mt-2">
@@ -754,7 +780,9 @@ const Pyramid = () => {
 
             {/* Private Provider Address Input */}
             <div className="flex flex-col my-4">
-              <label className="pb-1 font-medium">Private Provider [Address]</label>
+              <label className="pb-1 font-medium">
+                Private Provider [Address]
+              </label>
               <input
                 className="border-2 border-gray-300 py-2 px-3 rounded-md w-full"
                 type="text"

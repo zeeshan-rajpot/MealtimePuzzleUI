@@ -251,7 +251,6 @@ const handleSubmitAll = async()=>{
     );
  navigate(`/home/detailpage/${urn}/${totalSessions}`);
 
-    alert(response.data.message); // Feedback message
   } catch (error) {
     console.error('Error updating recommendation:', error);
     alert(error.response?.data?.message || 'Failed to update recommendation');
@@ -299,7 +298,7 @@ const handleSubmitAll = async()=>{
                   Add New Assessment{" "}
                 </button>
               </Link>
-                <button onClick={handleNextClick} className="w-full py-3 px-10 bg-ceruleanBlue text-white rounded-full shadow-lg my-8 hover:bg-blushPink transition duration-300">
+                <button onClick={handleNextClick} className="w- py-3 px-10 bg-ceruleanBlue text-white rounded-full shadow-lg my-8 hover:bg-blushPink transition duration-300">
                   Generate Report
                 </button>
 
