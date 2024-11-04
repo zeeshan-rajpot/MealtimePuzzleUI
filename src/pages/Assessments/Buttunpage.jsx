@@ -279,7 +279,7 @@ const applySuggestion = (field, suggestion) => {
    const handleOpenRecommendation = async() => {
 
     try {
-      const response = await axios.put(
+      const response = await axios.post(
         `http://localhost:5001/api/child/update-history/${urn}`,
         { childHistory },
         {
@@ -303,7 +303,7 @@ const applySuggestion = (field, suggestion) => {
 
 const handleSubmitAll = async()=>{
   try {
-    const response = await axios.put(
+    const response = await axios.post(
       `http://localhost:5001/api/child/update-recommendation/${urn}`,
       { RecommendationChild: reportRecommendation },
       {
