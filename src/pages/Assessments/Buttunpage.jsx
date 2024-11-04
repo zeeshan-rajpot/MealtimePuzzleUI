@@ -276,8 +276,14 @@ const applySuggestion = (field, suggestion) => {
 
 
 
-   const handleOpenRecommendation = async() => {
-
+  const handleOpenRecommendation = async () => {
+    console.log("Next button clicked, child history:", childHistory);
+  
+    if (childHistory.trim() === '') {
+      alert('Please enter the child history before proceeding.');
+      return;
+    }
+  
     try {
       const response = await axios.post(
         `http://localhost:5001/api/child/update-history/${urn}`,
@@ -288,8 +294,22 @@ const applySuggestion = (field, suggestion) => {
           },
         }
       );
-      setIsHistoryModalOpen(false);
-      setIsRecommendationModalOpen(true);
+  
+      console.log("API response for child history update:", response);
+  
+      if (response.status === 200) {
+        console.log("Child history updated successfully. Transitioning to recommendation modal.");
+        
+        // Close history modal and open recommendation modal
+        setIsHistoryModalOpen(false);
+        setIsRecommendationModalOpen(true);
+  
+        // Debugging state change
+        console.log("isHistoryModalOpen:", isHistoryModalOpen, "isRecommendationModalOpen:", isRecommendationModalOpen);
+      } else {
+        console.error("Unexpected response status:", response.status);
+        alert("Failed to update child history. Please try again.");
+      }
     } catch (error) {
       console.error('Error updating child history:', error);
       alert(error.response?.data?.message || 'Failed to update child history');
@@ -377,52 +397,70 @@ const handleSubmitAll = async()=>{
       <div className="flex justify-between items-center mb-6">
         <h2 className="text-2xl font-semibold">Who has done this assessment?</h2>
         <button
-          onClick={() => setShowInputs(true)}
-          className="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 transition"
-        >
-          Add New Member
-        </button>
+  onClick={() => setShowInputs(true)}
+  className="bg-[#006699] text-white px-4 py-2 rounded-lg hover:bg-[#003c68] transition"
+>
+  Add New Member
+</button>
+
       </div>
 
       {showInputs && (
-        <>
-          <div className="flex flex-col my-4">
-            <label className="pb-1 font-medium">Name</label>
-            <input
-              className="border-2 border-gray-300 py-2 px-3 rounded-md w-full focus:outline-none focus:border-blue-500"
-              type="text"
-              placeholder="Enter name"
-              value={newMember.username}
-              onChange={(e) => handleNewMemberChange("username", e.target.value)}
-              required
-            />
-          </div>
-          <div className="flex flex-col my-4">
-            <label className="pb-1 font-medium">Role</label>
-            <input
-              className="border-2 border-gray-300 py-2 px-3 rounded-md w-full focus:outline-none focus:border-blue-500"
-              type="text"
-              placeholder="Enter role"
-              value={newMember.role}
-              onChange={(e) => handleNewMemberChange("role", e.target.value)}
-            />
-          </div>
-          <div className="flex justify-center space-x-4">
-            <button
-              onClick={() => setShowInputs(false)}
-              className="bg-red-500 text-white px-8 py-2 rounded-full hover:bg-red-600 transition"
-            >
-              Close
-            </button>
-            <button
-              className="bg-gradient-to-r from-blue-500 to-green-500 text-white px-8 py-2 rounded-full hover:from-blue-600 hover:to-green-600 transition"
-              onClick={handleAddMember}
-            >
-              Save
-            </button>
-          </div>
-        </>
-      )}
+  <>
+    <div className="input-container">
+      <input
+        className="border border-gray-300 py-4 px-5 w-full rounded-md focus:outline-none"
+        type="text"
+        placeholder=" "  // Keeps the input space for floating label
+        value={newMember.username}
+        onChange={(e) => handleNewMemberChange("username", e.target.value)}
+        required
+      />
+      <label
+        className={`absolute left-5 top-4 bg-white px-1 text-gray-500 transition-all duration-300 ${
+          newMember.username ? "top-[-10px] text-xs text-[#006699]" : ""
+        }`}
+      >
+        Name
+      </label>
+    </div>
+
+    <div className="input-container">
+      <input
+        className="border border-gray-300 py-4 px-5 w-full rounded-md focus:outline-none"
+        type="text"
+        placeholder=" "
+        value={newMember.role}
+        onChange={(e) => handleNewMemberChange("role", e.target.value)}
+        required
+      />
+      <label
+        className={`absolute left-5 top-4 bg-white px-1 text-gray-500 transition-all duration-300 ${
+          newMember.role ? "top-[-10px] text-xs text-[#006699]" : ""
+        }`}
+      >
+        Role
+      </label>
+    </div>
+
+    <div className="flex justify-center space-x-4 mt-6">
+      <button
+        onClick={() => setShowInputs(false)}
+        className="bg-[#BB6F7A] text-white px-8 py-2 rounded-full hover:bg-[#A25666] transition"
+      >
+        Close
+      </button>
+      <button
+        onClick={handleAddMember}
+        className="bg-[#006699] text-white px-8 py-2 rounded-full hover:bg-[#003c68] transition"
+      >
+        Add
+      </button>
+    </div>
+  </>
+)}
+
+
 
       {members.map((member, index) => (
         <div key={index} className="flex space-x-4 items-center my-4">
@@ -462,27 +500,30 @@ const handleSubmitAll = async()=>{
       ))}
 
       <div className="flex justify-center mt-4">
-        <button
-          onClick={handleAddDropdown}
-          className="bg-green-500 text-white px-4 py-2 rounded-lg hover:bg-green-600 transition"
-        >
-          + Add Another Dropdown
-        </button>
+      <button
+  onClick={handleAddDropdown}
+  className="bg-[#006699] text-white px-4 py-2 rounded-lg hover:bg-[#003c68] transition"
+>
+  + Add Existing User
+</button>
+
       </div>
       <div className="mt-8 flex justify-center space-x-4">
-        <button
-          type="button"
-          onClick={() => setIsAssessmentModalOpen(false)}
-          className="bg-red-500 text-white px-8 py-2 rounded-full hover:bg-red-600 transition"
-        >
-          Cancel
-        </button>
-        <button
-          onClick={handleSaveAdditionalInfo}
-          className="bg-gradient-to-r from-blue-500 to-green-500 text-white px-8 py-2 rounded-full hover:from-blue-600 hover:to-green-600 transition"
-        >
-          Next
-        </button>
+      <button
+  type="button"
+  onClick={() => setIsAssessmentModalOpen(false)}
+  className="bg-[#BB6F7A] text-white px-8 py-2 rounded-full hover:bg-[#A25666] transition"
+>
+  Cancel
+</button>
+
+<button
+  onClick={handleSaveAdditionalInfo}
+  className="bg-[#006699] text-white px-8 py-2 rounded-full hover:bg-[#003c68] transition"
+>
+  Next
+</button>
+
       </div>
     </div>
   </div>
@@ -496,20 +537,24 @@ const handleSubmitAll = async()=>{
         Additional Information
       </h2>
 
-      {/* Address Inputs with Suggestions */}
+      {/* Address Inputs with Floating Labels and Suggestions */}
       {["parents", "referrer", "gp", "privateProvider"].map((field) => (
-        <div key={field} className="flex flex-col my-4">
-          <label className="pb-1 font-medium">
-            {field.charAt(0).toUpperCase() + field.slice(1)} [Address]
-          </label>
+        <div key={field} className="input-container my-4">
           <input
-            className="border-2 border-gray-300 py-2 px-3 rounded-md w-full"
+            className="border border-gray-300 py-4 px-5 w-full rounded-md focus:outline-none"
             type="text"
-            placeholder={`${field.charAt(0).toUpperCase() + field.slice(1)}'s Address`}
+            placeholder=" "  // Placeholder space for floating label
             value={additionalInfo[field]}
             onChange={(e) => handleAddressChange(field, e.target.value)}
           />
-          {isLoading[field] && <p>Loading suggestions...</p>}
+          <label
+            className={`absolute left-5 top-4 bg-white px-1 text-gray-500 transition-all duration-300 ${
+              additionalInfo[field] ? "top-[-10px] text-xs text-[#006699]" : ""
+            }`}
+          >
+            {field.charAt(0).toUpperCase() + field.slice(1)}'s Address
+          </label>
+          {isLoading[field] && <p className="text-sm text-gray-500">Loading suggestions...</p>}
           {suggestions[field].length > 0 && (
             <ul className="border border-gray-300 mt-2 rounded-md">
               {suggestions[field].map((suggestion, index) => (
@@ -548,15 +593,15 @@ const handleSubmitAll = async()=>{
       <div className="mt-8 flex justify-center">
         <button
           onClick={() => setIsAdditionalInfoModalOpen(false)}
-          className="bg-red-500 text-white px-8 py-2 rounded-full mr-2"
+          className="bg-[#BB6F7A] text-white px-8 py-2 rounded-full hover:bg-[#A25666] transition mr-2"
         >
           Cancel
         </button>
         <button
           onClick={handleHistorySubmit}
-          className="bg-green-500 text-white px-8 py-2 rounded-full"
+          className="bg-[#006699] text-white px-8 py-2 rounded-full hover:bg-[#003c68] transition"
         >
-          Save
+          Next
         </button>
       </div>
     </div>
@@ -564,79 +609,95 @@ const handleSubmitAll = async()=>{
 )}
 
 
+
 {isHistoryModalOpen && (
-        <div className="fixed inset-0 bg-gray-600 bg-opacity-75 flex justify-center items-center">
-          <div className="bg-white p-8 rounded-lg w-[60%]">
-            <div className="text-center mb-6 text-2xl font-semibold">
-              Enter Child History
-            </div>
-            <div className="flex flex-col my-4">
-              <label className="pb-1">Child History</label>
-              <textarea
-                className="border-2 py-2 px-3 w-full"
-                rows="4"
-                placeholder="Enter child history here..."
-                value={childHistory}
-                onChange={(e) => setChildHistory(e.target.value)}
-                required
-              ></textarea>
-            </div>
-            <div className="mt-8 flex justify-center">
-              <button
-                type="button"
-                onClick={() => setIsHistoryModalOpen(false)}
-                className="bg-red-500 text-white px-8 py-2 rounded-full mr-2"
-              >
-                Cancel
-              </button>
-              <button
-                onClick={handleOpenRecommendation }
-                className="bg-custom-gradient text-white px-8 py-2 rounded-full"
-              >
-                Next
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
+  <div className="fixed inset-0 bg-gray-600 bg-opacity-75 flex justify-center items-center z-50">
+    <div className="bg-white p-16 rounded-xl w-full max-w-5xl mx-6 shadow-lg">
+      <h2 className="text-center mb-8 text-4xl font-semibold text-gray-800">
+        Enter Child History
+      </h2>
+      <div className="relative flex flex-col mb-6 input-container">
+        <textarea
+          className="border border-gray-300 py-4 px-5 pt-6 w-full rounded-lg text-gray-800 text-lg focus:outline-none focus:border-blue-500 resize-none"
+          rows="8"
+          placeholder=" "
+          value={childHistory}
+          onChange={(e) => setChildHistory(e.target.value)}
+          required
+        ></textarea>
+        <label
+          className={`absolute left-5 top-4 text-xl font-medium text-gray-500 bg-white px-1 transition-all duration-300 
+            ${childHistory ? '-translate-y-6 scale-90 text-blue-500' : ''}`}
+        >
+          Child History
+        </label>
+      </div>
+      <div className="mt-10 flex justify-center space-x-8">
+      <button
+  type="button"
+  onClick={() => setIsHistoryModalOpen(false)}
+  className="bg-[#BB6F7A] text-white px-12 py-3 rounded-full text-xl font-semibold hover:bg-[#A25666] transition"
+>
+  Cancel
+</button>
+<button
+  onClick={handleOpenRecommendation}
+  className="bg-[#006699] text-white px-12 py-3 rounded-full text-xl font-semibold hover:bg-[#003c68] transition"
+>
+  Next
+</button>
 
-
+      </div>
+    </div>
+  </div>
+)}
 
 {isRecommendationModalOpen && (
-  <div className="fixed inset-0 bg-gray-600 bg-opacity-75 flex justify-center items-center">
-    <div className="bg-white p-8 rounded-lg w-[60%]">
-      <div className="text-center mb-6 text-2xl font-semibold">
+  <div className="fixed inset-0 bg-gray-600 bg-opacity-75 flex justify-center items-center z-50">
+    <div className="bg-white p-16 rounded-xl w-full max-w-5xl mx-6 shadow-lg">
+      <h2 className="text-center mb-8 text-4xl font-semibold text-gray-800">
         Enter Report Recommendation
-      </div>
-      <div className="flex flex-col my-4">
-        <label className="pb-1">Recommendation</label>
+      </h2>
+      <div className="relative flex flex-col mb-6 input-container">
         <textarea
-          className="border-2 py-2 px-3 w-full"
-          rows="4"
-          placeholder="Enter report recommendation here..."
+          className="border border-gray-300 py-4 px-5 pt-6 w-full rounded-lg text-gray-800 text-lg focus:outline-none focus:border-blue-500 resize-none"
+          rows="8"
+          placeholder=" "
           value={reportRecommendation}
           onChange={(e) => setReportRecommendation(e.target.value)}
           required
         ></textarea>
+        <label
+          className={`absolute left-5 top-4 text-xl font-medium text-gray-500 bg-white px-1 transition-all duration-300 
+            ${reportRecommendation ? '-translate-y-6 scale-90 text-blue-500' : ''}`}
+        >
+          Recommendation
+        </label>
       </div>
-      <div className="mt-8 flex justify-center">
-        <button
-          type="button"
-          onClick={() => setIsRecommendationModalOpen(false)}
-          className="bg-red-500 text-white px-8 py-2 rounded-full mr-2"
-        >
-          Cancel
-        </button>
-        <button
-          onClick={handleSubmitAll}
-          className="bg-custom-gradient text-white px-8 py-2 rounded-full"
-        >
-          Submit
-        </button>
+      <div className="mt-10 flex justify-center space-x-8">
+      <button
+  type="button"
+  onClick={() => setIsRecommendationModalOpen(false)}
+  className="bg-[#BB6F7A] text-white px-12 py-3 rounded-full text-xl font-semibold hover:bg-[#A25666] transition"
+>
+  Cancel
+</button>
+<button
+  onClick={handleSubmitAll}
+  className="bg-[#006699] text-white px-12 py-3 rounded-full text-xl font-semibold hover:bg-[#003c68] transition"
+>
+  Generate Report
+</button>
+
+
       </div>
     </div>
   </div>
 )}
+
+
+
+
 
 
 

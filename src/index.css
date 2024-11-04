@@ -12,7 +12,8 @@
 
 /* Modal container styling */
 .modal-container {
-  width: 90%;                  /* Full width within the viewport */
+  width: 90%;
+  max-width: 600px; /* Add a max-width to limit the modal's size */
   padding: 2rem;
   background-color: white;
   border-radius: 0.5rem;
@@ -29,7 +30,7 @@
 .input-container textarea,
 .input-container input,
 .input-container select {
-  width: 100%;                 
+  width: 100%;
   padding: 15px 18px;
   border: 1px solid #ccc;
   outline: none;
@@ -38,6 +39,7 @@
   background-color: #fff;
   box-shadow: var(--tw-shadow-sm);
   transition: border-color 0.3s ease, box-shadow 0.3s ease;
+  font-family: 'Meta Normal', sans-serif; /* Apply the custom font */
 }
 
 /* Textarea for multiline input */
@@ -62,20 +64,23 @@
   transform: translateY(-50%);
   font-size: 16px;
   color: #aaa;
+  background-color: white;
+  padding: 0 4px; /* Adds padding to avoid overlap with input border */
   transition: all 0.3s ease;
   pointer-events: none;
 }
 
+/* Label transition for focus and input states */
 .input-container input:focus + label,
 .input-container input:not(:placeholder-shown) + label,
 .input-container select:focus + label,
 .input-container select:not([value=""]) + label,
 .input-container textarea:focus + label,
 .input-container textarea:not(:placeholder-shown) + label {
-  top: -12px;
-  left: 18px;
-  font-size: 12px;
-  color: #006699;
+  top: -10px; /* Move the label above the input */
+  font-size: 12px; /* Reduce font size */
+  color: #006699; /* Change label color */
+  transform: translateY(0); /* Reset the translate to align */
 }
 
 /* Custom placeholder style */
