@@ -260,29 +260,29 @@ const ChildInformationPage = () => {
                   )}
                 </div>
                 <div className="input-container w-full">
-                  <input
-                    id="contactPhone"
-                    type="tel"
-                    {...register("contactPhone", {
-                      required: "Phone number is required",
-                      pattern: {
-                        value: /^[0-9]{9}$/,
-                        message: "Phone number must be 9 digits",
-                      },
-                    })}
-                    placeholder=" "
-                    className={`peer focus:outline-none ${errors.contactPhone
-                      ? "border-red-500 focus:ring-red-500"
-                      : phoneValue?.length === 9
-                        ? "border-green-500 focus:ring-green-500"
-                        : "border-gray-300 focus:ring-ceruleanBlue"
-                      }`}
-                  />
-                  <label htmlFor="contactPhone">Parent/Caretaker Contact Number</label>
-                  {errors.contactPhone && (
-                    <p className="text-red-500">{errors.contactPhone.message}</p>
-                  )}
-                </div>
+  <input
+    id="contactPhone"
+    type="tel"
+    {...register("contactPhone", {
+      required: "Phone number is required",
+      pattern: {
+        value: /^(0[23478]\d{8}|04\d{8})$/,
+        message: "Enter a valid phone number",
+      },
+    })}
+    placeholder=" "
+    className={`peer focus:outline-none ${errors.contactPhone
+      ? "border-red-500 focus:ring-red-500"
+      : phoneValue?.length === 10
+        ? "border-green-500 focus:ring-green-500"
+        : "border-gray-300 focus:ring-ceruleanBlue"
+      }`}
+  />
+  <label htmlFor="contactPhone">Parent/Caretaker Contact Number</label>
+  {errors.contactPhone && (
+    <p className="text-red-500">{errors.contactPhone.message}</p>
+  )}
+</div>
               </div>
 
               {/* FIN Number */}

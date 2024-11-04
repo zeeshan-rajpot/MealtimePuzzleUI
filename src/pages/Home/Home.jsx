@@ -16,7 +16,7 @@ const Home = () => {
             <img src="/Frame 1261153776.png" alt="asset" className="w-[50%] mx-auto" />
             <Link to="/home/childinfo">
               <button className="w-full py-3 px-10 bg-ceruleanBlue text-white rounded-full shadow-lg my-8 hover:bg-blushPink transition duration-300">
-                Add New Assessment
+                Create New Child
               </button>
             </Link>
           </div>

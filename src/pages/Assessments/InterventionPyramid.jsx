@@ -290,7 +290,7 @@ const InterventionPyramid = () => {
                   Cancel
                 </button>
                 <button
-                  type="submit"
+                  type="Submit"
                   className="bg-custom-gradient text-white px-8 py-2 rounded-full"
                 >
                   Save

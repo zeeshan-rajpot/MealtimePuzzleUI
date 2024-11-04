@@ -48,54 +48,54 @@ const SignIn = () => {
 
         <form className="mt-8 space-y-6" onSubmit={handleSubmit(onSubmit)}>
           {/* Username Field */}
-          <div className="relative input-container">
-            <input
-              id="username"
-              name="username"
-              type="text"
-              {...register("username", { required: true })}
-              className="flex-1 px-2 py-2 rounded-full bg-transparent outline-none border-ceruleanBlue focus:border-blushPink"
-              placeholder=" "  // Floating label placeholder
-            />
-            <label
-              htmlFor="username"
-              className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-500 transition-all duration-200 peer-placeholder-shown:top-1/2 peer-placeholder-shown:-translate-y-1/2 peer-focus:top-[-10px] peer-focus:text-sm peer-focus:text-ceruleanBlue"
-            >
-              Username
-            </label>
-            {errors.username && (
-              <span className="text-red-500">Username is required</span>
-            )}
-          </div>
+          {/* Username Field */}
+<div className="relative input-container">
+  <input
+    id="username"
+    name="username"
+    type="text"
+    {...register("username", { required: true })}
+    className="peer w-full px-4 py-2 rounded-full bg-transparent outline-none border border-ceruleanBlue focus:border-blushPink placeholder-transparent"
+    placeholder=" "
+  />
+  <label
+    htmlFor="username"
+    className="absolute left-4 top-2 text-gray-500 transition-all duration-200 transform -translate-y-1/2 scale-100 peer-placeholder-shown:top-1/2 peer-placeholder-shown:scale-100 peer-focus:top-2 peer-focus:scale-75 peer-focus:text-ceruleanBlue"
+  >
+    Username
+  </label>
+  {errors.username && (
+    <span className="text-red-500">Username is required</span>
+  )}
+</div>
 
-          {/* Password Field */}
-          <div className="relative input-container">
-            <input
-              id="password"
-              name="password"
-              type={isPasswordVisible ? "text" : "password"}
-              {...register("password", { required: true })}
-              className="flex-1 px-2 py-2 rounded-full bg-transparent outline-none border-ceruleanBlue focus:border-blushPink"
-              placeholder=" "
-            />
-            <label
-              htmlFor="password"
-              className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-500 transition-all duration-200 peer-placeholder-shown:top-1/2 peer-placeholder-shown:-translate-y-1/2 peer-focus:top-[-10px] peer-focus:text-sm peer-focus:text-ceruleanBlue"
-            >
-              Password
-            </label>
-            <button
-              type="button"
-              className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400"
-              onClick={togglePasswordVisibility}
-            >
-              <img src="/ion_eye-off.svg" alt="eye_icon" />
-            </button>
-            {errors.password && (
-              <span className="text-red-500">Password is required</span>
-            )}
-          </div>
-
+{/* Password Field */}
+<div className="relative input-container">
+  <input
+    id="password"
+    name="password"
+    type={isPasswordVisible ? "text" : "password"}
+    {...register("password", { required: true })}
+    className="peer w-full px-4 py-2 rounded-full bg-transparent outline-none border border-ceruleanBlue focus:border-blushPink placeholder-transparent"
+    placeholder=" "
+  />
+  <label
+    htmlFor="password"
+    className="absolute left-4 top-2 text-gray-500 transition-all duration-200 transform -translate-y-1/2 scale-100 peer-placeholder-shown:top-1/2 peer-placeholder-shown:scale-100 peer-focus:top-2 peer-focus:scale-75 peer-focus:text-ceruleanBlue"
+  >
+    Password
+  </label>
+  <button
+    type="button"
+    className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400"
+    onClick={togglePasswordVisibility}
+  >
+    <img src="/ion_eye-off.svg" alt="eye_icon" />
+  </button>
+  {errors.password && (
+    <span className="text-red-500">Password is required</span>
+  )}
+</div>
           <div>
             <button
               type="submit"
