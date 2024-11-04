@@ -74,6 +74,10 @@ const HistoryDetail = () => {
     }
   };
 
+
+
+
+  
   return (
     <>
       <Header />
@@ -91,30 +95,36 @@ const HistoryDetail = () => {
           </div>
           <h2 className="text-2xl text-center">URN : {childData?.urn}</h2>
 
-          <div className="p-4 space-y-6 mt-12">
-            <div className="flex justify-between w-full">
-              <h2 className="bg-black text-white text-lg font-normal ps-2 w-full text-left">
-                CDS MEALTIME PUZZLE SUMMARY
-              </h2>
-            </div>
-            {Object.entries(session || {}).map(([sessionKey, sessionValue], index) => (
-              <div key={index}>
-                <h2 className="text-2xl">{sessionKey}</h2>
-                <div className="interventions">
-                  {sessionValue.interventions.map((intervention, i) => (
-                    <div key={i} className="intervention-item">
-                      <h3 className="font-semibold text-xl my-3">Domain: {intervention.domainName}</h3>
-                      <p><strong>Clinical Prompt:</strong> {intervention.clinicalPrompt}</p>
-                      <p className="font-normal text-lg"><strong>Priority:</strong> {intervention.priority}</p>
-                      <p className="font-normal text-lg"><strong>Formulation:</strong> {intervention.formulation}</p>
-                      <p className="font-normal text-lg"><strong>Recommendation:</strong> {intervention.recommendation}</p>
-                    </div>
-                  ))}
-                </div>
-            
+          <div>
+  <div className="p-4 space-y-6 mt-12">
+    <div className="flex justify-between w-full">
+      <h2 className="bg-black text-white text-lg font-normal ps-2 w-full text-left">
+        CDS MEALTIME PUZZLE SUMMARY
+      </h2>
+    </div>
+    {Object.entries(session || {}).map(([sessionKey, sessionValue], index) => (
+      <div key={index}>
+        <h2 className="text-2xl">{sessionKey}</h2>
+        <div className="interventions">
+          {sessionValue.interventions
+            .sort((a, b) => {
+              const priorityOrder = { high: 1, moderate: 2, low: 3 };
+              return priorityOrder[a.priority.toLowerCase()] - priorityOrder[b.priority.toLowerCase()];
+            })
+            .map((intervention, i) => (
+              <div key={i} className="intervention-item">
+                <h3 className="font-semibold text-xl my-3">Domain: {intervention.domainName}</h3>
+                <p><strong>Clinical Prompt:</strong> {intervention.clinicalPrompt}</p>
+                <p className="font-normal text-lg"><strong>Priority:</strong> {intervention.priority}</p>
+                <p className="font-normal text-lg"><strong>Formulation:</strong> {intervention.formulation}</p>
+                <p className="font-normal text-lg"><strong>Recommendation:</strong> {intervention.recommendation}</p>
               </div>
-            ))}
-          </div>
+          ))}
+        </div>
+      </div>
+    ))}
+  </div>
+</div>
 
           {/* <button onClick={downloadWordDocument} className="btn btn-primary mt-4">
             Download as Word Document
