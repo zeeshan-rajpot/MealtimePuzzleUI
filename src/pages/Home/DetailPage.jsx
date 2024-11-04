@@ -119,6 +119,15 @@ const DetailPage = () => {
   const accessors = JSON.parse(localStorage.getItem('accessors')) || [];
   const additionalInfo = JSON.parse(localStorage.getItem('additionalInfo')) || {};
 
+
+
+  const priorityOrder = { high: 1, moderate: 2, low: 3 };
+
+// Sort interventions by priority
+const sortedInterventions = sessionData?.interventions?.slice().sort((a, b) => {
+  return (priorityOrder[a.priority?.toLowerCase()] || 4) - (priorityOrder[b.priority?.toLowerCase()] || 4);
+});
+
   return (
     <>
       <Header />
@@ -139,6 +148,9 @@ const DetailPage = () => {
                 </div>
                 <div>FIN: {childData?.finnumber || "N/A"}</div>
               </div>
+            </div>
+            <div className="text-center">
+            {childData?.parentName || "N/A"}
             </div>
             <div className="flex flex-col ms-32 ">
               <div className="text-xl font-normal">Gold Coast Health</div>
@@ -209,6 +221,7 @@ const DetailPage = () => {
 
               </p>
             </div>
+            
 
             <div className="p-4 space-y-6 mt-12">
               <div className="flex justify-between w-full">
@@ -216,27 +229,29 @@ const DetailPage = () => {
                   CDS MEALTIME PUZZLE SUMMARY
                 </h2>
               </div>
-
-              <div>
-                {sessionData?.interventions?.length > 0 ? (
-                  sessionData.interventions.map((intervention, index) => (
-                    <div key={index} className="p-4 border-b">
-                      <h3 className="font-semibold text-xl mb-3">{intervention.domainName}</h3>
-                      <p className="font-normal text-lg mb-2">
-                        {intervention.priority ? `${intervention.priority.charAt(0).toUpperCase()}${intervention.priority.slice(1)}` : 'No priority'} Priority
-                      </p>
-                      {intervention.formulation && (
-                        <p><strong>Formulation:</strong> {intervention.formulation}</p>
-                      )}
-                      {intervention.recommendation && (
-                        <p><strong>Recommendation:</strong> {intervention.recommendation}</p>
-                      )}
-                    </div>
-                  ))
-                ) : (
-                  <p>No session entries available</p>
-                )}
-              </div>
+              <div className="flex items-center justify-end">
+<img src="/Frame%201261153776.png" alt="" width='30%'/>
+            </div>
+            <div>
+    {sortedInterventions?.length > 0 ? (
+      sortedInterventions.map((intervention, index) => (
+        <div key={index} className="p-4 border-b">
+          <h3 className="font-semibold text-xl mb-3">{intervention.domainName}</h3>
+          <p className="font-normal text-lg mb-2">
+            {intervention.priority ? `${intervention.priority.charAt(0).toUpperCase()}${intervention.priority.slice(1)}` : 'No priority'} Priority
+          </p>
+          {intervention.formulation && (
+            <p><strong>Formulation:</strong> {intervention.formulation}</p>
+          )}
+          {intervention.recommendation && (
+            <p><strong>Recommendation:</strong> {intervention.recommendation}</p>
+          )}
+        </div>
+      ))
+    ) : (
+      <p>No session entries available</p>
+    )}
+  </div>
             </div>
 
             <div className="mt-16 relative">
