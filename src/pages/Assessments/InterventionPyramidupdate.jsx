@@ -517,137 +517,120 @@ const handleSaveAdditionalInfo = () => {
           </div>
         </div>
       </section>
-
+      
       {isModalOpen && (
-        <div className="fixed inset-0 bg-gray-600 bg-opacity-75 flex justify-center items-center">
-          <div className="bg-white p-8 rounded-lg w-[70%]">
-            <div className="text-center mb-3 text-lg font-semibold ">
-              {currentImageLabel ? `Edit ${currentImageLabel}` : "Add Domain"}
-            </div>
+  <div className="fixed inset-0 bg-gray-600 bg-opacity-75 flex justify-center items-center">
+    <div className="modal-container w-11/12 max-w-7xl p-12 rounded-lg bg-white shadow-lg transition-transform duration-300 transform translate-y-4">
+    <div className="text-left text-2xl font-semibold mb-4">
+  {childName && <span>Child Name: {childName}</span>}
+</div>
 
-            <div className="flex flex-col my-2">
-              <label>Clinical Prompt</label>
-              <input
-                value={modalData.clinicalPrompt}
-                onChange={(e) =>
-                  setModalData((prev) => ({
-                    ...prev,
-                    clinicalPrompt: e.target.value,
-                  }))
-                }
-                placeholder="Enter clinical prompt"
-                className="input-field border-2 py-1"
+      <div className="text-center text-3xl font-semibold mb-8">
+        {currentImageLabel ? `Edit ${currentImageLabel}` : "Add Domain"}
+      </div>
 
-              />
-            </div>
+      <div className="input-container flex flex-col my-6 relative w-full">
+        <textarea
+          value={modalData.clinicalPrompt}
+          onChange={(e) =>
+            setModalData((prev) => ({
+              ...prev,
+              clinicalPrompt: e.target.value,
+            }))
+          }
+          placeholder=" "
+          className="border-2 py-5 px-4 rounded-md w-full text-lg h-48 resize-none"
+          required
+        />
+        <label className={`absolute left-4 top-3 text-gray-500 text-base transition-all duration-200
+          ${modalData.clinicalPrompt ? 'text-xs top-1 -translate-y-1' : 'top-6'}`}>
+          Clinical Prompt
+        </label>
+      </div>
 
-            <div className="flex flex-col my-2">
-              <label>Priority</label>
-              <select
-                value={modalData.priority}
-                onChange={(e) =>
-                  setModalData((prev) => ({
-                    ...prev,
-                    priority: e.target.value,
-                  }))
-                }
-                className="select-field border-2 py-1"
-                required
-              >
-                <option value="">Select Priority</option>
-                <option value="high">High</option>
-                <option value="moderate">Moderate</option>
-                <option value="low">Low</option>
-              </select>
-            </div>
+      <div className="input-container flex flex-col my-6 relative w-full">
+        <textarea
+          value={modalData.formulation}
+          onChange={(e) =>
+            setModalData((prev) => ({
+              ...prev,
+              formulation: e.target.value,
+            }))
+          }
+          placeholder=" "
+          className="border-2 py-5 px-4 rounded-md w-full text-lg h-48 resize-none"
+        />
+        <label className={`absolute left-4 top-3 text-gray-500 text-base transition-all duration-200
+          ${modalData.formulation ? 'text-xs top-1 -translate-y-1' : 'top-6'}`}>
+          Formulation
+        </label>
+      </div>
 
-            <div className="flex flex-col my-2">
-              <label>Recommendation</label>
-              <input
-                value={modalData.recommendation}
-                onChange={(e) =>
-                  setModalData((prev) => ({
-                    ...prev,
-                    recommendation: e.target.value,
-                  }))
-                }
-                placeholder="Enter recommendation"
-                className="input-field border-2 py-1"
+      <div className="input-container flex flex-col my-6 relative w-full">
+        <textarea
+          value={modalData.recommendation}
+          onChange={(e) =>
+            setModalData((prev) => ({
+              ...prev,
+              recommendation: e.target.value,
+            }))
+          }
+          placeholder=" "
+          className="border-2 py-5 px-4 rounded-md w-full text-lg h-48 resize-none"
+        />
+        <label className={`absolute left-4 top-3 text-gray-500 text-base transition-all duration-200
+          ${modalData.recommendation ? 'text-xs top-1 -translate-y-1' : 'top-6'}`}>
+          Recommendation
+        </label>
+      </div>
 
-              />
-            </div>
+      <div className="input-container flex flex-col my-6 relative w-full">
+        <select
+          value={modalData.priority}
+          onChange={(e) =>
+            setModalData((prev) => ({
+              ...prev,
+              priority: e.target.value,
+            }))
+          }
+          className="border-2 py-4 px-4 rounded-md bg-white appearance-none text-lg w-full"
+        >
+          <option value="" disabled hidden>
+            Select Priority
+          </option>
+          <option value="high">High</option>
+          <option value="moderate">Moderate</option>
+          <option value="low">Low</option>
+        </select>
+        <label className="absolute left-4 top-3 text-gray-500 text-base transition-all duration-200 text-xs">
+          Priority
+        </label>
+      </div>
 
-            <div className="flex flex-col my-2">
-              <label>Formulation</label>
-              <input
-                value={modalData.formulation}
-                onChange={(e) =>
-                  setModalData((prev) => ({
-                    ...prev,
-                    formulation: e.target.value,
-                  }))
-                }
-                placeholder="Enter Formulation"
-                className="input-field border-2 py-1"
+      <div className="mt-10 flex justify-center">
+        <button
+          type="button"
+          onClick={() => setIsModalOpen(false)}
+          className="bg-red-500 text-white px-10 py-3 rounded-full mr-4 text-lg"
+        >
+          Cancel
+        </button>
+        <button
+          type="button"
+          onClick={handleModalSave}
+          className="bg-gradient-to-r from-blue-500 to-blue-600 text-white px-10 py-3 rounded-full text-lg"
+        >
+          Save
+        </button>
+      </div>
+    </div>
+  </div>
+)}
 
-              />
-            </div>
 
-            <div className="mt-4 flex justify-center">
-              <button
-                type="button"
-                onClick={() => setIsModalOpen(false)}
-                className="bg-red-500 text-white px-8 py-2 rounded-full mr-2"
-              >
-                Cancel
-              </button>
-              <button
-                type="button"
-                onClick={handleModalSave}
-                className="bg-custom-gradient text-white px-8 py-2 rounded-full"
-              >
-                Save
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
 
-      {isHistoryModalOpen && (
-        <div className="fixed inset-0 bg-gray-600 bg-opacity-75 flex justify-center items-center">
-          <div className="bg-white p-8 rounded-lg w-[60%]">
-            <div className="text-center mb-6 text-2xl font-semibold">
-              Enter Child History
-            </div>
-            <div className="flex flex-col my-4">
-              <label className="pb-1">Child History</label>
-              <textarea
-                className="border-2 py-2 px-3 w-full"
-                rows="4"
-                placeholder="Enter child history here..."
-                value={childHistory}
-                onChange={(e) => setChildHistory(e.target.value)}
-                required
-              ></textarea>
-            </div>
-            <div className="mt-8 flex justify-center">
-              <button
-                type="button"
-                onClick={() => setIsHistoryModalOpen(false)}
-                className="bg-red-500 text-white px-8 py-2 rounded-full mr-2"
-              >
-                Cancel
-              </button>
-              <button
-                // onClick={handleHistorySubmit}
-                className="bg-custom-gradient text-white px-8 py-2 rounded-full"
-              >
-                Submit
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
+
+
 
 {isAssessmentModalOpen && (
         <div className="fixed inset-0 bg-gray-600 bg-opacity-75 flex justify-center items-center z-50">

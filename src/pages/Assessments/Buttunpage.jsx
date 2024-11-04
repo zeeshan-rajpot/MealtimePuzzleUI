@@ -1,10 +1,11 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import SideBar from "../../components/SideBar";
 import Header from "../../components/Header";
 import toast from "react-hot-toast";
 import { Link, useParams } from "react-router-dom";
 import axios from "axios";
 import { useNavigate} from "react-router-dom";
+import { debounce } from "lodash";
 
 const Buttunpage = () => {
   const { urn, childName } = useParams();
@@ -143,6 +144,21 @@ const Buttunpage = () => {
     referrer: "",
     gp: "",
     privateProvider: "",
+    unitingCare: false, // Add checkbox state
+  });
+  
+  const [suggestions, setSuggestions] = useState({
+    parents: [],
+    referrer: [],
+    gp: [],
+    privateProvider: []
+  });
+  
+  const [isLoading, setIsLoading] = useState({
+    parents: false,
+    referrer: false,
+    gp: false,
+    privateProvider: false
   });
 
   const handleAdditionalInfoChange = (field, value) => {
@@ -174,11 +190,58 @@ const Buttunpage = () => {
     }
   };
 
-  const handleAddressChange = (type, value) => {
-    handleAdditionalInfoChange(type, value);
-    fetchAddressSuggestions(value);  // Fetch suggestions when input changes
-  };
+  const debouncedFetchAddressSuggestions = useCallback(
+    debounce(async (query, field) => {
+      if (query.length < 3) {
+        setSuggestions((prev) => ({ ...prev, [field]: [] }));
+        return;
+      }
+  
+      setIsLoading((prev) => ({ ...prev, [field]: true }));
+      try {
+        const response = await axios.post("http://localhost:5001/api/address-autocomplete", {
+          query, // Send the query in the body as shown in the screenshot
+        }, {
+          headers: {
+            "Authorization": `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+        });
+  
+        // Log the response structure for debugging
+        console.log(`Response for field "${field}":`, response);
+  
+        const addresses = response.data.suggestions || []; // Ensure suggestions is an array
+        setSuggestions((prev) => ({
+          ...prev,
+          [field]: Array.isArray(addresses) ? addresses.slice(0, 5) : [],
+        }));
+      } catch (error) {
+        console.error(`Error fetching address suggestions for ${field}:`, error);
+      } finally {
+        setIsLoading((prev) => ({ ...prev, [field]: false }));
+      }
+    }, 300),
+    [token]
+  );
+  
+  
+  
+const handleAddressChange = (field, value) => {
+  setAdditionalInfo((prev) => ({
+    ...prev,
+    [field]: value,
+  }));
+  debouncedFetchAddressSuggestions(value, field);
+};
 
+const applySuggestion = (field, suggestion) => {
+  setAdditionalInfo((prev) => ({
+    ...prev,
+    [field]: suggestion,
+  }));
+  setSuggestions((prev) => ({ ...prev, [field]: [] })); // Clear suggestions after selection
+};
 
 
   const handleNextClick = () => {
@@ -309,248 +372,197 @@ const handleSubmitAll = async()=>{
 
 
       {isAssessmentModalOpen && (
-        <div className="fixed inset-0 bg-gray-600 bg-opacity-75 flex justify-center items-center z-50">
-          <div className="bg-white p-8 rounded-lg w-[90%] md:w-[60%]">
-            <div className="flex justify-between items-center mb-6">
-              <h2 className="text-2xl font-semibold">Who has done this assessment?</h2>
-              {/* <button
-                onClick={() => setShowInputs(true)}
-                className="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 transition"
-              >
-                Add Member
-              </button> */}
+  <div className="fixed inset-0 bg-gray-600 bg-opacity-75 flex justify-center items-center z-50">
+    <div className="bg-white p-8 rounded-lg w-[90%] md:w-[60%]">
+      <div className="flex justify-between items-center mb-6">
+        <h2 className="text-2xl font-semibold">Who has done this assessment?</h2>
+        <button
+          onClick={() => setShowInputs(true)}
+          className="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 transition"
+        >
+          Add New Member
+        </button>
+      </div>
 
-            </div>
-            {/* {showInputs && (
-              <>
-                <div className="flex flex-col my-4">
-                  <label className="pb-1 font-medium">Name</label>
-                  <input
-                    className="border-2 border-gray-300 py-2 px-3 rounded-md w-full focus:outline-none focus:border-blue-500"
-                    type="text"
-                    placeholder="Enter name"
-                    value={newMember.username}
-                    onChange={(e) => handleNewMemberChange("username", e.target.value)}
-                    required
-                  />
-                </div>
-                <div className="flex flex-col my-4">
-                  <label className="pb-1 font-medium">Role</label>
-                  <input
-                    className="border-2 border-gray-300 py-2 px-3 rounded-md w-full focus:outline-none focus:border-blue-500"
-                    type="text"
-                    placeholder="Enter role"
-                    value={newMember.role}
+      {showInputs && (
+        <>
+          <div className="flex flex-col my-4">
+            <label className="pb-1 font-medium">Name</label>
+            <input
+              className="border-2 border-gray-300 py-2 px-3 rounded-md w-full focus:outline-none focus:border-blue-500"
+              type="text"
+              placeholder="Enter name"
+              value={newMember.username}
+              onChange={(e) => handleNewMemberChange("username", e.target.value)}
+              required
+            />
+          </div>
+          <div className="flex flex-col my-4">
+            <label className="pb-1 font-medium">Role</label>
+            <input
+              className="border-2 border-gray-300 py-2 px-3 rounded-md w-full focus:outline-none focus:border-blue-500"
+              type="text"
+              placeholder="Enter role"
+              value={newMember.role}
+              onChange={(e) => handleNewMemberChange("role", e.target.value)}
+            />
+          </div>
+          <div className="flex justify-center space-x-4">
+            <button
+              onClick={() => setShowInputs(false)}
+              className="bg-red-500 text-white px-8 py-2 rounded-full hover:bg-red-600 transition"
+            >
+              Close
+            </button>
+            <button
+              className="bg-gradient-to-r from-blue-500 to-green-500 text-white px-8 py-2 rounded-full hover:from-blue-600 hover:to-green-600 transition"
+              onClick={handleAddMember}
+            >
+              Save
+            </button>
+          </div>
+        </>
+      )}
 
-                  />
-                </div>
-                <div className="flex justify-center space-x-4">
-
-                  <button
-                    onClick={() => setShowInputs(false)}
-                    className="bg-red-500 text-white px-8 py-2 rounded-full hover:bg-red-600 transition"
-                  >
-                    Close
-                  </button>
-
-                  <button
-                    className="bg-gradient-to-r from-blue-500 to-green-500 text-white px-8 py-2 rounded-full hover:from-blue-600 hover:to-green-600 transition"
-                    onClick={handleAddMember}
-                  >
-                    Save
-                  </button>
-                </div>
-              </>
-            )} */}
-            {members.map((member, index) => (
-              <div key={index} className="flex space-x-4 items-center my-4">
-                <div className="flex flex-col w-1/2">
-                  <label className="pb-1 font-medium">Select Name</label>
-                  <select
-                    className="border-2 border-gray-300 py-2 px-3 rounded-md w-full focus:outline-none focus:border-blue-500"
-                    onChange={(e) => handleInputChange(index, "username", e.target.value)}
-                    value={member.username}
-                  >
-                    <option value="">Select Name</option>
-                    {users.map((user, idx) => (
-                      <option key={idx} value={`${user.firstName} ${user.lastName}`}>
-                        {user.firstName} {user.lastName}
-                      </option>
-                    ))}
-                  </select>
-                </div>
-                <div className="flex flex-col w-1/2">
-                  <label className="pb-1 font-medium">Role</label>
-                  <input
-                    className="border-2 border-gray-300 py-2 px-3 rounded-md w-full focus:outline-none focus:border-blue-500"
-                    type="text"
-                    value={member.role}
-                    readOnly
-                  />
-                </div>
-              </div>
-            ))}
-            <div className="flex justify-center mt-4">
-              <button
-                onClick={handleAddDropdown}
-                className="bg-green-500 text-white px-4 py-2 rounded-lg hover:bg-green-600 transition"
-              >
-                + Add Another Dropdown
-              </button>
-            </div>
-            <div className="mt-8 flex justify-center space-x-4">
-              <button
-                type="button"
-                onClick={() => setIsAssessmentModalOpen(false)}
-                className="bg-red-500 text-white px-8 py-2 rounded-full hover:bg-red-600 transition"
-              >
-                Cancel
-              </button>
-              <button
-                onClick={handleSaveAdditionalInfo}
-                className="bg-gradient-to-r from-blue-500 to-green-500 text-white px-8 py-2 rounded-full hover:from-blue-600 hover:to-green-600 transition"
-              >
-                Next
-              </button>
-            </div>
+      {members.map((member, index) => (
+        <div key={index} className="flex space-x-4 items-center my-4">
+          <div className="flex flex-col w-1/2">
+            <label className="pb-1 font-medium">Select Name</label>
+            <select
+              className="border-2 border-gray-300 py-2 px-3 rounded-md w-full focus:outline-none focus:border-blue-500"
+              onChange={(e) => handleInputChange(index, "username", e.target.value)}
+              value={member.username}
+            >
+              <option value="">Select Name</option>
+              {users.map((user, idx) => (
+                <option key={idx} value={`${user.firstName} ${user.lastName}`}>
+                  {user.firstName} {user.lastName}
+                </option>
+              ))}
+              {/* Add new members from sessionStorage */}
+              {members
+                .filter((m) => m.isNew)
+                .map((m, idx) => (
+                  <option key={`new-${idx}`} value={m.username}>
+                    {m.username}
+                  </option>
+                ))}
+            </select>
+          </div>
+          <div className="flex flex-col w-1/2">
+            <label className="pb-1 font-medium">Role</label>
+            <input
+              className="border-2 border-gray-300 py-2 px-3 rounded-md w-full focus:outline-none focus:border-blue-500"
+              type="text"
+              value={member.role}
+              readOnly
+            />
           </div>
         </div>
-      )}
+      ))}
+
+      <div className="flex justify-center mt-4">
+        <button
+          onClick={handleAddDropdown}
+          className="bg-green-500 text-white px-4 py-2 rounded-lg hover:bg-green-600 transition"
+        >
+          + Add Another Dropdown
+        </button>
+      </div>
+      <div className="mt-8 flex justify-center space-x-4">
+        <button
+          type="button"
+          onClick={() => setIsAssessmentModalOpen(false)}
+          className="bg-red-500 text-white px-8 py-2 rounded-full hover:bg-red-600 transition"
+        >
+          Cancel
+        </button>
+        <button
+          onClick={handleSaveAdditionalInfo}
+          className="bg-gradient-to-r from-blue-500 to-green-500 text-white px-8 py-2 rounded-full hover:from-blue-600 hover:to-green-600 transition"
+        >
+          Next
+        </button>
+      </div>
+    </div>
+  </div>
+)}
 
 
 {isAdditionalInfoModalOpen && (
-        <div className="fixed inset-0 bg-gray-600 bg-opacity-75 flex justify-center items-center">
-          <div className="bg-white p-8 rounded-lg w-[60%]">
-            <h2 className="text-center mb-6 text-2xl font-semibold">
-              Additional Information
-            </h2>
+  <div className="fixed inset-0 bg-gray-600 bg-opacity-75 flex justify-center items-center">
+    <div className="bg-white p-8 rounded-lg w-[60%]">
+      <h2 className="text-center mb-6 text-2xl font-semibold">
+        Additional Information
+      </h2>
 
-            {/* Parents Address Input */}
-            <div className="flex flex-col my-4">
-              <label className="pb-1 font-medium">Parents [Address]</label>
-              <input
-                className="border-2 border-gray-300 py-2 px-3 rounded-md w-full"
-                type="text"
-                placeholder="Parents' Address"
-                value={additionalInfo.parents}
-                onChange={(e) => handleAddressChange("parents", e.target.value)}
-              />
-              {/* Address Suggestions */}
-              {addressSuggestions.length > 0 && (
-                <ul className="border-2 border-gray-300 rounded-md mt-2">
-                  {addressSuggestions.map((address, index) => (
-                    <li
-                      key={index}
-                      className="p-2 cursor-pointer hover:bg-gray-200"
-                      onClick={() =>
-                        handleAdditionalInfoChange("parents", address)
-                      }
-                    >
-                      {address}
-                    </li>
-                  ))}
-                </ul>
-              )}
-            </div>
-
-            {/* Referrer Address Input */}
-            <div className="flex flex-col my-4">
-              <label className="pb-1 font-medium">Referrer [Address]</label>
-              <input
-                className="border-2 border-gray-300 py-2 px-3 rounded-md w-full"
-                type="text"
-                placeholder="Referrer's Address"
-                value={additionalInfo.referrer}
-                onChange={(e) => handleAddressChange("referrer", e.target.value)}
-              />
-              {addressSuggestions.length > 0 && (
-                <ul className="border-2 border-gray-300 rounded-md mt-2">
-                  {addressSuggestions.map((address, index) => (
-                    <li
-                      key={index}
-                      className="p-2 cursor-pointer hover:bg-gray-200"
-                      onClick={() =>
-                        handleAdditionalInfoChange("referrer", address)
-                      }
-                    >
-                      {address}
-                    </li>
-                  ))}
-                </ul>
-              )}
-            </div>
-
-            {/* GP Address Input */}
-            <div className="flex flex-col my-4">
-              <label className="pb-1 font-medium">GP [Address]</label>
-              <input
-                className="border-2 border-gray-300 py-2 px-3 rounded-md w-full"
-                type="text"
-                placeholder="GP's Address"
-                value={additionalInfo.gp}
-                onChange={(e) => handleAddressChange("gp", e.target.value)}
-              />
-              {addressSuggestions.length > 0 && (
-                <ul className="border-2 border-gray-300 rounded-md mt-2">
-                  {addressSuggestions.map((address, index) => (
-                    <li
-                      key={index}
-                      className="p-2 cursor-pointer hover:bg-gray-200"
-                      onClick={() => handleAdditionalInfoChange("gp", address)}
-                    >
-                      {address}
-                    </li>
-                  ))}
-                </ul>
-              )}
-            </div>
-
-            {/* Private Provider Address Input */}
-            <div className="flex flex-col my-4">
-              <label className="pb-1 font-medium">Private Provider [Address]</label>
-              <input
-                className="border-2 border-gray-300 py-2 px-3 rounded-md w-full"
-                type="text"
-                placeholder="Private Provider's Address"
-                value={additionalInfo.privateProvider}
-                onChange={(e) =>
-                  handleAddressChange("privateProvider", e.target.value)
-                }
-              />
-              {addressSuggestions.length > 0 && (
-                <ul className="border-2 border-gray-300 rounded-md mt-2">
-                  {addressSuggestions.map((address, index) => (
-                    <li
-                      key={index}
-                      className="p-2 cursor-pointer hover:bg-gray-200"
-                      onClick={() =>
-                        handleAdditionalInfoChange("privateProvider", address)
-                      }
-                    >
-                      {address}
-                    </li>
-                  ))}
-                </ul>
-              )}
-            </div>
-
-            <div className="mt-8 flex justify-center">
-              <button
-                onClick={() => setIsAdditionalInfoModalOpen(false)}
-                className="bg-red-500 text-white px-8 py-2 rounded-full mr-2"
-              >
-                Cancel
-              </button>
-              <button
-                onClick={handleHistorySubmit}
-                className="bg-green-500 text-white px-8 py-2 rounded-full"
-              >
-                Save
-              </button>
-            </div>
-          </div>
+      {/* Address Inputs with Suggestions */}
+      {["parents", "referrer", "gp", "privateProvider"].map((field) => (
+        <div key={field} className="flex flex-col my-4">
+          <label className="pb-1 font-medium">
+            {field.charAt(0).toUpperCase() + field.slice(1)} [Address]
+          </label>
+          <input
+            className="border-2 border-gray-300 py-2 px-3 rounded-md w-full"
+            type="text"
+            placeholder={`${field.charAt(0).toUpperCase() + field.slice(1)}'s Address`}
+            value={additionalInfo[field]}
+            onChange={(e) => handleAddressChange(field, e.target.value)}
+          />
+          {isLoading[field] && <p>Loading suggestions...</p>}
+          {suggestions[field].length > 0 && (
+            <ul className="border border-gray-300 mt-2 rounded-md">
+              {suggestions[field].map((suggestion, index) => (
+                <li
+                  key={index}
+                  className="p-2 cursor-pointer hover:bg-gray-200"
+                  onClick={() => applySuggestion(field, suggestion)}
+                >
+                  {suggestion}
+                </li>
+              ))}
+            </ul>
+          )}
         </div>
-      )}
+      ))}
+
+      {/* Uniting Care Checkbox */}
+      <div className="flex items-center my-4">
+        <input
+          type="checkbox"
+          id="unitingCareCheckbox"
+          className="mr-2"
+          checked={additionalInfo.unitingCare}
+          onChange={(e) =>
+            setAdditionalInfo((prev) => ({
+              ...prev,
+              unitingCare: e.target.checked,
+            }))
+          }
+        />
+        <label htmlFor="unitingCareCheckbox" className="font-medium">
+          Uniting Care
+        </label>
+      </div>
+
+      <div className="mt-8 flex justify-center">
+        <button
+          onClick={() => setIsAdditionalInfoModalOpen(false)}
+          className="bg-red-500 text-white px-8 py-2 rounded-full mr-2"
+        >
+          Cancel
+        </button>
+        <button
+          onClick={handleHistorySubmit}
+          className="bg-green-500 text-white px-8 py-2 rounded-full"
+        >
+          Save
+        </button>
+      </div>
+    </div>
+  </div>
+)}
+
 
 {isHistoryModalOpen && (
         <div className="fixed inset-0 bg-gray-600 bg-opacity-75 flex justify-center items-center">

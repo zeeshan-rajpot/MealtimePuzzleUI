@@ -10,22 +10,48 @@
   font-style: normal;
 }
 
+/* Modal container styling */
+.modal-container {
+  width: 90%;                  /* Full width within the viewport */
+  padding: 2rem;
+  background-color: white;
+  border-radius: 0.5rem;
+  box-shadow: 0px 10px 30px rgba(0, 0, 0, 0.15);
+  animation: slideUp 0.3s ease-out;
+}
+
 /* Styling the input-container */
 .input-container {
   position: relative;
   margin-top: 20px;
 }
 
+.input-container textarea,
 .input-container input,
 .input-container select {
-  width: 100%;
-  padding: 12px 18px;
+  width: 100%;                 
+  padding: 15px 18px;
   border: 1px solid #ccc;
   outline: none;
-  border-radius: 9999px;
+  border-radius: 0.5rem;
   font-size: 16px;
-  background-color: #fff;  /* Ensure background is not transparent */
-  box-shadow: var(--tw-shadow); /* Use Tailwind box-shadow */
+  background-color: #fff;
+  box-shadow: var(--tw-shadow-sm);
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+/* Textarea for multiline input */
+.input-container textarea {
+  min-height: 100px;
+  resize: vertical;
+}
+
+/* Input focus effect */
+.input-container input:focus,
+.input-container select:focus,
+.input-container textarea:focus {
+  border-color: #006699;
+  box-shadow: 0 0 8px rgba(0, 102, 153, 0.3);
 }
 
 /* Floating label behavior */
@@ -43,39 +69,76 @@
 .input-container input:focus + label,
 .input-container input:not(:placeholder-shown) + label,
 .input-container select:focus + label,
-.input-container select:not(:placeholder-shown) + label {
+.input-container select:not([value=""]) + label,
+.input-container textarea:focus + label,
+.input-container textarea:not(:placeholder-shown) + label {
   top: -12px;
   left: 18px;
   font-size: 12px;
-  color: #006699; /* Change to Cerulean Blue */
+  color: #006699;
 }
 
-.input-container input {
-  padding-top: 15px;
-  padding-bottom: 15px;
-}
-
-.input-container input:focus::placeholder {
+/* Custom placeholder style */
+.input-container input:focus::placeholder,
+.input-container select:focus::placeholder,
+.input-container textarea:focus::placeholder {
   color: transparent;
 }
 
 /* Autofill handling for smoother UX */
 input:-webkit-autofill {
   -webkit-box-shadow: inset 0 0 0px 9999px white;
+  box-shadow: inset 0 0 0px 9999px white;
 }
 
-/* Ensure default background is blue, with pink on hover */
+/* Button styling */
 button {
-    background-color: #006699; /* Cerulean Blue */
-    color: white;
-    border-radius: 9999px; /* Make the button fully rounded */
-    padding: 12px 18px;
-    box-shadow: var(--tw-shadow); /* Box-shadow for button */
-    transition: background-color 0.3s ease, box-shadow 0.3s ease; /* Smooth transition */
+  background-color: #006699;
+  color: white;
+  border-radius: 9999px;
+  padding: 12px 18px;
+  box-shadow: var(--tw-shadow);
+  transition: background-color 0.3s ease, box-shadow 0.3s ease, transform 0.2s ease;
+}
+
+button:hover {
+  background-color: #BB6F7A;
+  box-shadow: var(--tw-shadow-lg);
+  transform: translateY(-2px);
+}
+
+/* Button active effect */
+button:active {
+  transform: translateY(0);
+  box-shadow: var(--tw-shadow);
+}
+
+/* Modal overlay styling for fade-in effect */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background-color: rgba(96, 96, 96, 0.75);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  opacity: 0;
+  animation: fadeIn 0.3s forwards;
+}
+
+/* Animation keyframes for overlay fade-in */
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+/* Slide-up animation for modal */
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
   }
-  
-  button:hover {
-    background-color: #BB6F7A; /* Blush Pink on hover */
-    box-shadow: var(--tw-shadow-lg); /* Add a larger shadow on hover */
+  to {
+    opacity: 1;
+    transform: translateY(0);
   }
-  
+}

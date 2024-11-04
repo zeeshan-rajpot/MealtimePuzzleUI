@@ -666,7 +666,7 @@ const Pyramid = () => {
                 onClick={handleAddDropdown}
                 className="bg-green-500 text-white px-4 py-2 rounded-lg hover:bg-green-600 transition"
               >
-                + Add Another Dropdown
+                + Add Anothe Dropdown
               </button>
             </div>
             <div className="mt-8 flex justify-center space-x-4">
