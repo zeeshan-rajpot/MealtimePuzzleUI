@@ -1,17 +1,14 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
-import PizZip from "pizzip";
-import Docxtemplater from "docxtemplater";
-import { saveAs } from "file-saver";
 import Header from "../../components/Header";
 import SideBar from "../../components/SideBar";
-import { useNavigate, useParams } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
 
 const HistoryDetail = () => {
   const { urn } = useParams();
   const navigate = useNavigate();
   const [childData, setChildData] = useState(null);
-  const [session, setSession] = useState(null);
+  const [sessions, setSessions] = useState({});
 
   useEffect(() => {
     const fetchData = async () => {
@@ -25,9 +22,9 @@ const HistoryDetail = () => {
             },
           }
         );
+        console.log("Fetched child data:", response.data);
         setChildData(response.data.childData);
-        setSession(response.data.data);
-        console.log("Fetched child history:", response.data);
+        setSessions(response.data.data || {}); // Ensure sessions is an object
       } catch (error) {
         console.error("Error fetching data:", error);
       }
@@ -40,44 +37,8 @@ const HistoryDetail = () => {
     navigate(-1);
   };
 
-  // Function to generate and download Word document
-  const downloadWordDocument = () => {
-    const zip = new PizZip();
-    const doc = new Docxtemplater(zip, { paragraphLoop: true, linebreaks: true });
+  const totalSessions = Object.keys(sessions).length; // Calculate total sessions
 
-    // Generate document content
-    const docContent = {
-      childName: `${childData?.firstName || ""} ${childData?.lastName || ""}`,
-      urn: childData?.urn || "",
-      sessions: Object.entries(session || {}).map(([sessionKey, sessionValue]) => ({
-        sessionKey,
-        interventions: sessionValue.interventions.map(intervention => ({
-          domainName: intervention.domainName,
-          clinicalPrompt: intervention.clinicalPrompt,
-          priority: intervention.priority,
-          formulation: intervention.formulation,
-          recommendation: intervention.recommendation
-        })),
-        childHistory: sessionValue.childHistory || "N/A",
-        reportRecommendation: sessionValue.reportRecommendation || "N/A"
-      }))
-    };
-
-    doc.setData(docContent);
-
-    try {
-      doc.render();
-      const blob = doc.getZip().generate({ type: "blob" });
-      saveAs(blob, `Child_History_${childData?.firstName}_${childData?.lastName}.docx`);
-    } catch (error) {
-      console.error("Error creating document:", error);
-    }
-  };
-
-
-
-
-  
   return (
     <>
       <Header />
@@ -89,46 +50,27 @@ const HistoryDetail = () => {
             <button className="text-base">Back</button>
           </div>
 
-          <div className="flex items-center justify-center mx-auto ">
-            <h2 className="me-2 text-2xl">Child Name : {childData?.firstName}</h2>
-            <h2 className="text-2xl">{childData?.lastName}</h2>
+          <div className="flex flex-col justify-center items-center">
+            <h2 className="text-2xl font-bold mb-4">
+              {childData?.firstName} {childData?.lastName}
+            </h2>
+            <h2 className="text-xl font-bold mb-4">
+              Total Sessions: {totalSessions}
+            </h2>
+            <div className="flex flex-wrap gap-4 mt-8 justify-center">
+              {/* Render buttons for each session */}
+              {Object.keys(sessions).map((sessionKey, index) => {
+                const sessionNumber = sessionKey.match(/\d+/)?.[0]; // Extract digits only
+                return (
+                  <Link key={index} to={`/history/sessiondetails/${urn}/${sessionNumber}`}>
+                    <button className="py-2 px-6 bg-ceruleanBlue text-white rounded-full shadow-md hover:bg-blushPink transition duration-300 text-sm">
+                      View Session {sessionNumber}
+                    </button>
+                  </Link>
+                );
+              })}
+            </div>
           </div>
-          <h2 className="text-2xl text-center">URN : {childData?.urn}</h2>
-
-          <div>
-  <div className="p-4 space-y-6 mt-12">
-    <div className="flex justify-between w-full">
-      <h2 className="bg-black text-white text-lg font-normal ps-2 w-full text-left">
-        CDS MEALTIME PUZZLE SUMMARY
-      </h2>
-    </div>
-    {Object.entries(session || {}).map(([sessionKey, sessionValue], index) => (
-      <div key={index}>
-        <h2 className="text-2xl">{sessionKey}</h2>
-        <div className="interventions">
-          {sessionValue.interventions
-            .sort((a, b) => {
-              const priorityOrder = { high: 1, moderate: 2, low: 3 };
-              return priorityOrder[a.priority.toLowerCase()] - priorityOrder[b.priority.toLowerCase()];
-            })
-            .map((intervention, i) => (
-              <div key={i} className="intervention-item">
-                <h3 className="font-semibold text-xl my-3">Domain: {intervention.domainName}</h3>
-                <p><strong>Clinical Prompt:</strong> {intervention.clinicalPrompt}</p>
-                <p className="font-normal text-lg"><strong>Priority:</strong> {intervention.priority}</p>
-                <p className="font-normal text-lg"><strong>Formulation:</strong> {intervention.formulation}</p>
-                <p className="font-normal text-lg"><strong>Recommendation:</strong> {intervention.recommendation}</p>
-              </div>
-          ))}
-        </div>
-      </div>
-    ))}
-  </div>
-</div>
-
-          {/* <button onClick={downloadWordDocument} className="btn btn-primary mt-4">
-            Download as Word Document
-          </button> */}
         </div>
       </section>
     </>

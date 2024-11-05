@@ -20,6 +20,7 @@ import Buttunpage from "./pages/Assessments/Buttunpage";
 import InterventionPyramidupdate from "./pages/Assessments/InterventionPyramidupdate";
 import Addnewassestent from "./pages/Assessments/Addnewassestent";
 import GenerateReport from "./pages/Assessments/GenerateReport";
+import SessionDetail from "./pages/History/SessionDetail"; // Import SessionDetail
 
 function App() {
   
@@ -44,7 +45,6 @@ function App() {
       path: "/home/options/:urn/:childName",
       element: <Pyramid />,
     }, 
-    
     {
       path: "/home/addnew/:urn/:childName/:totalSessions",
       element: <Addnewassestent />,
@@ -66,10 +66,14 @@ function App() {
       element: <HistoryDetail />,
     },
     {
+      path: "/history/sessiondetails/:urn/:session", // Add route for SessionDetail
+      element: <SessionDetail />,
+    },
+    {
       path: "/Profile",
       element: <Profile />,
     }, 
-     {
+    {
       path: "/Buttunpage/:urn/:childName",
       element: <Buttunpage />,
     },
@@ -85,17 +89,10 @@ function App() {
       path: "/intervention/pyramid/:urn",
       element: <InterventionPyramid />,
     },
-    
     {
       path: "/interventionupdate/pyramid/:urn/:session/:childName",
       element: <InterventionPyramidupdate />,
     },
-
-    {
-      path: "/home/generatereport/:urn/:childName",
-      element: <GenerateReport />,
-    },
-    
     {
       path: "/childData",
       element: <ChildData />,
@@ -104,7 +101,6 @@ function App() {
       path: "/childData/formulation/:urn",
       element: <Formulation />,
     },
-
     {
       path: "/settings",
       element: <Settings />,
