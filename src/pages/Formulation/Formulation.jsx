@@ -112,7 +112,7 @@ const Formulation = () => {
               className="relative group mt-10 cursor-pointer "
               onClick={() => handleImageClick(1, "Variety & Volume")}
             >
-              <img src="/Frame 1261153616.svg" alt="food" />
+              <img src="/VarietyandVolume.svg" alt="food" />
               <div className="tooltip absolute top-0 left-0 z-20 invisible opacity-0 group-hover:visible group-hover:opacity-100 transition-opacity duration-300 bg-gray-900 text-white text-sm px-3 py-1 rounded">
                 {descriptions["Variety & Volume"]
                   ? descriptions["Variety & Volume"]
@@ -124,7 +124,7 @@ const Formulation = () => {
               className="relative group cursor-pointer"
               onClick={() => handleImageClick(2, "New Food Learning")}
             >
-              <img src="/Frame 1261153617.svg" alt="New Food Learning" />
+              <img src="/NewFoodLearning.svg" alt="New Food Learning" />
               <div className="tooltip absolute top-0 left-0 z-20 invisible opacity-0 group-hover:visible group-hover:opacity-100 transition-opacity duration-300 bg-gray-900 text-white text-sm px-3 py-1 rounded">
                 {descriptions["New Food Learning"]
                   ? descriptions["New Food Learning"]
@@ -136,7 +136,7 @@ const Formulation = () => {
               className="relative group cursor-pointer"
               onClick={() => handleImageClick(3, "Food Mapping")}
             >
-              <img src="/Frame 1261153618.svg" alt="Food Mapping" />
+              <img src="/FoodMapping.svg" alt="Food Mapping" />
               <div className="tooltip absolute top-0 left-0 z-20 invisible opacity-0 group-hover:visible group-hover:opacity-100 transition-opacity duration-300 bg-gray-900 text-white text-sm px-3 py-1 rounded">
                 {descriptions["Food Mapping"]
                   ? descriptions["Food Mapping"]
@@ -149,7 +149,7 @@ const Formulation = () => {
                 className="relative group cursor-pointer"
                 onClick={() => handleImageClick(4, "Sensory")}
               >
-                <img src="/Frame 1261153619.svg" alt="Sensory" />
+                <img src="/Sensory.svg" alt="Sensory" />
                 <div className="tooltip absolute top-0 left-0 z-20 invisible opacity-0 group-hover:visible group-hover:opacity-100 transition-opacity duration-300 bg-gray-900 text-white text-sm px-3 py-1 rounded">
                   {descriptions["Sensory"] ? descriptions["Sensory"] : "Empty"}
                 </div>
@@ -158,7 +158,7 @@ const Formulation = () => {
                 className="relative group cursor-pointer"
                 onClick={() => handleImageClick(5, "Oral Motor")}
               >
-                <img src="/Frame 1261153620.svg" alt="Oral Motor" />
+                <img src="/OralMotor.svg" alt="Oral Motor" />
                 <div className="tooltip absolute top-0 left-0 z-20 invisible opacity-0 group-hover:visible group-hover:opacity-100 transition-opacity duration-300 bg-gray-900 text-white text-sm px-3 py-1 rounded">
                   {descriptions["Oral Motor"]
                     ? descriptions["Oral Motor"]
@@ -173,7 +173,7 @@ const Formulation = () => {
                 onClick={() => handleImageClick(6, "Self Feeding")}
                 className="relative group cursor-pointer"
               >
-                <img src="/Frame 1261153621.svg" alt="food" />
+                <img src="/SelfFeeding.svg" alt="food" />
                 <div className="tooltip absolute top-0 left-0 z-20 invisible opacity-0 group-hover:visible group-hover:opacity-100 transition-opacity duration-300 bg-gray-900 text-white text-sm px-3 py-1 rounded">
                   {descriptions["Self Feeding"]
                     ? descriptions["Self Feeding"]
@@ -185,7 +185,7 @@ const Formulation = () => {
                 onClick={() => handleImageClick(7, "Mealtime Engagement")}
                 className="relative group cursor-pointer"
               >
-                <img src="/Frame 1261153622.svg" alt="food" />
+                <img src="/MealtimeEngagement.svg" alt="food" />
                 <div className="tooltip absolute top-0 left-0 z-20 invisible opacity-0 group-hover:visible group-hover:opacity-100 transition-opacity duration-300 bg-gray-900 text-white text-sm px-3 py-1 rounded">
                   {descriptions["Mealtime Engagement"]
                     ? descriptions["Mealtime Engagement"]
@@ -199,7 +199,7 @@ const Formulation = () => {
                 onClick={() => handleImageClick(8, "Food Exposure")}
                 className="relative group cursor-pointer"
               >
-                <img src="/Frame 1261153624.svg" alt="food" />
+                <img src="/FoodExposure.svg" alt="food" />
                 <div className="tooltip absolute top-0 left-0 z-20 invisible opacity-0 group-hover:visible group-hover:opacity-100 transition-opacity duration-300 bg-gray-900 text-white text-sm px-3 py-1 rounded">
                   {descriptions["Mealtime Engagement"]
                     ? descriptions["Food Exposure"]
@@ -211,7 +211,7 @@ const Formulation = () => {
                 onClick={() => handleImageClick(9, "Mealtime Environment")}
                 className="relative group cursor-pointer"
               >
-                <img src="/Frame 1261153625.svg" alt="food" />
+                <img src="/MealtimeEnvironment.svg" alt="food" />
                 <div className="tooltip absolute top-0 left-0 z-20 invisible opacity-0 group-hover:visible group-hover:opacity-100 transition-opacity duration-300 bg-gray-900 text-white text-sm px-3 py-1 rounded">
                   {descriptions["Mealtime Environment"]
                     ? descriptions["Mealtime Environment"]
@@ -223,7 +223,7 @@ const Formulation = () => {
                 onClick={() => handleImageClick(10, "Flexibility")}
                 className="relative group cursor-pointer"
               >
-                <img src="/Frame 1261153626.svg" alt="food" />
+                <img src="/Flexibility.svg" alt="food" />
                 <div className="tooltip absolute top-0 left-0 z-20 invisible opacity-0 group-hover:visible group-hover:opacity-100 transition-opacity duration-300 bg-gray-900 text-white text-sm px-3 py-1 rounded">
                   {descriptions["Flexibility"]
                     ? descriptions["Flexibility"]
@@ -237,7 +237,7 @@ const Formulation = () => {
                 data-label="Hunger Cycle"
                 onClick={() => handleImageClick(11, "Hunger Cycle")}
               >
-                <img src="/Frame 1261153627.svg" alt="food" />
+                <img src="/HungerCycle.svg" alt="food" />
                 <div className="tooltip absolute top-0 left-0 z-20 invisible opacity-0 group-hover:visible group-hover:opacity-100 transition-opacity duration-300 bg-gray-900 text-white text-sm px-3 py-1 rounded">
                   {descriptions["Hunger Cycle"]
                     ? descriptions["Hunger Cycle"]
@@ -249,7 +249,7 @@ const Formulation = () => {
                 onClick={() => handleImageClick(12, "Mealtime Roles")}
                 className="relative group cursor-pointer"
               >
-                <img src="/Frame 1261153628.svg" alt="food" />
+                <img src="/MealtimeRoles.svg" alt="food" />
                 <div className="tooltip absolute top-0 left-0 z-20 invisible opacity-0 group-hover:visible group-hover:opacity-100 transition-opacity duration-300 bg-gray-900 text-white text-sm px-3 py-1 rounded">
                   {descriptions["Mealtime Roles"]
                     ? descriptions["Mealtime Roles"]
@@ -261,7 +261,7 @@ const Formulation = () => {
                 onClick={() => handleImageClick(13, "Caregivers Influence")}
                 className="relative group cursor-pointer"
               >
-                <img src="/Frame 1261153629.svg" alt="food" />
+                <img src="/CaregiversInfluence.svg" alt="food" />
                 <div className="tooltip absolute top-0 left-0 z-20 invisible opacity-0 group-hover:visible group-hover:opacity-100 transition-opacity duration-300 bg-gray-900 text-white text-sm px-3 py-1 rounded">
                   {descriptions["Caregivers Influence"]
                     ? descriptions["Caregivers Influence"]
@@ -273,7 +273,7 @@ const Formulation = () => {
                 onClick={() => handleImageClick(14, "Calm Mealtimes")}
                 className="relative group cursor-pointer"
               >
-                <img src="/Frame 1261153630.svg" alt="food" />
+                <img src="/CalmMealtime.svg" alt="food" />
                 <div className="tooltip absolute top-0 left-0 z-20 invisible opacity-0 group-hover:visible group-hover:opacity-100 transition-opacity duration-300 bg-gray-900 text-white text-sm px-3 py-1 rounded">
                   {descriptions["Calm Mealtimes"]
                     ? descriptions["Calm Mealtimes"]
@@ -287,7 +287,7 @@ const Formulation = () => {
                 onClick={() => handleImageClick(15, "Development")}
                 className="relative group cursor-pointer"
               >
-                <img src="/Frame 1261153631.svg" alt="food" />
+                <img src="/Development.svg" alt="food" />
                 <div className="tooltip absolute top-0 left-0 z-20 invisible opacity-0 group-hover:visible group-hover:opacity-100 transition-opacity duration-300 bg-gray-900 text-white text-sm px-3 py-1 rounded">
                   {descriptions["Development"]
                     ? descriptions["Development"]
@@ -299,7 +299,7 @@ const Formulation = () => {
                 onClick={() => handleImageClick(16, "Medical / Nutrition")}
                 className="relative group cursor-pointer"
               >
-                <img src="/Frame 1261153632.svg" alt="food" />
+                <img src="/MedicalNutrition.svg" alt="food" />
                 <div className="tooltip absolute top-0 left-0 z-20 invisible opacity-0 group-hover:visible group-hover:opacity-100 transition-opacity duration-300 bg-gray-900 text-white text-sm px-3 py-1 rounded">
                   {descriptions["Medical / Nutrition"]
                     ? descriptions["Medical / Nutrition"]
@@ -311,7 +311,7 @@ const Formulation = () => {
                 onClick={() => handleImageClick(17, "Temperament")}
                 className="relative group cursor-pointer"
               >
-                <img src="/Frame 1261153633.svg" alt="food" />
+                <img src="/Temperament.svg" alt="food" />
                 <div className="tooltip absolute top-0 left-0 z-20 invisible opacity-0 group-hover:visible group-hover:opacity-100 transition-opacity duration-300 bg-gray-900 text-white text-sm px-3 py-1 rounded">
                   {descriptions["Temperament"]
                     ? descriptions["Temperament"]

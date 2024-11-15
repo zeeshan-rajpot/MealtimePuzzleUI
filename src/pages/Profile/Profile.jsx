@@ -9,10 +9,14 @@ import Header from "../../components/Header";
 import toast from "react-hot-toast";
 
 const Profile = () => {
+  // Initialize form with react-hook-form
   const { register, handleSubmit, reset } = useForm();
+
+  // Fetch user profile data and initialize mutation for updating profile
   const { data: profileData, isLoading, error } = useGetUserProfileQuery();
   const [updateUserProfile] = useUpdateUserProfileMutation();
-  
+
+  // State variables for handling password change
   const [currentPassword, setCurrentPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
   const [isUpdatingProfile, setIsUpdatingProfile] = useState(false);
@@ -20,17 +24,20 @@ const Profile = () => {
   const [passwordError, setPasswordError] = useState("");
   const [passwordSuccess, setPasswordSuccess] = useState("");
 
+  // Populate form fields with profile data on load
   useEffect(() => {
     if (profileData) {
       reset(profileData);
     }
   }, [profileData, reset]);
 
+  // Handle password change logic
   const handlePasswordChange = async () => {
     setPasswordError("");
     setPasswordSuccess("");
     setIsUpdatingPassword(true);
 
+    // Validate password fields
     if (!currentPassword || !newPassword) {
       setPasswordError("Please provide both current and new password.");
       setIsUpdatingPassword(false);
@@ -38,6 +45,7 @@ const Profile = () => {
     }
 
     try {
+      // Send password change request
       const response = await fetch(
         "http://localhost:5001/api/change-password",
         {
@@ -53,6 +61,7 @@ const Profile = () => {
         }
       );
 
+      // Handle response
       if (response.ok) {
         setPasswordSuccess("Password changed successfully.");
         setCurrentPassword("");
@@ -68,20 +77,22 @@ const Profile = () => {
     }
   };
 
+  // Handle profile data submission
   const onSubmit = async (profileData) => {
     setIsUpdatingProfile(true);
 
     try {
+      // Update user profile
       await updateUserProfile(profileData).unwrap();
       toast.success("Profile updated successfully!");
     } catch (err) {
-      console.error("Error updating profile: ", err);
       toast.error("Failed to update profile.");
     } finally {
       setIsUpdatingProfile(false);
     }
   };
 
+  // Display loading message if data is being fetched
   if (isLoading) return <div>Loading...</div>;
   if (error) return <div>Error fetching profile data</div>;
 
@@ -95,6 +106,7 @@ const Profile = () => {
             <div className="w-full max-w-3xl mx-auto flex justify-center items-center flex-col">
               <h2 className="text-2xl font-semibold">Profile</h2>
 
+              {/* Profile Update Form */}
               <div className="w-full mt-4">
                 <form onSubmit={handleSubmit(onSubmit)}>
                   <div className="flex space-x-4">
@@ -150,6 +162,7 @@ const Profile = () => {
                     className="w-full p-3 border rounded mb-4"
                   />
 
+                  {/* Display password change status messages */}
                   {passwordError && <p className="text-red-500">{passwordError}</p>}
                   {passwordSuccess && <p className="text-green-500">{passwordSuccess}</p>}
 

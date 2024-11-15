@@ -369,7 +369,7 @@ const Addnewassestent = () => {
               style={{ opacity: getImageOpacity("Variety & Volume") }}
               className="mt-8"
             >
-              <img src="/Frame 1261153616.svg" alt="food" />
+              <img src="/VarietyandVolume.svg" alt="food" />
             </div>
 
             <div
@@ -377,7 +377,7 @@ const Addnewassestent = () => {
               onClick={() => handleImageClick(2, "New Food Learning")}
               style={{ opacity: getImageOpacity("New Food Learning") }}
             >
-              <img src="/Frame 1261153617.svg" alt="food" />
+              <img src="/NewFoodLearning.svg" alt="food" />
             </div>
 
             <div
@@ -385,7 +385,7 @@ const Addnewassestent = () => {
               onClick={() => handleImageClick(3, "Food Mapping")}
               style={{ opacity: getImageOpacity("Food Mapping") }}
             >
-              <img src="/Frame 1261153618.svg" alt="food" />
+              <img src="/FoodMapping.svg" alt="food" />
             </div>
 
             <div className="flex">
@@ -394,7 +394,7 @@ const Addnewassestent = () => {
                 onClick={() => handleImageClick(4, "Sensory")}
                 style={{ opacity: getImageOpacity("Sensory") }}
               >
-                <img src="/Frame 1261153619.svg" alt="food" />
+                <img src="/Sensory.svg" alt="food" />
               </div>
 
               <div
@@ -402,7 +402,7 @@ const Addnewassestent = () => {
                 onClick={() => handleImageClick(5, "Oral Motor")}
                 style={{ opacity: getImageOpacity("Oral Motor") }}
               >
-                <img src="/Frame 1261153620.svg" alt="food" />
+                <img src="/OralMotor.svg" alt="food" />
               </div>
             </div>
             <div className="flex">
@@ -411,14 +411,14 @@ const Addnewassestent = () => {
                 onClick={() => handleImageClick(6, "Self Feeding")}
                 style={{ opacity: getImageOpacity("Self Feeding") }}
               >
-                <img src="/Frame 1261153621.svg" alt="food" />
+                <img src="/SelfFeeding.svg" alt="food" />
               </div>
               <div
                 data-label="Mealtime Engagement"
                 onClick={() => handleImageClick(7, "Mealtime Engagement")}
                 style={{ opacity: getImageOpacity("Mealtime Engagement") }}
               >
-                <img src="/Frame 1261153622.svg" alt="food" />
+                <img src="/MealtimeEngagement.svg" alt="food" />
               </div>
             </div>
             <div className="flex mt-4">
@@ -427,21 +427,21 @@ const Addnewassestent = () => {
                 onClick={() => handleImageClick(8, "Food Exposure")}
                 style={{ opacity: getImageOpacity("Food Exposure") }}
               >
-                <img src="/Frame 1261153624.svg" alt="food" />
+                <img src="/FoodExposure.svg" alt="food" />
               </div>
               <div
                 data-label="Mealtime Environment"
                 onClick={() => handleImageClick(9, "Mealtime Environment")}
                 style={{ opacity: getImageOpacity("Mealtime Environment") }}
               >
-                <img src="/Frame 1261153625.svg" alt="food" />
+                <img src="/MealtimeEnvironment.svg" alt="food" />
               </div>
               <div
                 data-label="Flexibility"
                 onClick={() => handleImageClick(10, "Flexibility")}
                 style={{ opacity: getImageOpacity("Flexibility") }}
               >
-                <img src="/Frame 1261153626.svg" alt="food" />
+                <img src="/Flexibility.svg" alt="food" />
               </div>
             </div>
             <div className="flex">
@@ -450,28 +450,28 @@ const Addnewassestent = () => {
                 onClick={() => handleImageClick(11, "Hunger Cycle")}
                 style={{ opacity: getImageOpacity("Hunger Cycle") }}
               >
-                <img src="/Frame 1261153627.svg" alt="food" />
+                <img src="/HungerCycle.svg" alt="food" />
               </div>
               <div
                 data-label="Mealtime Roles"
                 onClick={() => handleImageClick(12, "Mealtime Roles")}
                 style={{ opacity: getImageOpacity("Mealtime Roles") }}
               >
-                <img src="/Frame 1261153628.svg" alt="food" />
+                <img src="/MealtimeRoles.svg" alt="food" />
               </div>
               <div
                 data-label="Caregivers Influence"
                 onClick={() => handleImageClick(13, "Caregivers Influence")}
                 style={{ opacity: getImageOpacity("Caregivers Influence") }}
               >
-                <img src="/Frame 1261153629.svg" alt="food" />
+                <img src="/CaregiversInfluence.svg" alt="food" />
               </div>
               <div
                 data-label="Calm Mealtimes"
                 onClick={() => handleImageClick(14, "Calm Mealtimes")}
                 style={{ opacity: getImageOpacity("Calm Mealtimes") }}
               >
-                <img src="/Frame 1261153630.svg" alt="food" />
+                <img src="/CalmMealtime.svg" alt="food" />
               </div>
             </div>
             <div className="flex">
@@ -480,21 +480,21 @@ const Addnewassestent = () => {
                 onClick={() => handleImageClick(15, "Development")}
                 style={{ opacity: getImageOpacity("Development") }}
               >
-                <img src="/Frame 1261153631.svg" alt="food" />
+                <img src="/Development.svg" alt="food" />
               </div>
               <div
                 data-label="Medical / Nutrition"
                 onClick={() => handleImageClick(16, "Medical / Nutrition")}
                 style={{ opacity: getImageOpacity("Medical / Nutrition") }}
               >
-                <img src="/Frame 1261153632.svg" alt="food" />
+                <img src="/MedicalNutrition.svg" alt="food" />
               </div>
               <div
                 data-label="Temperament"
                 onClick={() => handleImageClick(17, "Temperament")}
                 style={{ opacity: getImageOpacity("Temperament") }}
               >
-                <img src="/Frame 1261153633.svg" alt="food" />
+                <img src="/Temperament.svg" alt="food" />
               </div>
             </div>
 

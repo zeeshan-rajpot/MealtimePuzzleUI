@@ -20,7 +20,8 @@ import Buttunpage from "./pages/Assessments/Buttunpage";
 import InterventionPyramidupdate from "./pages/Assessments/InterventionPyramidupdate";
 import Addnewassestent from "./pages/Assessments/Addnewassestent";
 import GenerateReport from "./pages/Assessments/GenerateReport";
-import SessionDetail from "./pages/History/SessionDetail"; // Import SessionDetail
+import SessionDetail from "./pages/History/SessionDetail";
+import AllSessions from "./pages/History/AllSession";
 
 function App() {
   
@@ -69,6 +70,11 @@ function App() {
       path: "/history/sessiondetails/:urn/:session", // Add route for SessionDetail
       element: <SessionDetail />,
     },
+    {
+      path: "/history/all-sessions/:urn",
+      element: <AllSessions />,
+    },
+
     {
       path: "/Profile",
       element: <Profile />,

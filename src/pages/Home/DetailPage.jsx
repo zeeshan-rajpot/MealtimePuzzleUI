@@ -105,7 +105,7 @@ const DetailPage = () => {
             {/* Logos at the top */}
             <div className="flex justify-between items-center mb-4">
               <img src="/logo.PNG" alt="Logo 1" className="h-12" />
-              <img src="/CDS Logo.png" alt="Logo 2" className="h-20 w-48" />
+              <img src="/GCH Logo.png" alt="Logo 2" className="h-20 w-48" />
             </div>
 
             {/* Header with Child's Full Name and URN only in PDF */}
@@ -192,7 +192,7 @@ const DetailPage = () => {
               <p className="bg-black text-white text-lg font-normal p-2">CDS MEALTIME PUZZLE SUMMARY</p>
 
               <div className="text-center my-6">
-                <img src="/Frame%201261153776@2x.png" alt="Puzzle Logo" className="puzzle-image" />
+                <img src="/pyramid2.png" alt="Puzzle Logo" className="puzzle-image" />
                 <p className="mt-4 text-center">
                   The Mealtime Puzzle is a clinical tool developed within the Child Development Service, that provides a summary of the factors that may impact on a child’s ability to engage in mealtimes. Below is a summary of the key areas relating to {childData?.firstName} {childData?.lastName} Mealtime Puzzle.
                 </p>

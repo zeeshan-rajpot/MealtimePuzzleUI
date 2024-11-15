@@ -278,7 +278,7 @@ const Pyramid = () => {
               style={{ opacity: getImageOpacity(1) }}
               className="mt-8"
             >
-              <img src="/Frame 1261153616.svg" alt="food" />
+              <img src="/VarietyandVolume.svg" alt="food" />
             </div>
 
             <div
@@ -286,7 +286,7 @@ const Pyramid = () => {
               onClick={() => handleImageClick(2, "New Food Learning")}
               style={{ opacity: getImageOpacity(2) }}
             >
-              <img src="/Frame 1261153617.svg" alt="food" />
+              <img src="/NewFoodLearning.svg" alt="food" />
             </div>
 
             <div
@@ -294,7 +294,7 @@ const Pyramid = () => {
               onClick={() => handleImageClick(3, "Food Mapping")}
               style={{ opacity: getImageOpacity(3) }}
             >
-              <img src="/Frame 1261153618.svg" alt="food" />
+              <img src="/FoodMapping.svg" alt="food" />
             </div>
 
             <div className="flex">
@@ -303,7 +303,7 @@ const Pyramid = () => {
                 onClick={() => handleImageClick(4, "Sensory")}
                 style={{ opacity: getImageOpacity(4) }}
               >
-                <img src="/Frame 1261153619.svg" alt="food" />
+                <img src="/Sensory.svg" alt="food" />
               </div>
 
               <div
@@ -311,7 +311,7 @@ const Pyramid = () => {
                 onClick={() => handleImageClick(5, "Oral Motor")}
                 style={{ opacity: getImageOpacity(5) }}
               >
-                <img src="/Frame 1261153620.svg" alt="food" />
+                <img src="/OralMotor.svg" alt="food" />
               </div>
             </div>
             <div className="flex">
@@ -320,14 +320,14 @@ const Pyramid = () => {
                 onClick={() => handleImageClick(6, "Self Feeding")}
                 style={{ opacity: getImageOpacity(6) }}
               >
-                <img src="/Frame 1261153621.svg" alt="food" />
+                <img src="/SelfFeeding.svg" alt="food" />
               </div>
               <div
                 data-label="Mealtime Engagement"
                 onClick={() => handleImageClick(7, "Mealtime Engagement")}
                 style={{ opacity: getImageOpacity(7) }}
               >
-                <img src="/Frame 1261153622.svg" alt="food" />
+                <img src="/MealtimeEngagement.svg" alt="food" />
               </div>
             </div>
             <div className="flex mt-4">
@@ -336,21 +336,21 @@ const Pyramid = () => {
                 onClick={() => handleImageClick(8, "Food Exposure")}
                 style={{ opacity: getImageOpacity(8) }}
               >
-                <img src="/Frame 1261153624.svg" alt="food" />
+                <img src="/FoodExposure.svg" alt="food" />
               </div>
               <div
                 data-label="Mealtime Environment"
                 onClick={() => handleImageClick(9, "Mealtime Environment")}
                 style={{ opacity: getImageOpacity(9) }}
               >
-                <img src="/Frame 1261153625.svg" alt="food" />
+                <img src="/MealtimeEnvironment.svg" alt="food" />
               </div>
               <div
                 data-label="Flexibility"
                 onClick={() => handleImageClick(10, "Flexibility")}
                 style={{ opacity: getImageOpacity(10) }}
               >
-                <img src="/Frame 1261153626.svg" alt="food" />
+                <img src="/Flexibility.svg" alt="food" />
               </div>
             </div>
             <div className="flex">
@@ -359,28 +359,28 @@ const Pyramid = () => {
                 onClick={() => handleImageClick(11, "Hunger Cycle")}
                 style={{ opacity: getImageOpacity(11) }}
               >
-                <img src="/Frame 1261153627.svg" alt="food" />
+                <img src="/HungerCycle.svg" alt="food" />
               </div>
               <div
                 data-label="Mealtime Roles"
                 onClick={() => handleImageClick(12, "Mealtime Roles")}
                 style={{ opacity: getImageOpacity(12) }}
               >
-                <img src="/Frame 1261153628.svg" alt="food" />
+                <img src="/MealtimeRoles.svg" alt="food" />
               </div>
               <div
                 data-label="Caregivers Influence"
                 onClick={() => handleImageClick(13, "Caregivers Influence")}
                 style={{ opacity: getImageOpacity(13) }}
               >
-                <img src="/Frame 1261153629.svg" alt="food" />
+                <img src="/CaregiversInfluence.svg" alt="food" />
               </div>
               <div
                 data-label="Calm Mealtimes"
                 onClick={() => handleImageClick(14, "Calm Mealtimes")}
                 style={{ opacity: getImageOpacity(14) }}
               >
-                <img src="/Frame 1261153630.svg" alt="food" />
+                <img src="/CalmMealtime.svg" alt="food" />
               </div>
             </div>
             <div className="flex">
@@ -389,21 +389,21 @@ const Pyramid = () => {
                 onClick={() => handleImageClick(15, "Development")}
                 style={{ opacity: getImageOpacity(15) }}
               >
-                <img src="/Frame 1261153631.svg" alt="food" />
+                <img src="/Development.svg" alt="food" />
               </div>
               <div
                 data-label="Medical / Nutrition"
                 onClick={() => handleImageClick(16, "Medical / Nutrition")}
                 style={{ opacity: getImageOpacity(16) }}
               >
-                <img src="/Frame 1261153632.svg" alt="food" />
+                <img src="/MedicalNutrition.svg" alt="food" />
               </div>
               <div
                 data-label="Temperament"
                 onClick={() => handleImageClick(17, "Temperament")}
                 style={{ opacity: getImageOpacity(17) }}
               >
-                <img src="/Frame 1261153633.svg" alt="food" />
+                <img src="/Temperament.svg" alt="food" />
               </div>
             </div>
 

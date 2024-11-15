@@ -1,9 +1,8 @@
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import { useSignupUserMutation } from "../../features/auth/authApi";
 import toast from "react-hot-toast";
-import { useNavigate } from "react-router-dom";
 
 const SignUp = () => {
   const navigate = useNavigate();
@@ -16,27 +15,23 @@ const SignUp = () => {
   } = useForm();
 
   const [signupUser, { isLoading, isError, error }] = useSignupUserMutation();
+  const [isPasswordVisible, setIsPasswordVisible] = useState(false);
+  const [isConfirmPasswordVisible, setIsConfirmPasswordVisible] = useState(false);
 
+  // Handle form submission
   const onSubmit = async (userData) => {
-    console.log(userData);
     try {
-      const { confirmPassword, ...rest } = userData;
-
+      const { confirmPassword, ...rest } = userData; // Remove confirmPassword for the API call
       await signupUser(rest).unwrap();
       toast.success("New User Created");
       navigate("/");
       reset();
     } catch (err) {
       toast.error("SignUp Failed");
-      console.error("Failed to signup:", err);
     }
   };
 
-  const [isPasswordVisible, setIsPasswordVisible] = useState(false);
-  const [isConfirmPasswordVisible, setIsConfirmPasswordVisible] =
-    useState(false);
-
-  // Function to toggle password visibility
+  // Toggle visibility of password fields
   const togglePasswordVisibility = () => {
     setIsPasswordVisible(!isPasswordVisible);
   };
@@ -46,17 +41,21 @@ const SignUp = () => {
 
   return (
     <div className="flex items-center justify-center min-h-screen relative">
+      {/* Sidebar image for larger screens */}
       <img
         src="/Frame 1261153634 (1).jpg"
         alt="side_img"
         className="absolute left-0 hidden md:block w-[35%]"
       />
+
       <div className="w-full max-w-md space-y-8 p-6">
+        {/* Center logo */}
         <div className="flex justify-center">
-          <img src="/CDS Logo.png" alt="" className="w-[50%] mx-auto" />
+          <img src="/GCH Logo.png" alt="" className="w-[50%] mx-auto" />
         </div>
 
         <form className="mt-8 space-y-6" onSubmit={handleSubmit(onSubmit)}>
+          {/* First Name and Last Name Fields */}
           <div className="flex space-x-2">
             <div className="relative w-[48%] input-container">
               <input
@@ -81,7 +80,7 @@ const SignUp = () => {
               />
               <label
                 htmlFor="first_name"
-                className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-500 transition-all duration-200 peer-placeholder-shown:top-1/2 peer-placeholder-shown:-translate-y-1/2 peer-focus:top-[-10px] peer-focus:text-sm peer-focus:text-ceruleanBlue"
+                className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-500 transition-all duration-200"
               >
                 First Name
               </label>
@@ -115,7 +114,7 @@ const SignUp = () => {
               />
               <label
                 htmlFor="last_name"
-                className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-500 transition-all duration-200 peer-placeholder-shown:top-1/2 peer-placeholder-shown:-translate-y-1/2 peer-focus:top-[-10px] peer-focus:text-sm peer-focus:text-ceruleanBlue"
+                className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-500 transition-all duration-200"
               >
                 Last Name
               </label>
@@ -127,6 +126,7 @@ const SignUp = () => {
             </div>
           </div>
 
+          {/* Username Field */}
           <div className="relative input-container">
             <input
               id="username"
@@ -146,7 +146,7 @@ const SignUp = () => {
             />
             <label
               htmlFor="username"
-              className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-500 transition-all duration-200 peer-placeholder-shown:top-1/2 peer-placeholder-shown:-translate-y-1/2 peer-focus:top-[-10px] peer-focus:text-sm peer-focus:text-ceruleanBlue"
+              className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-500 transition-all duration-200"
             >
               Username
             </label>
@@ -155,6 +155,7 @@ const SignUp = () => {
             )}
           </div>
 
+          {/* Email Field */}
           <div className="relative input-container">
             <input
               id="email"
@@ -171,7 +172,7 @@ const SignUp = () => {
             />
             <label
               htmlFor="email"
-              className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-500 transition-all duration-200 peer-placeholder-shown:top-1/2 peer-placeholder-shown:-translate-y-1/2 peer-focus:top-[-10px] peer-focus:text-sm peer-focus:text-ceruleanBlue"
+              className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-500 transition-all duration-200"
             >
               Email
             </label>
@@ -180,6 +181,7 @@ const SignUp = () => {
             )}
           </div>
 
+          {/* Password Field */}
           <div className="relative input-container">
             <input
               id="password"
@@ -196,7 +198,7 @@ const SignUp = () => {
             />
             <label
               htmlFor="password"
-              className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-500 transition-all duration-200 peer-placeholder-shown:top-1/2 peer-placeholder-shown:-translate-y-1/2 peer-focus:top-[-10px] peer-focus:text-sm peer-focus:text-ceruleanBlue"
+              className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-500 transition-all duration-200"
             >
               Password
             </label>
@@ -212,6 +214,7 @@ const SignUp = () => {
             )}
           </div>
 
+          {/* Confirm Password Field */}
           <div className="relative input-container">
             <input
               id="confirm_password"
@@ -226,7 +229,7 @@ const SignUp = () => {
             />
             <label
               htmlFor="confirm_password"
-              className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-500 transition-all duration-200 peer-placeholder-shown:top-1/2 peer-placeholder-shown:-translate-y-1/2 peer-focus:top-[-10px] peer-focus:text-sm peer-focus:text-ceruleanBlue"
+              className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-500 transition-all duration-200"
             >
               Confirm Password
             </label>
@@ -244,6 +247,7 @@ const SignUp = () => {
             )}
           </div>
 
+          {/* Role Selection */}
           <div className="relative input-container">
             <select
               id="role"
@@ -259,7 +263,7 @@ const SignUp = () => {
             </select>
             <label
               htmlFor="role"
-              className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-500 transition-all duration-200 peer-placeholder-shown:top-1/2 peer-placeholder-shown:-translate-y-1/2 peer-focus:top-[-10px] peer-focus:text-sm peer-focus:text-ceruleanBlue"
+              className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-500 transition-all duration-200"
             >
               Select Role
             </label>
@@ -268,21 +272,23 @@ const SignUp = () => {
             )}
           </div>
 
+          {/* Submit Button */}
           <div>
-  <button
-    type="submit"
-    disabled={isLoading}
-    className={`w-full p-3 rounded-full bg-ceruleanBlue text-white ${
-      isLoading
-        ? "opacity-50 cursor-not-allowed"
-        : "hover:bg-blushPink transition duration-300"
-    }`}
-  >
-    {isLoading ? "Signing up..." : "Sign Up"}
-  </button>
-</div>
+            <button
+              type="submit"
+              disabled={isLoading}
+              className={`w-full p-3 rounded-full bg-ceruleanBlue text-white ${
+                isLoading
+                  ? "opacity-50 cursor-not-allowed"
+                  : "hover:bg-blushPink transition duration-300"
+              }`}
+            >
+              {isLoading ? "Signing up..." : "Sign Up"}
+            </button>
+          </div>
         </form>
 
+        {/* Login Link */}
         <div className="text-center">
           <p className="text-sm">
             Already have an account?{" "}

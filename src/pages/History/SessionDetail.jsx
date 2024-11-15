@@ -3,28 +3,30 @@ import axios from "axios";
 import { useParams, useNavigate } from "react-router-dom";
 import Header from "../../components/Header";
 import SideBar from "../../components/SideBar";
-import generateWordReport from "../../pages/History/generateWordReport"; // Make sure this path is correct
+import generateWordReport from "../../pages/History/generateWordReport"; // Ensure this path is correct
 
 const SessionDetail = () => {
+  // Retrieve parameters from URL
   const { urn, session } = useParams();
   const navigate = useNavigate();
+
+  // State to hold session data
   const [sessionData, setSessionData] = useState(null);
 
+  // Fetch session data on component mount or when URL parameters change
   useEffect(() => {
     const fetchData = async () => {
-      const token = localStorage.getItem("token");
+      const token = localStorage.getItem("token"); // Retrieve token for authorization
       try {
-        console.log("Fetching session data for:", urn, "Session:", session);
         const response = await axios.get(
-          `http://localhost:5001/api/get/Intervention/${urn}/${session}`, 
+          `http://localhost:5001/api/get/Intervention/${urn}/${session}`,
           {
             headers: {
               Authorization: `Bearer ${token}`,
             },
           }
         );
-        console.log("Fetched session data:", response.data);
-        setSessionData(response.data);
+        setSessionData(response.data); // Set session data after fetching
       } catch (error) {
         console.error("Error fetching session data:", error);
         if (error.response) {
@@ -36,7 +38,7 @@ const SessionDetail = () => {
     fetchData();
   }, [urn, session]);
 
-  // Calculate earliest createdAt and latest updatedAt
+  // Calculate the earliest creation and latest update dates in the session
   const getSummaryDates = () => {
     if (!sessionData || !sessionData.sessionEntries) return { earliest: null, latest: null };
 
@@ -53,7 +55,7 @@ const SessionDetail = () => {
 
   const { earliest, latest } = getSummaryDates();
 
-  // Filter entries by priority
+  // Filter session entries by priority level
   const highPriorityEntries = sessionData?.sessionEntries.filter(entry => entry.priority.toLowerCase() === "high") || [];
   const moderatePriorityEntries = sessionData?.sessionEntries.filter(entry => entry.priority.toLowerCase() === "moderate") || [];
   const otherEntries = sessionData?.sessionEntries.filter(entry => entry.priority.toLowerCase() === "low") || [];
@@ -64,13 +66,15 @@ const SessionDetail = () => {
       <section className="flex flex-col lg:flex-row justify-between gap-4 h-auto w-full">
         <SideBar />
         <div className="pt-10 w-full lg:w-[75%] xl:w-[80%] 2xl:w-[85%] h-auto">
+          {/* Back button */}
           <button onClick={() => navigate(-1)} className="text-base mb-4">
             Back
           </button>
 
+          {/* Session Header */}
           <h2 className="text-2xl text-center mb-4">Session: {session}</h2>
 
-          {/* Display summary dates */}
+          {/* Display summary dates if available */}
           {earliest && latest && (
             <div className="text-center mb-4">
               <p><strong>Session Start Date:</strong> {earliest.toLocaleDateString()}</p>
@@ -88,7 +92,7 @@ const SessionDetail = () => {
               {/* High Priority Domains */}
               {highPriorityEntries.length > 0 && (
                 <div className="mb-6">
-                  <h3 className="font-semibold text-xl mt-6 mb-4">High Priority Domains</h3>
+                  <h3 className="font-semibold text-xl mt-6 mb-4 text-green-600">High Priority Domains</h3>
                   {highPriorityEntries.map((entry, index) => (
                     <div key={index} className="mb-4">
                       <h4 className="font-semibold text-lg">{entry.domainname}</h4>
@@ -103,7 +107,7 @@ const SessionDetail = () => {
               {/* Moderate Priority Domains */}
               {moderatePriorityEntries.length > 0 && (
                 <div className="mb-6">
-                  <h3 className="font-semibold text-xl mt-6 mb-4">Moderate Priority Domains</h3>
+                  <h3 className="font-semibold text-xl mt-6 mb-4 text-yellow-600">Moderate Priority Domains</h3>
                   {moderatePriorityEntries.map((entry, index) => (
                     <div key={index} className="mb-4">
                       <h4 className="font-semibold text-lg">{entry.domainname}</h4>
@@ -118,7 +122,7 @@ const SessionDetail = () => {
               {/* Other Domains */}
               {otherEntries.length > 0 && (
                 <div className="mb-6">
-                  <h3 className="font-semibold text-xl mt-6 mb-4">Other Domains</h3>
+                  <h3 className="font-semibold text-xl mt-6 mb-4 text-blue-600">Other Domains</h3>
                   {otherEntries.map((entry, index) => (
                     <div key={index} className="mb-4">
                       <h4 className="font-semibold text-lg">{entry.domainname}</h4>
@@ -132,20 +136,11 @@ const SessionDetail = () => {
 
               {/* Download Button */}
               <button
-  onClick={() => generateWordReport(sessionData, session, earliest, latest)}
-  className="mt-6 px-4 py-2"
-  style={{
-    backgroundColor: "#006699", // Cerulean Blue
-    color: "#ffffff", // White text
-    borderRadius: "0.375rem", // Tailwind's 'rounded' class
-    transition: "background-color 0.3s", // Smooth transition for hover
-  }}
-  onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = "#003c68")} // Deep Sky Blue on hover
-  onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = "#006699")} // Revert back on mouse leave
->
-  Download Session Summary
-</button>
-
+                onClick={() => generateWordReport(sessionData, session, earliest, latest)}
+                className="mt-6 px-6 py-3 bg-ceruleanBlue text-white rounded-full shadow-md hover:bg-blushPink transition duration-300"
+              >
+                Download Session Summary
+              </button>
             </div>
           ) : (
             <p>Loading session details...</p>

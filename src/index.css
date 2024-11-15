@@ -2,13 +2,7 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Font-face for Meta Normal */
-@font-face {
-  font-family: 'Meta Normal';
-  src: url('/dist/meta-normal.ttf') format('truetype');
-  font-weight: normal;
-  font-style: normal;
-}
+/* Remove Meta Normal font-face as it's not needed anymore */
 
 /* Modal container styling */
 .modal-container {
@@ -39,7 +33,7 @@
   background-color: #fff;
   box-shadow: var(--tw-shadow-sm);
   transition: border-color 0.3s ease, box-shadow 0.3s ease;
-  font-family: 'Meta Normal', sans-serif; /* Apply the custom font */
+  font-family: 'Noto Sans', sans-serif; /* Apply Noto Sans font */
 }
 
 /* Textarea for multiline input */

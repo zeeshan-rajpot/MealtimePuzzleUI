@@ -3,24 +3,27 @@ import SideBar from "../../components/SideBar";
 import Header from "../../components/Header";
 
 const Settings = () => {
+  // State variables for storing passwords and feedback messages
   const [currentPassword, setCurrentPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
 
+  // Handle password change submission
   const handlePasswordChange = async (e) => {
     e.preventDefault();
     setError("");
     setSuccess("");
 
     try {
+      // Send request to change the password
       const response = await fetch(
         "http://localhost:5001/api/change-password",
         {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
-            Authorization: `Bearer ${localStorage.getItem("token")}`, // Assuming the token is stored in localStorage
+            Authorization: `Bearer ${localStorage.getItem("token")}`, // Assuming token is stored in localStorage
           },
           body: JSON.stringify({
             currentPassword,
@@ -29,6 +32,7 @@ const Settings = () => {
         }
       );
 
+      // Handle response from the server
       if (response.ok) {
         setSuccess("Password changed successfully.");
         setCurrentPassword("");
@@ -52,6 +56,7 @@ const Settings = () => {
             <div className="w-full max-w-3xl mx-auto flex justify-center items-center flex-col">
               <h2 className="text-2xl font-semibold">Settings</h2>
 
+              {/* Password Change Form */}
               <div className="w-full max-w-lg mt-8">
                 <input
                   type="password"
@@ -70,6 +75,7 @@ const Settings = () => {
                   className="w-full p-3 border rounded mb-4"
                 />
 
+                {/* Display success or error messages */}
                 {error && <p className="text-red-500">{error}</p>}
                 {success && <p className="text-green-500">{success}</p>}
 

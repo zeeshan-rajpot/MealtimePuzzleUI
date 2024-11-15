@@ -29,14 +29,15 @@ const History = () => {
     async (event, urn) => {
       event.preventDefault();
       event.stopPropagation();
-      try {
-        await deleteChild(urn).unwrap();
-        toast.success("Child record deleted successfully");
-        refetch();
-      } catch (err) {
-        toast.error("Failed to delete child record");
-        console.log(err);
-        
+      if (window.confirm("Are you sure you want to delete this record?")) {
+        try {
+          await deleteChild(urn).unwrap();
+          toast.success("Child record deleted successfully");
+          refetch();
+        } catch (err) {
+          toast.error("Failed to delete child record");
+          console.log(err);
+        }
       }
     },
     [deleteChild, refetch]
@@ -49,12 +50,12 @@ const History = () => {
         <SideBar />
         <div className="pt-10 w-full lg:w-[75%] xl:w-[80%] 2xl:w-[85%] h-auto">
           <div className="flex flex-col justify-center items-center">
-          <div className="flex justify-between mb-6 w-full px-[7rem] relative">
-              <h1 className="text-2xl font-bold text-center ">History </h1>
+            <div className="flex justify-between mb-6 w-full px-[7rem] relative">
+              <h1 className="text-2xl font-bold text-center">History</h1>
               <input
                 type="text"
-                placeholder="Search...."
-                className=" border border-gray-300 rounded-lg px-2 py-2 w-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                placeholder="Search..."
+                className="border border-gray-300 rounded-lg px-2 py-2 w-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
               />
@@ -64,12 +65,11 @@ const History = () => {
                 className="absolute right-[7.5rem] top-1"
               />
             </div>
-            {/* Conditional rendering for loading and error */}
             {isLoading ? (
-              <p>Loading...</p>
+              <p>Loading children data, please wait...</p>
             ) : error ? (
-              <p>Error loading children data.</p>
-            ) : (
+              <p>Error loading children data. Please try again later.</p>
+            ) : filteredChildren?.length > 0 ? (
               <div className="flex flex-col space-y-4 w-full max-w-4xl">
                 {filteredChildren.map((item, index) => (
                   <Link key={index} to={`/history/DetailPage/${item.urn}`}>
@@ -82,7 +82,7 @@ const History = () => {
                       </div>
                       <button
                         className="text-white font-bold hover:underline hover:text-white"
-                        onClick={(event) => handleDelete(event, item.urn)} // Prevent Link navigation
+                        onClick={(event) => handleDelete(event, item.urn)}
                         disabled={isDeleting}
                       >
                         Delete
@@ -91,6 +91,8 @@ const History = () => {
                   </Link>
                 ))}
               </div>
+            ) : (
+              <p>No children found matching "{searchQuery}".</p>
             )}
           </div>
         </div>
